@@ -57,15 +57,19 @@ public class Servlet2Stateless
     public void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
         PrintWriter out = resp.getWriter();
-        
+
         try {
             String env = req.getParameter("envlist");
             String shop = req.getParameter("shoplist");
             if ((env != null) && (env.trim().length() > 0)) {
-                ResponseContents RC = sless.callApi(env, shop);
-                out.println("<FONT size=+1 color=blue> Request: </FONT>"+ RC.getRequest() + "<br>");
-                out.println("<FONT size=+1 color=blue> Status : </FONT>"+ RC.getStatus() + "<br>");
-                out.println("<FONT size=+1 color=blue> Contents : </FONT>"+ RC.getContents() + "<br>");
+                for (int i = 0; i < sless.countScenario(env, shop); i++) {
+                    ResponseContents RC2 = sless.executeScenario(env, shop, i);
+                    out.println("<table class=\"table\"><tbody>");
+                    out.println("<tr><td><FONT size=+1 color=blue>Request:</FONT></td><td>" + RC2.getRequest() + "</td></tr>");
+                    out.println("<tr><td><FONT size=+1 color=blue>Status:</FONT></td><td>" + RC2.getStatus() + "</td></tr>");
+                    out.println("<tr><td><FONT size=+1 color=blue>Contents:</FONT></td><td>" + RC2.getContents() + "</td></tr>");
+                    out.println("</tbody></table><br>");
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();

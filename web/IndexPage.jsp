@@ -9,19 +9,53 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <!-- Bootstrap -->
+        <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
         <title>JSP Page</title>
     </head>
     <body>
         <form method="POST">
-            <p><FONT size=+1 color=black>Selecione o Ambiente: </FONT><br>
-                <input type="radio" name="envlist" value="PRD" checked>PRD<br>
-                <input type="radio" name="envlist" value="HLG"        >HLG<br>
-            <p>
-            <p><FONT size=+1 color=black>Selecione o Lojista: </FONT><br>
-                <input type="radio" name="shoplist" value="3" checked>3-Toystore<br>
-                <input type="radio" name="shoplist" value="4"        >4-Mockshop<br>
-            <p><input type="submit" name="sub">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <FONT size=+1 color=black>Selecione o Ambiente: </FONT>
+                </div>
+                <div class="panel-body">
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="envlist" value="PRD" checked>PRD
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="envlist" value="HLG"        >HLG
+                        </label>
+                    </div>
+                </div>
+                    
+                    <div class="panel-heading">
+                        <FONT size=+1 color=black>Selecione o Lojista: </FONT>
+                    </div>
+                <div class="panel-body">
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="shoplist" value="3" checked>3-Toystore
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="shoplist" value="4"        >4-Mockshop
+                        </label>
+                    </div>
+                </div>
+                <button class="btn btn-primary" type="submit">Executar</button>
+            </div>
         </form>
+
         <jsp:include page="/servlet" flush="true" />
+        
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://code.jquery.com/jquery.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="bootstrap/js/bootstrap.min.js"></script>
     </body>
 </html>

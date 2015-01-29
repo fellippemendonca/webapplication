@@ -41,6 +41,7 @@ import javax.ejb.Stateless;
 
 @Stateless
 public class StatelessSessionBean {
+    AutoScenario autoScenario;
 
     public String sayHello(String name) {
         return "Search Input: " + name + "\n";
@@ -51,7 +52,17 @@ public class StatelessSessionBean {
         return RC;
     }
     
+    public int countScenario(String env, String shop){
+        AutoScenario autoScenario = new AutoScenario();
+        autoScenario.addRequest(env, shop);
+        return autoScenario.getScenarioListSize();
+    }
     
+    public ResponseContents executeScenario(String env, String shop ,int index) throws IOException, URISyntaxException{
+        AutoScenario autoScenario = new AutoScenario();
+        autoScenario.addRequest(env, shop);
+        return autoScenario.executeScenario(index);
+    }
 
     
 }

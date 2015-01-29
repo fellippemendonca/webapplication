@@ -22,6 +22,7 @@ public class RestRequester {
     HttpGet httpget;
     HttpPut httpput;
     HttpPost httppost;
+    String method;
 
     public RestRequester() {
         this.uri = new DiffURIBuilder();
@@ -29,6 +30,7 @@ public class RestRequester {
         this.httpget = new HttpGet();
         this.httpput = new HttpPut();
         this.httppost = new HttpPost();
+        this.method = "";
     }
     
     public String getUriString(){
@@ -40,6 +42,44 @@ public class RestRequester {
         System.out.println("-------------------------");
 
         switch (method.toUpperCase()) {
+            case "GET":
+                System.out.println("GET : " + this.uri.getHost() + this.uri.getPath() + this.uri.getTemplate());
+                this.httpget.setURI(this.uri.getFinalURI().build());
+                this.RC = connFactory.RestRequest(this.httpget);
+                this.RC.setRequest("GET : " + this.uri.getHost() + this.uri.getPath());
+                System.out.println("GET : " + this.RC.status);
+                break;
+
+            case "PUT":
+                System.out.println("PUT : " + this.uri.getHost() + this.uri.getPath() + this.uri.getTemplate());
+                this.httpput.setURI(this.uri.getFinalURI().build());
+                this.httpput.setEntity(uri.getEntity());
+                this.RC = connFactory.RestRequest(this.httpput);
+                this.RC.setRequest("PUT : " + this.uri.getHost() + this.uri.getPath());
+                System.out.println("PUT : " + this.RC.status);
+                break;
+
+            case "POST":
+                System.out.println("POST : " + this.uri.getHost() + this.uri.getPath() + this.uri.getTemplate());
+                this.httppost.setURI(this.uri.getFinalURI().build());
+                this.httppost.setEntity(uri.getEntity());
+                this.RC = connFactory.RestRequest(this.httppost);
+                this.RC.setRequest("POST : " + this.uri.getHost() + this.uri.getPath());
+                System.out.println("POST : " + this.RC.status);
+                break;
+        }
+  
+        
+        System.out.println("-------------------------");
+        return this.RC;
+    }
+    
+    
+     public ResponseContents Request() throws IOException, URISyntaxException {
+        RestConnFactory connFactory = new RestConnFactory();
+        System.out.println("-------------------------");
+
+        switch (this.method.toUpperCase()) {
             case "GET":
                 System.out.println("GET : " + this.uri.getHost() + this.uri.getPath() + this.uri.getTemplate());
                 this.httpget.setURI(this.uri.getFinalURI().build());
@@ -115,6 +155,14 @@ public class RestRequester {
     
     public DiffURIBuilder getUri() {
         return this.uri;
+    }
+    
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
     }
 
 }
