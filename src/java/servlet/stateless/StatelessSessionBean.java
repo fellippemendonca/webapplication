@@ -32,10 +32,12 @@ package servlet.stateless;
 
 import Databank_Engines.DatabankConnector;
 import Databank_Engines.Matrix.DynamicMatrix;
+import Entities.Store;
 import HttpConnections.ResponseContents;
 import autoScenarios.openApi.v1.sellerItems.AutoScenario;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import javax.ejb.Stateless;
 
@@ -62,6 +64,21 @@ public class StatelessSessionBean {
         AutoScenario autoScenario = new AutoScenario();
         autoScenario.addRequest(env, shop);
         return autoScenario.executeScenario(index);
+    }
+    
+    public String jpaRequest(){
+        AutoScenario autoScenario = new AutoScenario();
+        return autoScenario.jpaController();
+    }
+    
+    public String getStore(int i){
+        AutoScenario autoScenario = new AutoScenario();
+        return autoScenario.findStore(i);
+    }
+    
+    public List<Store> findStoreByID(String i){
+        AutoScenario autoScenario = new AutoScenario();
+        return autoScenario.findStoreByID(i);
     }
 
     

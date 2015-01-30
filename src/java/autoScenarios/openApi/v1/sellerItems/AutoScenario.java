@@ -5,8 +5,10 @@
  */
 package autoScenarios.openApi.v1.sellerItems;
 
+import DAO.DataAccessObject;
 import Databank_Engines.DatabankConnector;
 import Databank_Engines.Matrix.DynamicMatrix;
+import Entities.Store;
 import HttpConnections.ResponseContents;
 import HttpConnections.RestRequester;
 import Projects.Rest.RestRequests;
@@ -14,12 +16,21 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
+import javax.transaction.UserTransaction;
+import jpa.StoreJpaController;
 
 /**
  *
  * @author fellippe.mendonca
  */
 public class AutoScenario {
+    
+    @PersistenceContext protected EntityManager   em;
+    @Resource           private   UserTransaction utx;    
 
     List<RestRequester> restRequesterList;
 
@@ -46,6 +57,24 @@ public class AutoScenario {
         ResponseContents RC1 = new RestRequests().openApi(env, shop).v1().sellerItems().getSku(sku_id);
         return RC1;
     }
+    
+    public String jpaController (){
+        EntityManagerFactory emf = javax.persistence.Persistence.createEntityManagerFactory("ServletStatelessPU");
+        StoreJpaController jpa = new StoreJpaController(utx,emf);
+        return jpa.findStore(1).getStoreName();
+    }
+    
+    public String findStore (int i){
+        DataAccessObject dao = new DataAccessObject();
+        return dao.getStore(i);
+    }
+    
+    public List<Store> findStoreByID (String i){
+        DataAccessObject dao = new DataAccessObject();
+        return dao.findStoreByID(i);
+    }
+    
+    
 
     public boolean addRequest(String env, String shop) {
         DynamicMatrix DX = new DatabankConnector().executeQuery("AD" + env, "select * from ac_admin.ecma_sku_mp_related_sku_seller where store_qualifier_id = '" + shop + "' and rownum =1");

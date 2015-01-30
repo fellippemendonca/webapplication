@@ -70,6 +70,10 @@ public class Servlet2Stateless
                     out.println("<tr><td><FONT size=+1 color=blue>Contents:</FONT></td><td>" + RC2.getContents() + "</td></tr>");
                     out.println("</tbody></table><br>");
                 }
+                out.println("<br><br><FONT size=+1 color=blue>Shop_name:</FONT></td><td>" + sless.jpaRequest() + "<br>");
+                out.println("<br><br><FONT size=+1 color=blue>Shop_name_by_DAO:</FONT></td><td>" + sless.getStore(1) + "<br>");
+                out.println("<br><br><FONT size=+1 color=blue>Shop_name_by_DAO:</FONT></td><td>" + sless.findStoreByID("3").get(0).getStoreName() + "<br>");
+
             }
         } catch (Exception ex) {
             ex.printStackTrace();
