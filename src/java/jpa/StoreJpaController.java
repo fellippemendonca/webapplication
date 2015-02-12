@@ -15,7 +15,6 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.transaction.UserTransaction;
 import jpa.exceptions.NonexistentEntityException;
 import jpa.exceptions.RollbackFailureException;
 
@@ -25,27 +24,23 @@ import jpa.exceptions.RollbackFailureException;
  */
 public class StoreJpaController implements Serializable {
 
-    public StoreJpaController(UserTransaction utx, EntityManagerFactory emf) {
-        this.utx = utx;
+    public StoreJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
-    private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public void create(Store store) throws RollbackFailureException, Exception {
+    public Store create(Store store) throws RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
             em = getEntityManager();
             em.persist(store);
-            utx.commit();
+            em.flush();
         } catch (Exception ex) {
             try {
-                utx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -55,18 +50,16 @@ public class StoreJpaController implements Serializable {
                 em.close();
             }
         }
+        return store;
     }
 
     public void edit(Store store) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
             em = getEntityManager();
             store = em.merge(store);
-            utx.commit();
         } catch (Exception ex) {
             try {
-                utx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -88,7 +81,6 @@ public class StoreJpaController implements Serializable {
     public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
             em = getEntityManager();
             Store store;
             try {
@@ -98,10 +90,8 @@ public class StoreJpaController implements Serializable {
                 throw new NonexistentEntityException("The store with id " + id + " no longer exists.", enfe);
             }
             em.remove(store);
-            utx.commit();
         } catch (Exception ex) {
             try {
-                utx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -171,8 +161,6 @@ public class StoreJpaController implements Serializable {
         }
     }
     
-    
-    
 
     public int getStoreCount() {
         EntityManager em = getEntityManager();
@@ -187,4 +175,29 @@ public class StoreJpaController implements Serializable {
         }
     }
     
+    public Store find(Store store) {
+        EntityManager em = getEntityManager();
+        Query query = em.createNamedQuery("Store.findByStoreCode");
+        query.setParameter("storeCode", store.getStoreCode());
+        List<Store> hostList = (List<Store>) query.getResultList();
+        try{
+        if(hostList.size()>0){
+            return hostList.get(0);
+        } else{
+            return null;
+        }
+        }
+        finally {
+            em.close();
+        }
+    }
+    
+    public Store findOrAdd(Store store) throws RollbackFailureException, Exception{
+        if(find(store)!=null){
+            return store;
+        }else{
+            create(store);
+            return find(store);
+        }
+    }
 }

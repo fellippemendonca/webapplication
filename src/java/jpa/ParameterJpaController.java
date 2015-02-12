@@ -3,18 +3,30 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package jpa;
 
 import Entities.Parameter;
+import static com.sun.faces.facelets.util.Path.context;
 import java.io.Serializable;
+import java.security.Principal;
+import java.util.Hashtable;
 import java.util.List;
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import static javax.ejb.TransactionManagementType.BEAN;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.PersistenceUnit;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.sql.DataSource;
 import javax.transaction.UserTransaction;
 import jpa.exceptions.NonexistentEntityException;
 import jpa.exceptions.RollbackFailureException;
@@ -24,28 +36,26 @@ import jpa.exceptions.RollbackFailureException;
  * @author fellippe.mendonca
  */
 public class ParameterJpaController implements Serializable {
+    
+    private EntityManagerFactory emf = null;
 
-    public ParameterJpaController(UserTransaction utx, EntityManagerFactory emf) {
-        this.utx = utx;
+    public ParameterJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
-    private UserTransaction utx = null;
-    private EntityManagerFactory emf = null;
+    
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public void create(Parameter parameter) throws RollbackFailureException, Exception {
+    public Parameter create(Parameter parameter) throws RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
             em = getEntityManager();
             em.persist(parameter);
-            utx.commit();
+            em.flush();
         } catch (Exception ex) {
             try {
-                utx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -55,18 +65,19 @@ public class ParameterJpaController implements Serializable {
                 em.close();
             }
         }
+        return parameter;
     }
 
     public void edit(Parameter parameter) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
+
             em = getEntityManager();
             parameter = em.merge(parameter);
-            utx.commit();
+
         } catch (Exception ex) {
             try {
-                utx.rollback();
+
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -88,7 +99,7 @@ public class ParameterJpaController implements Serializable {
     public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
+
             em = getEntityManager();
             Parameter parameter;
             try {
@@ -98,10 +109,10 @@ public class ParameterJpaController implements Serializable {
                 throw new NonexistentEntityException("The parameter with id " + id + " no longer exists.", enfe);
             }
             em.remove(parameter);
-            utx.commit();
+
         } catch (Exception ex) {
             try {
-                utx.rollback();
+
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -159,4 +170,30 @@ public class ParameterJpaController implements Serializable {
         }
     }
     
+    public Parameter find(Parameter parameter) {
+        EntityManager em = getEntityManager();
+        Query query = em.createNamedQuery("Parameter.findByParameterNameAndValue");
+        query.setParameter("parameterName", parameter.getParameterName());
+        query.setParameter("parameterValue", parameter.getParameterValue());
+        List<Parameter> parameterList = (List<Parameter>) query.getResultList();
+        try {
+            if (parameterList.size() > 0) {
+                return parameterList.get(0);
+            } else {
+                return null;
+            }
+        } finally {
+            em.close();
+        }
+    }
+
+    public Parameter findOrAdd(Parameter parameter) throws Exception {
+        if (find(parameter) != null) {
+            return find(parameter);
+        } else {
+            create(parameter);
+            return find(parameter);
+        }
+    }
+
 }

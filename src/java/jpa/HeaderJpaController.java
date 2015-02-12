@@ -25,27 +25,25 @@ import jpa.exceptions.RollbackFailureException;
  */
 public class HeaderJpaController implements Serializable {
 
-    public HeaderJpaController(UserTransaction utx, EntityManagerFactory emf) {
-        this.utx = utx;
+    public HeaderJpaController(EntityManagerFactory emf) {
+
         this.emf = emf;
     }
-    private UserTransaction utx = null;
+
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public void create(Header header) throws RollbackFailureException, Exception {
+    public Header create(Header header) throws RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
             em = getEntityManager();
             em.persist(header);
-            utx.commit();
+            em.flush();
         } catch (Exception ex) {
             try {
-                utx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -55,18 +53,16 @@ public class HeaderJpaController implements Serializable {
                 em.close();
             }
         }
+        return header;
     }
 
     public void edit(Header header) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
             em = getEntityManager();
             header = em.merge(header);
-            utx.commit();
         } catch (Exception ex) {
             try {
-                utx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -88,7 +84,6 @@ public class HeaderJpaController implements Serializable {
     public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
             em = getEntityManager();
             Header header;
             try {
@@ -98,10 +93,8 @@ public class HeaderJpaController implements Serializable {
                 throw new NonexistentEntityException("The header with id " + id + " no longer exists.", enfe);
             }
             em.remove(header);
-            utx.commit();
         } catch (Exception ex) {
             try {
-                utx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -143,6 +136,32 @@ public class HeaderJpaController implements Serializable {
             return em.find(Header.class, id);
         } finally {
             em.close();
+        }
+    }
+    
+    public Header find(Header object) {
+        EntityManager em = getEntityManager();
+        Query query = em.createNamedQuery("Header.findByHeaderNameAndValue");
+        query.setParameter("headerName", object.getHeaderName());
+        query.setParameter("headerValue", object.getHeaderValue());
+        List<Header> objectList = (List<Header>) query.getResultList();
+        try {
+            if (objectList.size() > 0) {
+                return objectList.get(0);
+            } else {
+                return null;
+            }
+        } finally {
+            em.close();
+        }
+    }
+
+    public Header findOrAdd(Header object) throws Exception {
+        if (find(object) != null) {
+            return find(object);
+        } else {
+            create(object);
+            return find(object);
         }
     }
 

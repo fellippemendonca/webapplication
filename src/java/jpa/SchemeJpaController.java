@@ -25,27 +25,23 @@ import jpa.exceptions.RollbackFailureException;
  */
 public class SchemeJpaController implements Serializable {
 
-    public SchemeJpaController(UserTransaction utx, EntityManagerFactory emf) {
-        this.utx = utx;
+    public SchemeJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
-    private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public void create(Scheme scheme) throws RollbackFailureException, Exception {
+    public Scheme create(Scheme scheme) throws RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
             em = getEntityManager();
             em.persist(scheme);
-            utx.commit();
+            em.flush();
         } catch (Exception ex) {
             try {
-                utx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -55,18 +51,16 @@ public class SchemeJpaController implements Serializable {
                 em.close();
             }
         }
+        return scheme;
     }
 
     public void edit(Scheme scheme) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
             em = getEntityManager();
             scheme = em.merge(scheme);
-            utx.commit();
         } catch (Exception ex) {
             try {
-                utx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -88,7 +82,6 @@ public class SchemeJpaController implements Serializable {
     public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
             em = getEntityManager();
             Scheme scheme;
             try {
@@ -98,10 +91,8 @@ public class SchemeJpaController implements Serializable {
                 throw new NonexistentEntityException("The scheme with id " + id + " no longer exists.", enfe);
             }
             em.remove(scheme);
-            utx.commit();
         } catch (Exception ex) {
             try {
-                utx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -156,6 +147,31 @@ public class SchemeJpaController implements Serializable {
             return ((Long) q.getSingleResult()).intValue();
         } finally {
             em.close();
+        }
+    }
+    
+    public Scheme find(Scheme scheme) {
+        EntityManager em = getEntityManager();
+        Query query = em.createNamedQuery("Scheme.findBySchemeValue");
+        query.setParameter("schemeValue", scheme.getSchemeValue());
+        List<Scheme> schemeList = (List<Scheme>) query.getResultList();
+        try {
+            if (schemeList.size() > 0) {
+                return schemeList.get(0);
+            } else {
+                return null;
+            }
+        } finally {
+            em.close();
+        }
+    }
+
+    public Scheme findOrAdd(Scheme scheme) throws Exception {
+        if (find(scheme) != null) {
+            return find(scheme);
+        } else {
+            create(scheme);
+            return find(scheme);
         }
     }
     

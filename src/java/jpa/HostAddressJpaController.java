@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.UserTransaction;
@@ -25,52 +26,45 @@ import jpa.exceptions.RollbackFailureException;
  * @author fellippe.mendonca
  */
 public class HostAddressJpaController implements Serializable {
+    private EntityManagerFactory emf = null;
+    
+    @PersistenceContext(unitName="ServletStatelessPU")
+    private EntityManager entityManager; 
 
-    public HostAddressJpaController(UserTransaction utx, EntityManagerFactory emf) {
-        this.utx = utx;
+    public HostAddressJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
-    private UserTransaction utx = null;
-    private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
+        //return this.entityManager;
         return emf.createEntityManager();
     }
 
-    public void create(HostAddress hostAddress) throws PreexistingEntityException, RollbackFailureException, Exception {
+    public HostAddress create(HostAddress hostAddress) throws PreexistingEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
+            System.out.println("Inserindo HostAddress no Banco de Dados...");
             em = getEntityManager();
             em.persist(hostAddress);
-            utx.commit();
+            em.flush();
         } catch (Exception ex) {
-            try {
-                utx.rollback();
-            } catch (Exception re) {
-                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
-            }
-            if (findHostAddress(hostAddress.getIdHostAddress()) != null) {
-                throw new PreexistingEntityException("HostAddress " + hostAddress + " already exists.", ex);
-            }
+            System.out.println("Ocorreu um Problema durante a inserção do HostAddress.");
             throw ex;
         } finally {
             if (em != null) {
                 em.close();
             }
         }
+        return hostAddress;
     }
 
     public void edit(HostAddress hostAddress) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
             em = getEntityManager();
             hostAddress = em.merge(hostAddress);
-            utx.commit();
         } catch (Exception ex) {
             try {
-                utx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -92,7 +86,6 @@ public class HostAddressJpaController implements Serializable {
     public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
             em = getEntityManager();
             HostAddress hostAddress;
             try {
@@ -102,10 +95,8 @@ public class HostAddressJpaController implements Serializable {
                 throw new NonexistentEntityException("The hostAddress with id " + id + " no longer exists.", enfe);
             }
             em.remove(hostAddress);
-            utx.commit();
         } catch (Exception ex) {
             try {
-                utx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -147,6 +138,34 @@ public class HostAddressJpaController implements Serializable {
             return em.find(HostAddress.class, id);
         } finally {
             em.close();
+        }
+    }
+    
+    public HostAddress find(HostAddress host) {
+        EntityManager em = getEntityManager();
+        Query query = em.createNamedQuery("HostAddress.findByHostAddressValue");
+        query.setParameter("hostAddressValue", host.getHostAddressValue());
+        List<HostAddress> hostList = (List<HostAddress>) query.getResultList();
+        try{
+        if(hostList.size()>0){
+            System.out.println("HostAddressValue Encontrado");
+            return hostList.get(0);
+        } else{
+            System.out.println("HostAddressValue Não Encontrado");
+            return null;
+        }
+        }
+        finally {
+            em.close();
+        }
+    }
+    
+    public HostAddress findOrAdd(HostAddress host) throws RollbackFailureException, Exception{
+        if(find(host)!=null){
+            return find(host);
+        }else{
+            create(host);
+            return find(host);
         }
     }
 

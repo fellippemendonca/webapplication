@@ -13,7 +13,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -31,7 +30,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Template.findAll", query = "SELECT t FROM Template t"),
     @NamedQuery(name = "Template.findByIdTemplate", query = "SELECT t FROM Template t WHERE t.idTemplate = :idTemplate"),
-    @NamedQuery(name = "Template.findByTemplateValue", query = "SELECT t FROM Template t WHERE t.templateValue = :templateValue")})
+    @NamedQuery(name = "Template.findByTemplateValue", query = "SELECT t FROM Template t WHERE t.templateValue = :templateValue"),
+    @NamedQuery(name = "Template.findByTemplateStatic", query = "SELECT t FROM Template t WHERE t.templateStatic = :templateStatic")})
 public class Template implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -46,9 +46,8 @@ public class Template implements Serializable {
     private String templateValue;
     @Basic(optional = false)
     @NotNull
-    @Lob
     @Column(name = "template_static")
-    private byte[] templateStatic;
+    private int templateStatic;
 
     public Template() {
     }
@@ -57,7 +56,7 @@ public class Template implements Serializable {
         this.idTemplate = idTemplate;
     }
 
-    public Template(Integer idTemplate, String templateValue, byte[] templateStatic) {
+    public Template(Integer idTemplate, String templateValue, int templateStatic) {
         this.idTemplate = idTemplate;
         this.templateValue = templateValue;
         this.templateStatic = templateStatic;
@@ -79,11 +78,11 @@ public class Template implements Serializable {
         this.templateValue = templateValue;
     }
 
-    public byte[] getTemplateStatic() {
+    public int getTemplateStatic() {
         return templateStatic;
     }
 
-    public void setTemplateStatic(byte[] templateStatic) {
+    public void setTemplateStatic(int templateStatic) {
         this.templateStatic = templateStatic;
     }
 

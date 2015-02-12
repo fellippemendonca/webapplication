@@ -4,9 +4,11 @@
  * and open the template in the editor.
  */
 
-package jpa;
+package jpa.ReferenceJpaControllers;
 
-import Entities.Template;
+import DAO.exceptions.NonexistentEntityException;
+import DAO.exceptions.RollbackFailureException;
+import Entities.ReferenceEntities.TemplateReference;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -16,32 +18,32 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.UserTransaction;
-import jpa.exceptions.NonexistentEntityException;
-import jpa.exceptions.RollbackFailureException;
 
 /**
  *
  * @author fellippe.mendonca
  */
-public class TemplateJpaController implements Serializable {
+public class TemplateReferenceJpaController implements Serializable {
 
-    public TemplateJpaController(EntityManagerFactory emf) {
+    public TemplateReferenceJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
+
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public Template create(Template template) throws RollbackFailureException, Exception {
+    public TemplateReference create(TemplateReference templateReference) throws RollbackFailureException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
-            em.persist(template);
+            em.persist(templateReference);
             em.flush();
         } catch (Exception ex) {
             try {
+
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -51,24 +53,27 @@ public class TemplateJpaController implements Serializable {
                 em.close();
             }
         }
-        return template;
+        return templateReference;
     }
 
-    public void edit(Template template) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void edit(TemplateReference templateReference) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+
             em = getEntityManager();
-            template = em.merge(template);
+            templateReference = em.merge(templateReference);
+
         } catch (Exception ex) {
             try {
+
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = template.getIdTemplate();
-                if (findTemplate(id) == null) {
-                    throw new NonexistentEntityException("The template with id " + id + " no longer exists.");
+                Integer id = templateReference.getIdTemplateReference();
+                if (findTemplateReference(id) == null) {
+                    throw new NonexistentEntityException("The templateReference with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -82,17 +87,20 @@ public class TemplateJpaController implements Serializable {
     public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+
             em = getEntityManager();
-            Template template;
+            TemplateReference templateReference;
             try {
-                template = em.getReference(Template.class, id);
-                template.getIdTemplate();
+                templateReference = em.getReference(TemplateReference.class, id);
+                templateReference.getIdTemplateReference();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The template with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The templateReference with id " + id + " no longer exists.", enfe);
             }
-            em.remove(template);
+            em.remove(templateReference);
+
         } catch (Exception ex) {
             try {
+
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -104,19 +112,19 @@ public class TemplateJpaController implements Serializable {
         }
     }
 
-    public List<Template> findTemplateEntities() {
-        return findTemplateEntities(true, -1, -1);
+    public List<TemplateReference> findTemplateReferenceEntities() {
+        return findTemplateReferenceEntities(true, -1, -1);
     }
 
-    public List<Template> findTemplateEntities(int maxResults, int firstResult) {
-        return findTemplateEntities(false, maxResults, firstResult);
+    public List<TemplateReference> findTemplateReferenceEntities(int maxResults, int firstResult) {
+        return findTemplateReferenceEntities(false, maxResults, firstResult);
     }
 
-    private List<Template> findTemplateEntities(boolean all, int maxResults, int firstResult) {
+    private List<TemplateReference> findTemplateReferenceEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(Template.class));
+            cq.select(cq.from(TemplateReference.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -128,20 +136,20 @@ public class TemplateJpaController implements Serializable {
         }
     }
 
-    public Template findTemplate(Integer id) {
+    public TemplateReference findTemplateReference(Integer id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(Template.class, id);
+            return em.find(TemplateReference.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int getTemplateCount() {
+    public int getTemplateReferenceCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<Template> rt = cq.from(Template.class);
+            Root<TemplateReference> rt = cq.from(TemplateReference.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
@@ -150,28 +158,15 @@ public class TemplateJpaController implements Serializable {
         }
     }
     
-    public Template find(Template template) {
+    public List<TemplateReference> findByIdRequestReference(int id) {
         EntityManager em = getEntityManager();
-        Query query = em.createNamedQuery("Template.findByTemplateValue");
-        query.setParameter("templateValue", template.getTemplateValue());
-        List<Template> templateList = (List<Template>) query.getResultList();
+        Query query = em.createNamedQuery("TemplateReference.findByIdRequestReference");
+        query.setParameter("idRequestReference", id);
+        List<TemplateReference> templateReferenceList = (List<TemplateReference>) query.getResultList();
         try {
-            if (templateList.size() > 0) {
-                return templateList.get(0);
-            } else {
-                return null;
-            }
+            return templateReferenceList;
         } finally {
             em.close();
-        }
-    }
-
-    public Template findOrAdd(Template template) throws Exception {
-        if (find(template) != null) {
-            return find(template);
-        } else {
-            create(template);
-            return find(template);
         }
     }
     

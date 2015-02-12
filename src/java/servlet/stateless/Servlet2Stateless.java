@@ -29,13 +29,14 @@
  */
 package servlet.stateless;
 
+import DAO.DataAccessObject;
 import HttpConnections.ResponseContents;
 import java.io.*;
 import javax.ejb.EJB;
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
-import util.HTMLFilter;
+
 
 // Though it is perfectly fine to declare the dependency on the bean
 // at the type level, it is not required for stateless session bean
@@ -70,10 +71,14 @@ public class Servlet2Stateless
                     out.println("<tr><td><FONT size=+1 color=blue>Contents:</FONT></td><td>" + RC2.getContents() + "</td></tr>");
                     out.println("</tbody></table><br>");
                 }
-                out.println("<br><br><FONT size=+1 color=blue>Shop_name:</FONT></td><td>" + sless.jpaRequest() + "<br>");
-                out.println("<br><br><FONT size=+1 color=blue>Shop_name_by_DAO:</FONT></td><td>" + sless.getStore(1) + "<br>");
-                out.println("<br><br><FONT size=+1 color=blue>Shop_name_by_DAO:</FONT></td><td>" + sless.findStoreByID("3").get(0).getStoreName() + "<br>");
-
+                
+                out.println("<br><br><FONT size=+1 color=blue>RequestList:</FONT> ");
+                out.println("" + sless.getRequest() + "<br>");
+                
+                out.println("<br><br><FONT size=+1 color=blue>Novo Cenario Insert:</FONT> ");
+                //out.println("" + sless.insereNovoCenario() + "<br>");
+                //out.println("<br><br><FONT size=+1 color=blue>Parameter Insert:</FONT> ");
+                //out.println("" + sless.insertParameter("_limit", "30", 1) + "<br>");
             }
         } catch (Exception ex) {
             ex.printStackTrace();

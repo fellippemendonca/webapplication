@@ -30,56 +30,50 @@
 
 package servlet.stateless;
 
-import Databank_Engines.DatabankConnector;
-import Databank_Engines.Matrix.DynamicMatrix;
+import Entities.Parameter;
 import Entities.Store;
 import HttpConnections.ResponseContents;
 import autoScenarios.openApi.v1.sellerItems.AutoScenario;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.List;
-
 import javax.ejb.Stateless;
+import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
+import jpa.ParameterJpaController;
 
 @Stateless
-public class StatelessSessionBean {
+public class StatelessSessionBean implements Serializable{
     AutoScenario autoScenario;
 
     public String sayHello(String name) {
         return "Search Input: " + name + "\n";
     }
     
-    public ResponseContents callApi(String env, String shop) throws IOException, URISyntaxException {
-        ResponseContents RC = new AutoScenario().searchSkuV1(env, shop);
-        return RC;
+    public int countScenario(String env, String shop) throws NamingException{
+        this.autoScenario = new AutoScenario();
+        this.autoScenario.addRequest(env, shop);
+        return this.autoScenario.getScenarioListSize();
     }
     
-    public int countScenario(String env, String shop){
-        AutoScenario autoScenario = new AutoScenario();
-        autoScenario.addRequest(env, shop);
-        return autoScenario.getScenarioListSize();
-    }
-    
-    public ResponseContents executeScenario(String env, String shop ,int index) throws IOException, URISyntaxException{
-        AutoScenario autoScenario = new AutoScenario();
-        autoScenario.addRequest(env, shop);
-        return autoScenario.executeScenario(index);
-    }
-    
-    public String jpaRequest(){
-        AutoScenario autoScenario = new AutoScenario();
-        return autoScenario.jpaController();
-    }
-    
-    public String getStore(int i){
-        AutoScenario autoScenario = new AutoScenario();
-        return autoScenario.findStore(i);
-    }
-    
-    public List<Store> findStoreByID(String i){
-        AutoScenario autoScenario = new AutoScenario();
-        return autoScenario.findStoreByID(i);
+    public ResponseContents executeScenario(String env, String shop ,int index) throws IOException, URISyntaxException, NamingException{
+        this.autoScenario = new AutoScenario();
+        this.autoScenario.addRequest(env, shop);
+        return this.autoScenario.executeScenario(index);
     }
 
+    public int insertParameter(String name, String value, int fix) throws NamingException{
+        this.autoScenario = new AutoScenario();
+        return this.autoScenario.parameterInsert(name, value, fix);
+    }
     
+    public String getRequest() throws NamingException{
+        this.autoScenario = new AutoScenario();
+        return this.autoScenario.getRequest();
+    }
+    
+    public boolean insereNovoCenario(){
+        return this.autoScenario.insereNovoCenario();
+    }
 }

@@ -4,10 +4,11 @@
  * and open the template in the editor.
  */
 
-package jpa;
+package jpa.ReferenceJpaControllers;
 
-import Entities.ParameterReference;
-import Entities.ParameterReferencePK;
+import DAO.exceptions.NonexistentEntityException;
+import DAO.exceptions.RollbackFailureException;
+import Entities.ReferenceEntities.ParameterReference;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -17,9 +18,6 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.UserTransaction;
-import jpa.exceptions.NonexistentEntityException;
-import jpa.exceptions.PreexistingEntityException;
-import jpa.exceptions.RollbackFailureException;
 
 /**
  *
@@ -27,35 +25,29 @@ import jpa.exceptions.RollbackFailureException;
  */
 public class ParameterReferenceJpaController implements Serializable {
 
-    public ParameterReferenceJpaController(UserTransaction utx, EntityManagerFactory emf) {
-        this.utx = utx;
+    public ParameterReferenceJpaController(EntityManagerFactory emf) {
+
         this.emf = emf;
     }
-    private UserTransaction utx = null;
+
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public void create(ParameterReference parameterReference) throws PreexistingEntityException, RollbackFailureException, Exception {
-        if (parameterReference.getParameterReferencePK() == null) {
-            parameterReference.setParameterReferencePK(new ParameterReferencePK());
-        }
+    public ParameterReference create(ParameterReference parameterReference) throws RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
+
             em = getEntityManager();
             em.persist(parameterReference);
-            utx.commit();
+            em.flush();
         } catch (Exception ex) {
             try {
-                utx.rollback();
+
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
-            }
-            if (findParameterReference(parameterReference.getParameterReferencePK()) != null) {
-                throw new PreexistingEntityException("ParameterReference " + parameterReference + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -63,24 +55,25 @@ public class ParameterReferenceJpaController implements Serializable {
                 em.close();
             }
         }
+        return parameterReference;
     }
 
     public void edit(ParameterReference parameterReference) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
+
             em = getEntityManager();
             parameterReference = em.merge(parameterReference);
-            utx.commit();
+  
         } catch (Exception ex) {
             try {
-                utx.rollback();
+    
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                ParameterReferencePK id = parameterReference.getParameterReferencePK();
+                Integer id = parameterReference.getIdParameterReference();
                 if (findParameterReference(id) == null) {
                     throw new NonexistentEntityException("The parameterReference with id " + id + " no longer exists.");
                 }
@@ -93,23 +86,23 @@ public class ParameterReferenceJpaController implements Serializable {
         }
     }
 
-    public void destroy(ParameterReferencePK id) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
+       
             em = getEntityManager();
             ParameterReference parameterReference;
             try {
                 parameterReference = em.getReference(ParameterReference.class, id);
-                parameterReference.getParameterReferencePK();
+                parameterReference.getIdParameterReference();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The parameterReference with id " + id + " no longer exists.", enfe);
             }
             em.remove(parameterReference);
-            utx.commit();
+
         } catch (Exception ex) {
             try {
-                utx.rollback();
+
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -145,7 +138,7 @@ public class ParameterReferenceJpaController implements Serializable {
         }
     }
 
-    public ParameterReference findParameterReference(ParameterReferencePK id) {
+    public ParameterReference findParameterReference(Integer id) {
         EntityManager em = getEntityManager();
         try {
             return em.find(ParameterReference.class, id);
@@ -162,6 +155,18 @@ public class ParameterReferenceJpaController implements Serializable {
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
+        } finally {
+            em.close();
+        }
+    }
+    
+    public List<ParameterReference> findByIdRequestReference(int id) {
+        EntityManager em = getEntityManager();
+        Query query = em.createNamedQuery("ParameterReference.findByIdRequestReference");
+        query.setParameter("idRequestReference", id);
+        List<ParameterReference> headerReferenceList = (List<ParameterReference>) query.getResultList();
+        try {
+            return headerReferenceList;
         } finally {
             em.close();
         }

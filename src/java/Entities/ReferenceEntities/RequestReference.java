@@ -4,24 +4,43 @@
  * and open the template in the editor.
  */
 
-package Entities;
+package Entities.ReferenceEntities;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author fellippe.mendonca
  */
-@Embeddable
-public class RequestReferencePK implements Serializable {
+@Entity
+@Table(name = "request_reference")
+@XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "RequestReference.findAll", query = "SELECT r FROM RequestReference r"),
+    @NamedQuery(name = "RequestReference.findByIdRequestReference", query = "SELECT r FROM RequestReference r WHERE r.idRequestReference = :idRequestReference"),
+    @NamedQuery(name = "RequestReference.findByIdEnvironment", query = "SELECT r FROM RequestReference r WHERE r.idEnvironment = :idEnvironment"),
+    @NamedQuery(name = "RequestReference.findByIdMethod", query = "SELECT r FROM RequestReference r WHERE r.idMethod = :idMethod"),
+    @NamedQuery(name = "RequestReference.findByIdScheme", query = "SELECT r FROM RequestReference r WHERE r.idScheme = :idScheme"),
+    @NamedQuery(name = "RequestReference.findByIdHostAddress", query = "SELECT r FROM RequestReference r WHERE r.idHostAddress = :idHostAddress"),
+    @NamedQuery(name = "RequestReference.findByIdPath", query = "SELECT r FROM RequestReference r WHERE r.idPath = :idPath")})
+public class RequestReference implements Serializable {
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id_request_reference")
-    private int idRequestReference;
+    private Integer idRequestReference;
     @Basic(optional = false)
     @NotNull
     @Column(name = "id_environment")
@@ -43,10 +62,14 @@ public class RequestReferencePK implements Serializable {
     @Column(name = "id_path")
     private int idPath;
 
-    public RequestReferencePK() {
+    public RequestReference() {
     }
 
-    public RequestReferencePK(int idRequestReference, int idEnvironment, int idMethod, int idScheme, int idHostAddress, int idPath) {
+    public RequestReference(Integer idRequestReference) {
+        this.idRequestReference = idRequestReference;
+    }
+
+    public RequestReference(Integer idRequestReference, int idEnvironment, int idMethod, int idScheme, int idHostAddress, int idPath) {
         this.idRequestReference = idRequestReference;
         this.idEnvironment = idEnvironment;
         this.idMethod = idMethod;
@@ -55,11 +78,11 @@ public class RequestReferencePK implements Serializable {
         this.idPath = idPath;
     }
 
-    public int getIdRequestReference() {
+    public Integer getIdRequestReference() {
         return idRequestReference;
     }
 
-    public void setIdRequestReference(int idRequestReference) {
+    public void setIdRequestReference(Integer idRequestReference) {
         this.idRequestReference = idRequestReference;
     }
 
@@ -106,38 +129,18 @@ public class RequestReferencePK implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (int) idRequestReference;
-        hash += (int) idEnvironment;
-        hash += (int) idMethod;
-        hash += (int) idScheme;
-        hash += (int) idHostAddress;
-        hash += (int) idPath;
+        hash += (idRequestReference != null ? idRequestReference.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof RequestReferencePK)) {
+        if (!(object instanceof RequestReference)) {
             return false;
         }
-        RequestReferencePK other = (RequestReferencePK) object;
-        if (this.idRequestReference != other.idRequestReference) {
-            return false;
-        }
-        if (this.idEnvironment != other.idEnvironment) {
-            return false;
-        }
-        if (this.idMethod != other.idMethod) {
-            return false;
-        }
-        if (this.idScheme != other.idScheme) {
-            return false;
-        }
-        if (this.idHostAddress != other.idHostAddress) {
-            return false;
-        }
-        if (this.idPath != other.idPath) {
+        RequestReference other = (RequestReference) object;
+        if ((this.idRequestReference == null && other.idRequestReference != null) || (this.idRequestReference != null && !this.idRequestReference.equals(other.idRequestReference))) {
             return false;
         }
         return true;
@@ -145,7 +148,7 @@ public class RequestReferencePK implements Serializable {
 
     @Override
     public String toString() {
-        return "Entities.RequestReferencePK[ idRequestReference=" + idRequestReference + ", idEnvironment=" + idEnvironment + ", idMethod=" + idMethod + ", idScheme=" + idScheme + ", idHostAddress=" + idHostAddress + ", idPath=" + idPath + " ]";
+        return "Entities.RequestReference[ idRequestReference=" + idRequestReference + " ]";
     }
     
 }

@@ -31,7 +31,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Header.findAll", query = "SELECT h FROM Header h"),
     @NamedQuery(name = "Header.findByIdHeader", query = "SELECT h FROM Header h WHERE h.idHeader = :idHeader"),
     @NamedQuery(name = "Header.findByHeaderName", query = "SELECT h FROM Header h WHERE h.headerName = :headerName"),
-    @NamedQuery(name = "Header.findByHeaderValue", query = "SELECT h FROM Header h WHERE h.headerValue = :headerValue")})
+    @NamedQuery(name = "Header.findByHeaderValue", query = "SELECT h FROM Header h WHERE h.headerValue = :headerValue"),
+    @NamedQuery(name = "Header.findByHeaderNameAndValue", query = "SELECT h FROM Header h WHERE h.headerName = :headerName and h.headerValue = :headerValue")})
 public class Header implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

@@ -43,6 +43,11 @@ public class Path implements Serializable {
 
     public Path() {
     }
+    
+    public Path(Integer idPath, String pathValue) {
+        this.idPath = idPath;
+        this.pathValue = pathValue;
+    }
 
     public Path(Integer idPath) {
         this.idPath = idPath;

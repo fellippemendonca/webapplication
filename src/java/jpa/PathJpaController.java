@@ -25,27 +25,23 @@ import jpa.exceptions.RollbackFailureException;
  */
 public class PathJpaController implements Serializable {
 
-    public PathJpaController(UserTransaction utx, EntityManagerFactory emf) {
-        this.utx = utx;
+    public PathJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
-    private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public void create(Path path) throws RollbackFailureException, Exception {
+    public Path create(Path path) throws RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
             em = getEntityManager();
             em.persist(path);
-            utx.commit();
+            em.flush();
         } catch (Exception ex) {
             try {
-                utx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -55,18 +51,16 @@ public class PathJpaController implements Serializable {
                 em.close();
             }
         }
+        return path;
     }
 
     public void edit(Path path) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
             em = getEntityManager();
             path = em.merge(path);
-            utx.commit();
         } catch (Exception ex) {
             try {
-                utx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -88,7 +82,6 @@ public class PathJpaController implements Serializable {
     public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
             em = getEntityManager();
             Path path;
             try {
@@ -98,10 +91,8 @@ public class PathJpaController implements Serializable {
                 throw new NonexistentEntityException("The path with id " + id + " no longer exists.", enfe);
             }
             em.remove(path);
-            utx.commit();
         } catch (Exception ex) {
             try {
-                utx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -156,6 +147,31 @@ public class PathJpaController implements Serializable {
             return ((Long) q.getSingleResult()).intValue();
         } finally {
             em.close();
+        }
+    }
+    
+    public Path find(Path path) {
+        EntityManager em = getEntityManager();
+        Query query = em.createNamedQuery("Path.findByPathValue");
+        query.setParameter("pathValue", path.getPathValue());
+        List<Path> pathList = (List<Path>) query.getResultList();
+        try {
+            if (pathList.size() > 0) {
+                return pathList.get(0);
+            } else {
+                return null;
+            }
+        } finally {
+            em.close();
+        }
+    }
+
+    public Path findOrAdd(Path path) throws Exception {
+        if (find(path) != null) {
+            return find(path);
+        } else {
+            create(path);
+            return find(path);
         }
     }
     

@@ -15,7 +15,6 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.transaction.UserTransaction;
 import jpa.exceptions.NonexistentEntityException;
 import jpa.exceptions.RollbackFailureException;
 
@@ -25,27 +24,27 @@ import jpa.exceptions.RollbackFailureException;
  */
 public class EnvironmentJpaController implements Serializable {
 
-    public EnvironmentJpaController(UserTransaction utx, EntityManagerFactory emf) {
-        this.utx = utx;
+    public EnvironmentJpaController(EntityManagerFactory emf) {
+
         this.emf = emf;
     }
-    private UserTransaction utx = null;
+
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public void create(Environment environment) throws RollbackFailureException, Exception {
+    public Environment create(Environment environment) throws RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
+
             em = getEntityManager();
             em.persist(environment);
-            utx.commit();
+            em.flush();
         } catch (Exception ex) {
             try {
-                utx.rollback();
+
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -55,18 +54,16 @@ public class EnvironmentJpaController implements Serializable {
                 em.close();
             }
         }
+        return environment;
     }
 
     public void edit(Environment environment) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
             em = getEntityManager();
             environment = em.merge(environment);
-            utx.commit();
         } catch (Exception ex) {
             try {
-                utx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -88,7 +85,6 @@ public class EnvironmentJpaController implements Serializable {
     public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
             em = getEntityManager();
             Environment environment;
             try {
@@ -98,10 +94,8 @@ public class EnvironmentJpaController implements Serializable {
                 throw new NonexistentEntityException("The environment with id " + id + " no longer exists.", enfe);
             }
             em.remove(environment);
-            utx.commit();
         } catch (Exception ex) {
             try {
-                utx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -143,6 +137,32 @@ public class EnvironmentJpaController implements Serializable {
             return em.find(Environment.class, id);
         } finally {
             em.close();
+        }
+    }
+    
+    public Environment find(Environment env) {
+        EntityManager em = getEntityManager();
+        Query query = em.createNamedQuery("Environment.findByEnvironmentName");
+        query.setParameter("environmentName", env.getEnvironmentName());
+        List<Environment> environment = (List<Environment>) query.getResultList();
+        try{
+        if(environment.size()>0){
+            return environment.get(0);
+        } else {
+            return null;
+        }
+        }
+        finally {
+            em.close();
+        }
+    }
+    
+    public Environment findOrAdd(Environment environment) throws Exception{
+        if(find(environment)!=null){
+            return find(environment);
+        }else{
+            create(environment);
+            return find(environment);
         }
     }
 

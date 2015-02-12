@@ -4,10 +4,9 @@
  * and open the template in the editor.
  */
 
-package jpa;
+package jpa.ReferenceJpaControllers;
 
-import Entities.TemplateReference;
-import Entities.TemplateReferencePK;
+import Entities.ReferenceEntities.HeaderReference;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -18,44 +17,34 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.UserTransaction;
 import jpa.exceptions.NonexistentEntityException;
-import jpa.exceptions.PreexistingEntityException;
 import jpa.exceptions.RollbackFailureException;
 
 /**
  *
  * @author fellippe.mendonca
  */
-public class TemplateReferenceJpaController implements Serializable {
+public class HeaderReferenceJpaController implements Serializable {
 
-    public TemplateReferenceJpaController(UserTransaction utx, EntityManagerFactory emf) {
-        this.utx = utx;
+    public HeaderReferenceJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
-    private UserTransaction utx = null;
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public void create(TemplateReference templateReference) throws PreexistingEntityException, RollbackFailureException, Exception {
-        if (templateReference.getTemplateReferencePK() == null) {
-            templateReference.setTemplateReferencePK(new TemplateReferencePK());
-        }
+    public HeaderReference create(HeaderReference headerReference) throws RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
             em = getEntityManager();
-            em.persist(templateReference);
-            utx.commit();
+            em.persist(headerReference);
+            em.flush();
         } catch (Exception ex) {
             try {
-                utx.rollback();
+
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
-            }
-            if (findTemplateReference(templateReference.getTemplateReferencePK()) != null) {
-                throw new PreexistingEntityException("TemplateReference " + templateReference + " already exists.", ex);
             }
             throw ex;
         } finally {
@@ -63,26 +52,27 @@ public class TemplateReferenceJpaController implements Serializable {
                 em.close();
             }
         }
+        return headerReference;
     }
 
-    public void edit(TemplateReference templateReference) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void edit(HeaderReference headerReference) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
+
             em = getEntityManager();
-            templateReference = em.merge(templateReference);
-            utx.commit();
+            headerReference = em.merge(headerReference);
+
         } catch (Exception ex) {
             try {
-                utx.rollback();
+
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                TemplateReferencePK id = templateReference.getTemplateReferencePK();
-                if (findTemplateReference(id) == null) {
-                    throw new NonexistentEntityException("The templateReference with id " + id + " no longer exists.");
+                Integer id = headerReference.getIdHeaderReference();
+                if (findHeaderReference(id) == null) {
+                    throw new NonexistentEntityException("The headerReference with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -93,23 +83,23 @@ public class TemplateReferenceJpaController implements Serializable {
         }
     }
 
-    public void destroy(TemplateReferencePK id) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
+
             em = getEntityManager();
-            TemplateReference templateReference;
+            HeaderReference headerReference;
             try {
-                templateReference = em.getReference(TemplateReference.class, id);
-                templateReference.getTemplateReferencePK();
+                headerReference = em.getReference(HeaderReference.class, id);
+                headerReference.getIdHeaderReference();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The templateReference with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The headerReference with id " + id + " no longer exists.", enfe);
             }
-            em.remove(templateReference);
-            utx.commit();
+            em.remove(headerReference);
+
         } catch (Exception ex) {
             try {
-                utx.rollback();
+
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -121,19 +111,19 @@ public class TemplateReferenceJpaController implements Serializable {
         }
     }
 
-    public List<TemplateReference> findTemplateReferenceEntities() {
-        return findTemplateReferenceEntities(true, -1, -1);
+    public List<HeaderReference> findHeaderReferenceEntities() {
+        return findHeaderReferenceEntities(true, -1, -1);
     }
 
-    public List<TemplateReference> findTemplateReferenceEntities(int maxResults, int firstResult) {
-        return findTemplateReferenceEntities(false, maxResults, firstResult);
+    public List<HeaderReference> findHeaderReferenceEntities(int maxResults, int firstResult) {
+        return findHeaderReferenceEntities(false, maxResults, firstResult);
     }
 
-    private List<TemplateReference> findTemplateReferenceEntities(boolean all, int maxResults, int firstResult) {
+    private List<HeaderReference> findHeaderReferenceEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(TemplateReference.class));
+            cq.select(cq.from(HeaderReference.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -145,23 +135,35 @@ public class TemplateReferenceJpaController implements Serializable {
         }
     }
 
-    public TemplateReference findTemplateReference(TemplateReferencePK id) {
+    public HeaderReference findHeaderReference(Integer id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(TemplateReference.class, id);
+            return em.find(HeaderReference.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int getTemplateReferenceCount() {
+    public int getHeaderReferenceCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<TemplateReference> rt = cq.from(TemplateReference.class);
+            Root<HeaderReference> rt = cq.from(HeaderReference.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
+        } finally {
+            em.close();
+        }
+    }
+    
+    public List<HeaderReference> findByIdRequestReference(int id) {
+        EntityManager em = getEntityManager();
+        Query query = em.createNamedQuery("HeaderReference.findByIdRequestReference");
+        query.setParameter("idRequestReference", id);
+        List<HeaderReference> headerReferenceList = (List<HeaderReference>) query.getResultList();
+        try {
+            return headerReferenceList;
         } finally {
             em.close();
         }

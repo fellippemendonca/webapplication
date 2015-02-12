@@ -25,27 +25,27 @@ import jpa.exceptions.RollbackFailureException;
  */
 public class DatabaseSelectJpaController implements Serializable {
 
-    public DatabaseSelectJpaController(UserTransaction utx, EntityManagerFactory emf) {
-        this.utx = utx;
+    public DatabaseSelectJpaController(EntityManagerFactory emf) {
+
         this.emf = emf;
     }
-    private UserTransaction utx = null;
+
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public void create(DatabaseSelect databaseSelect) throws RollbackFailureException, Exception {
+    public DatabaseSelect create(DatabaseSelect databaseSelect) throws RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
+
             em = getEntityManager();
             em.persist(databaseSelect);
-            utx.commit();
+            em.flush();
         } catch (Exception ex) {
             try {
-                utx.rollback();
+
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -55,18 +55,19 @@ public class DatabaseSelectJpaController implements Serializable {
                 em.close();
             }
         }
+        return databaseSelect;
     }
 
     public void edit(DatabaseSelect databaseSelect) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
+
             em = getEntityManager();
             databaseSelect = em.merge(databaseSelect);
-            utx.commit();
+
         } catch (Exception ex) {
             try {
-                utx.rollback();
+
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -88,7 +89,7 @@ public class DatabaseSelectJpaController implements Serializable {
     public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-            utx.begin();
+
             em = getEntityManager();
             DatabaseSelect databaseSelect;
             try {
@@ -98,10 +99,10 @@ public class DatabaseSelectJpaController implements Serializable {
                 throw new NonexistentEntityException("The databaseSelect with id " + id + " no longer exists.", enfe);
             }
             em.remove(databaseSelect);
-            utx.commit();
+
         } catch (Exception ex) {
             try {
-                utx.rollback();
+
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -157,6 +158,11 @@ public class DatabaseSelectJpaController implements Serializable {
         } finally {
             em.close();
         }
+    }
+    
+    public DatabaseSelect findOrAdd(DatabaseSelect object) throws Exception {
+        create(object);
+        return object;
     }
     
 }

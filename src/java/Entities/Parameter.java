@@ -32,7 +32,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Parameter.findAll", query = "SELECT p FROM Parameter p"),
     @NamedQuery(name = "Parameter.findByIdParameter", query = "SELECT p FROM Parameter p WHERE p.idParameter = :idParameter"),
     @NamedQuery(name = "Parameter.findByParameterName", query = "SELECT p FROM Parameter p WHERE p.parameterName = :parameterName"),
-    @NamedQuery(name = "Parameter.findByParameterValue", query = "SELECT p FROM Parameter p WHERE p.parameterValue = :parameterValue")})
+    @NamedQuery(name = "Parameter.findByParameterValue", query = "SELECT p FROM Parameter p WHERE p.parameterValue = :parameterValue"),
+    @NamedQuery(name = "Parameter.findByParameterStatic", query = "SELECT p FROM Parameter p WHERE p.parameterStatic = :parameterStatic"),
+    @NamedQuery(name = "Parameter.findByParameterNameAndValue", query = "SELECT p FROM Parameter p WHERE p.parameterName = :parameterName and p.parameterValue = :parameterValue")})
 public class Parameter implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -52,9 +54,8 @@ public class Parameter implements Serializable {
     private String parameterValue;
     @Basic(optional = false)
     @NotNull
-    @Lob
     @Column(name = "parameter_static")
-    private byte[] parameterStatic;
+    private Integer parameterStatic;
 
     public Parameter() {
     }
@@ -63,7 +64,7 @@ public class Parameter implements Serializable {
         this.idParameter = idParameter;
     }
 
-    public Parameter(Integer idParameter, String parameterName, String parameterValue, byte[] parameterStatic) {
+    public Parameter(Integer idParameter, String parameterName, String parameterValue, Integer parameterStatic) {
         this.idParameter = idParameter;
         this.parameterName = parameterName;
         this.parameterValue = parameterValue;
@@ -94,11 +95,11 @@ public class Parameter implements Serializable {
         this.parameterValue = parameterValue;
     }
 
-    public byte[] getParameterStatic() {
+    public Integer getParameterStatic() {
         return parameterStatic;
     }
 
-    public void setParameterStatic(byte[] parameterStatic) {
+    public void setParameterStatic(Integer parameterStatic) {
         this.parameterStatic = parameterStatic;
     }
 
