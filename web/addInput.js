@@ -6,7 +6,7 @@ function addHeader(divName){
      }
      else {
           var newdiv = document.createElement('div');
-          newdiv.innerHTML = "Header " + (counter + 1) + "<input type='text' name='HeaderNames[]'>=<input type='text' name='HeaderValues[]'></td></tr>";
+          newdiv.innerHTML = (counter + 1) + "- <input type='text' name='HeaderNames[]'>=<input type='text' name='HeaderValues[]'>";
           document.getElementById(divName).appendChild(newdiv);
           counter++;
      }
@@ -20,8 +20,22 @@ function addParameter(divName){
      }
      else {
           var newdiv = document.createElement('div');
-          newdiv.innerHTML = "Parameter " + (ParameterCounter + 1) + "<input type='text' name='ParameterNames[]'>=<input type='text' name='ParameterValues[]'></td></tr>";
+          newdiv.innerHTML = (ParameterCounter + 1) + "- <input type='text' name='ParameterNames[]'>=<input type='text' name='ParameterValues[]'>";
           document.getElementById(divName).appendChild(newdiv);
           ParameterCounter++;
+     }
+}
+
+var TemplateCounter = 0;
+var TemplateLimit = 3;
+function addTemplate(divName){
+     if (TemplateCounter == TemplateLimit)  {
+          alert("You have reached the limit of adding " + TemplateCounter + " Templates");
+     }
+     else {
+          var newdiv = document.createElement('div');
+          newdiv.innerHTML = (TemplateCounter + 1) + "- <input type='text' name='TemplateNames[]'>";
+          document.getElementById(divName).appendChild(newdiv);
+          TemplateCounter++;
      }
 }
