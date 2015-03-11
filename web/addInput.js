@@ -1,41 +1,30 @@
-var counter = 0;
-var limit = 3;
-function addHeader(divName){
-     if (counter == limit)  {
-          alert("You have reached the limit of adding " + counter + " Headers");
+
+function addElement(divName){
+    var ElementCounter = 0;
+    var ElementLimit = 3;
+     if (ElementCounter == ElementLimit){
+          alert("You have reached the limit of adding " + ElementCounter + " "+divName);
      }
      else {
           var newdiv = document.createElement('div');
-          newdiv.innerHTML = (counter + 1) + "- <input type='text' name='HeaderNames[]'>=<input type='text' name='HeaderValues[]'>";
+          newdiv.innerHTML = "<input type='text' name='"+divName+"'>";
           document.getElementById(divName).appendChild(newdiv);
-          counter++;
+          ElementCounter++;
      }
 }
 
-var ParameterCounter = 0;
-var ParameterLimit = 3;
-function addParameter(divName){
-     if (ParameterCounter == ParameterLimit)  {
-          alert("You have reached the limit of adding " + ParameterCounter + " Parameters");
+
+function addElement2(divName){
+    var ElementCounter2 = 0;
+    var ElementLimit2 = 3;
+     if (ElementCounter2 == ElementLimit2){
+          alert("You have reached the limit of adding " + ElementCounter2 + " "+divName);
      }
      else {
           var newdiv = document.createElement('div');
-          newdiv.innerHTML = (ParameterCounter + 1) + "- <input type='text' name='ParameterNames[]'>=<input type='text' name='ParameterValues[]'>";
+          newdiv.innerHTML = "<input type='text' name='"+divName+"Name'>=<input type='text' name='"+divName+"Value'>";
           document.getElementById(divName).appendChild(newdiv);
-          ParameterCounter++;
+          ElementCounter2++;
      }
 }
 
-var TemplateCounter = 0;
-var TemplateLimit = 3;
-function addTemplate(divName){
-     if (TemplateCounter == TemplateLimit)  {
-          alert("You have reached the limit of adding " + TemplateCounter + " Templates");
-     }
-     else {
-          var newdiv = document.createElement('div');
-          newdiv.innerHTML = (TemplateCounter + 1) + "- <input type='text' name='TemplateNames[]'>";
-          document.getElementById(divName).appendChild(newdiv);
-          TemplateCounter++;
-     }
-}

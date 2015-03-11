@@ -44,8 +44,7 @@ import javax.servlet.http.*;
 // container to inject the bean.
 // @EJB(name="StatelessSession", beanInterface=StatelessSession.class)
 @WebServlet(name = "Servlet", urlPatterns = {"/servlet"})
-public class Servlet2Stateless
-        extends HttpServlet {
+public class Servlet2Stateless extends HttpServlet {
 
     // Using injection for Stateless session bean is still thread-safe since
     // the ejb container will route every request to different
@@ -63,19 +62,19 @@ public class Servlet2Stateless
             String env = req.getParameter("envlist");
             String shop = req.getParameter("shoplist");
             if ((env != null) && (env.trim().length() > 0)) {
-                for (int i = 0; i < sless.countScenario(env, shop); i++) {
+                /*for (int i = 0; i < sless.countScenario(env, shop); i++) {
                     ResponseContents RC2 = sless.executeScenario(env, shop, i);
                     out.println("<table class=\"table\"><tbody>");
                     out.println("<tr><td><FONT size=+1 color=blue>Request:</FONT></td><td>" + RC2.getRequest() + "</td></tr>");
                     out.println("<tr><td><FONT size=+1 color=blue>Status:</FONT></td><td>" + RC2.getStatus() + "</td></tr>");
                     out.println("<tr><td><FONT size=+1 color=blue>Contents:</FONT></td><td>" + RC2.getContents() + "</td></tr>");
                     out.println("</tbody></table><br>");
-                }
+                }*/
                 
                 out.println("<br><br><FONT size=+1 color=blue>RequestList:</FONT> ");
                 out.println("" + sless.getRequest() + "<br>");
                 
-                out.println("<br><br><FONT size=+1 color=blue>Novo Cenario Insert:</FONT> ");
+                //out.println("<br><br><FONT size=+1 color=blue>Novo Cenario Insert:</FONT> ");
                 //out.println("" + sless.insereNovoCenario() + "<br>");
                 //out.println("<br><br><FONT size=+1 color=blue>Parameter Insert:</FONT> ");
                 //out.println("" + sless.insertParameter("_limit", "30", 1) + "<br>");

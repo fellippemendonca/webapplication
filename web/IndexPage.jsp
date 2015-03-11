@@ -15,7 +15,9 @@
         <title>JSP Page</title>
     </head>
     <body>
+
         <form method="POST">
+
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <FONT size=+1 color=black>Selecione o Ambiente: </FONT>
@@ -48,27 +50,71 @@
                         </label>
                     </div>
                 </div>
-                <div>
-                    <button class="btn btn-primary" type="submit">Executar</button>
-                </div>
+
 
                 <div id="section">
-                    <div id="dynamicInput1">
-                        <table class="table"><tbody>
-                                <tr><td><input type="button" value="Add Header" onClick="addHeader('dynamicInput1');">
-                            </tbody></table>  
-                    </div>
-                    <div id="dynamicInput2">
-                        <table class="table"><tbody>
-                                <tr><td><input type="button" value="Add Parameter" onClick="addParameter('dynamicInput2');">
-                            </tbody></table>  
-                    </div>
+
+                    <table class="table">
+                        <tbody>
+                        <td>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1">Environment</span>
+                                <input type="text" class="form-control" size="5" placeholder="HLG" aria-describedby="basic-addon1">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1">Scheme</span>
+                                <input type="text" class="form-control" size="5" placeholder="http" aria-describedby="basic-addon1">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1">Host</span>
+                                <input type="text" class="form-control" size="5" placeholder="api.extra.com.br" aria-describedby="basic-addon1">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1">Path</span>
+                                <input type="text" class="form-control" size="5" placeholder="api/v1/sellerItems" aria-describedby="basic-addon1">
+                            </div>
+                        </td>   
+                        <td>
+                            <div id="dynamicInput3" align="left">
+                                <span class="input-group-addon" id="basic-addon1">Add Template:</span>
+                                <input type="button" class="btn btn-primary" value="+" onClick="addTemplate('dynamicInput3');">
+                            </div>
+                        </td>
+                        </tbody>
+                    </table>
+
+                    <table class="table"><tbody>
+                        <td>
+                            <div id="dynamicInput1" align="left">
+                                <span class="input-group-addon" id="basic-addon1">Add Header:</span>
+                                <input type="button" class="btn btn-primary" value="+" onClick="addHeader('dynamicInput1');">
+                            </div>
+                        </td>
+                        <td>
+                            <div id="dynamicInput2" align="left">
+                                <span class="input-group-addon" id="basic-addon1">Add Parameter:</span>
+                                <input type="button"  class="btn btn-primary" value="+" onClick="addParameter('dynamicInput2');">
+                            </div>
+                        </td>
+                        </tbody></table>
+                </div>
+                <div>
+                    <button class="btn btn-primary" id="execute-requests" type="submit">Executar</button>
                 </div>
             </div>
         </form>
 
         <jsp:include page="/servlet" flush="false" />
 
+        </br>Ajax Requests
+        <div id="requests-results"></div>
+        </br>
 
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
         <script src="https://code.jquery.com/jquery.js"></script>

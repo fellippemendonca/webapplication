@@ -194,7 +194,7 @@ public class StoreJpaController implements Serializable {
     
     public Store findOrAdd(Store store) throws RollbackFailureException, Exception{
         if(find(store)!=null){
-            return store;
+            return find(store);
         }else{
             create(store);
             return find(store);

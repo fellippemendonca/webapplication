@@ -7,6 +7,8 @@
 package DAO;
 
 import Entities.ReferenceEntities.RequestReference;
+import JsonObjects.JsonRequestObject;
+import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 import javax.naming.NamingException;
@@ -18,7 +20,6 @@ import javax.naming.NamingException;
 public class RequestObjectList {
     
     List<RequestReferenceObject> requestObjectList;
-    RequestReferenceObject requestReferenceObject;
     DataAccessObject dao;
     
     
@@ -26,18 +27,19 @@ public class RequestObjectList {
         this.requestObjectList = new ArrayList<>();
         this.dao = new DataAccessObject();
     }
+    
+    public RequestReferenceObject addRequest(String json){
+        RequestReferenceObject rro = new RequestReferenceObject(this.dao,json);
+        this.requestObjectList.add(rro);
+        return rro;
+    }
 
-    public List<RequestReferenceObject> getRequestObjectList() throws NamingException {
-        for (RequestReference rr : this.dao.getRequestReferece()) {
-            this.requestObjectList.add(new RequestReferenceObject(rr,this.dao));
-        }
+    /*RETORNA LISTA APENAS COM REQUESTS DA MEMORIA*/
+    public List<RequestReferenceObject> getRequestObjectList() {
         return this.requestObjectList;
     }
     
-    public void setRequestObjectList(List<RequestReferenceObject> requestObjectList) {
-        this.requestObjectList = requestObjectList;
-    }
-    
+    /*RETORNA LISTA APENAS COM REQUESTS DA BASE DE DADOS*/
     public List<RequestReferenceObject> getRequestObjectListFromDB() throws NamingException {
         List<RequestReferenceObject> requestObjectListDB = new ArrayList<>();
         for (RequestReference rr : this.dao.getRequestReferece()) {
@@ -45,31 +47,13 @@ public class RequestObjectList {
         }
         return requestObjectListDB;
     }
-
-    public RequestReferenceObject getRequestReferenceObject() {
-        return requestReferenceObject;
-    }
     
-    
-    public RequestReferenceObject createRequestReferenceObject(){
-        this.requestReferenceObject = new RequestReferenceObject(this.dao);
-        return requestReferenceObject;
-    }
-    
-    
-    public TemplateReferenceObject createTemplateReferenceObject(String name, int seq,int fix){
-        TemplateReferenceObject templateReferenceObject = new TemplateReferenceObject(this.dao, name, seq, fix);
-        return templateReferenceObject;
-    }
-    
-    public HeaderReferenceObject createHeaderReferenceObject(String name, String value){
-        HeaderReferenceObject headerReferenceObject = new HeaderReferenceObject(this.dao, name, value);
-        return headerReferenceObject;
-    }
-    
-    public ParameterReferenceObject createParameterReferenceObject(String name, String value, int fix){
-        ParameterReferenceObject parameterReferenceObject = new ParameterReferenceObject(this.dao, name, value, fix);
-        return parameterReferenceObject;
+    public String generateJsonRequestList() throws NamingException{
+        List<JsonRequestObject> requestList = new ArrayList();
+        for (RequestReferenceObject rro : getRequestObjectListFromDB()) {
+            requestList.add(rro.getRequestObject());
+        }
+        return "{\"requestList\":"+(new Gson().toJson(requestList))+"}";
     }
 
 }

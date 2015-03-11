@@ -24,14 +24,9 @@ public class HeaderReferenceObject {
     DataAccessObject dao;
     
     public HeaderReferenceObject(DataAccessObject dao, String name, String value){
-        Header tmp = new Header(0, name, value);
+        this.header = new Header(0, name, value);
         this.headerReference = null;
         this.dao = dao;
-        try {
-            this.header = this.dao.getHeaderJpaController().findOrAdd(tmp);
-        } catch (Exception ex) {
-            Logger.getLogger(HeaderReferenceObject.class.getName()).log(Level.SEVERE, "Header não Existente/Inserido", ex);
-        }
     }
     
     public HeaderReferenceObject(HeaderReference headerReference, DataAccessObject dao){
@@ -49,6 +44,7 @@ public class HeaderReferenceObject {
     }
     
     public boolean persistHeaderReference(RequestReference requestReference) {
+        persistHeader();
         HeaderReference tmp = new HeaderReference(0, requestReference.getIdRequestReference(), this.header.getIdHeader());
         try {
             this.headerReference = dao.getHeaderReferenceJpaController().create(tmp);
@@ -67,11 +63,14 @@ public class HeaderReferenceObject {
     public Header getHeader() {
         return this.header;
     }
-
+    
     public void setHeader(String name, String value) {
-        Header tmp = new Header(0, name, value);
+        this.header = new Header(0, name, value);
+    }
+
+    public void persistHeader() {
         try {
-            this.header = this.dao.getHeaderJpaController().findOrAdd(tmp);
+            this.header = this.dao.getHeaderJpaController().findOrAdd(this.header);
         } catch (Exception ex) {
             Logger.getLogger(HeaderReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }

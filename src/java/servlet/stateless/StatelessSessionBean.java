@@ -30,27 +30,36 @@
 
 package servlet.stateless;
 
-import Entities.Parameter;
-import Entities.Store;
 import HttpConnections.ResponseContents;
 import autoScenarios.openApi.v1.sellerItems.AutoScenario;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
-import java.util.List;
 import javax.ejb.Stateless;
 import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
-import jpa.ParameterJpaController;
+
 
 @Stateless
 public class StatelessSessionBean implements Serializable{
     AutoScenario autoScenario;
 
-    public String sayHello(String name) {
-        return "Search Input: " + name + "\n";
-    }
     
+    public String getRequest() throws NamingException{
+        this.autoScenario = new AutoScenario();
+        return this.autoScenario.getRequest();
+    } 
+    
+     public String executaNovoCenario() throws NamingException{
+        this.autoScenario = new AutoScenario();
+        return this.autoScenario.executaNovoCenario();
+    }
+     
+    public ResponseContents executaNovoCenario(String json) throws NamingException{
+        this.autoScenario = new AutoScenario();
+        return this.autoScenario.newScenarioExec(json);
+    }
+     
+    /*
     public int countScenario(String env, String shop) throws NamingException{
         this.autoScenario = new AutoScenario();
         this.autoScenario.addRequest(env, shop);
@@ -62,18 +71,16 @@ public class StatelessSessionBean implements Serializable{
         this.autoScenario.addRequest(env, shop);
         return this.autoScenario.executeScenario(index);
     }
-
-    public int insertParameter(String name, String value, int fix) throws NamingException{
-        this.autoScenario = new AutoScenario();
-        return this.autoScenario.parameterInsert(name, value, fix);
-    }
     
-    public String getRequest() throws NamingException{
-        this.autoScenario = new AutoScenario();
-        return this.autoScenario.getRequest();
-    }
+    
+    
+   
+    
+    
+    
+    
     
     public boolean insereNovoCenario(){
         return this.autoScenario.insereNovoCenario();
-    }
+    }*/
 }

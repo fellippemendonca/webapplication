@@ -27,15 +27,10 @@ public class ParameterReferenceObject {
     
     
     public ParameterReferenceObject(DataAccessObject dao, String name, String value, int fix) {
-        Parameter tmp = new Parameter(0, name, value, fix);
+        this.parameter = new Parameter(0, name, value, fix);
         this.parameterReference = null;
         this.dao = dao;
         this.databaseSelect = new DatabaseSelect(0, "", "");
-        try {
-            this.parameter = this.dao.getParameterJpaController().findOrAdd(tmp);
-        } catch (Exception ex) {
-            Logger.getLogger(ParameterReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     
@@ -56,11 +51,12 @@ public class ParameterReferenceObject {
     }
     
     public boolean persistParameterReference(RequestReference requestReference) {
-        
+        persistParameter();
         ParameterReference tmp;
         if(this.parameter.getParameterStatic()==1){
             tmp = new ParameterReference(0, requestReference.getIdRequestReference(), this.parameter.getIdParameter(), 0);
         }else{
+            persistDatabaseSelect();
             tmp = new ParameterReference(0, requestReference.getIdRequestReference(), this.parameter.getIdParameter(), this.databaseSelect.getIdDatabaseSelect());
         }
         
@@ -81,11 +77,14 @@ public class ParameterReferenceObject {
     public Parameter getParameter() {
         return parameter;
     }
-
+    
     public void setParameter(String name, String value, int fix) {
-        Parameter tmp = new Parameter(0, name, value, fix);
+        this.parameter = new Parameter(0, name, value, fix);
+    }
+
+    public void persistParameter() {
         try {
-            this.parameter = this.dao.getParameterJpaController().findOrAdd(tmp);
+            this.parameter = this.dao.getParameterJpaController().findOrAdd(this.parameter);
         } catch (Exception ex) {
             Logger.getLogger(ParameterReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -94,11 +93,14 @@ public class ParameterReferenceObject {
     public DatabaseSelect getDatabaseSelect() {
         return databaseSelect;
     }
-
+    
     public void setDatabaseSelect(String databaseName, String value) {
-        DatabaseSelect tmp = new DatabaseSelect(0, databaseName, value);
+        this.databaseSelect = new DatabaseSelect(0, databaseName, value);
+    }
+
+    public void persistDatabaseSelect() {
         try {
-            this.databaseSelect = this.dao.getDatabaseSelectJpaController().findOrAdd(tmp);
+            this.databaseSelect = this.dao.getDatabaseSelectJpaController().findOrAdd(this.databaseSelect);
         } catch (Exception ex) {
             Logger.getLogger(ParameterReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }

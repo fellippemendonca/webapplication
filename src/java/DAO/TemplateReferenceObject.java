@@ -27,17 +27,11 @@ public class TemplateReferenceObject {
     DatabaseSelect databaseSelect;
 
     public TemplateReferenceObject(DataAccessObject dao, String name, int seq, int fix) {
+        this.template = new Template(0, name, fix);
         this.sequence = seq;
         this.templateReference = null;
         this.dao = dao;
         this.databaseSelect = new DatabaseSelect(0, "", "");
-        
-        try {
-            this.template = dao.getTemplateJpaController().findOrAdd(new Template(0, name, fix));
-        } catch (Exception ex) {
-            Logger.getLogger(TemplateReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
     }
     
     public TemplateReferenceObject(TemplateReference templateReference, DataAccessObject dao){
@@ -57,10 +51,12 @@ public class TemplateReferenceObject {
     }
     
     public boolean persistTemplateReference(RequestReference requestReference){
+        persistTemplate();
         TemplateReference tmp;
         if(this.template.getTemplateStatic()==1){
             tmp = new TemplateReference(0, requestReference.getIdRequestReference(), this.template.getIdTemplate(), this.sequence, 0);
         }else{
+            persistDatabaseSelect();
             tmp = new TemplateReference(0, requestReference.getIdRequestReference(), this.template.getIdTemplate(), this.sequence, this.databaseSelect.getIdDatabaseSelect());
         }
         
@@ -80,11 +76,14 @@ public class TemplateReferenceObject {
     public Template getTemplate() {
         return template;
     }
-
+    
     public void setTemplate(String name, int fix) {
-        Template tmp = new Template(0, name, fix);
+        this.template = new Template(0, name, fix);
+    }
+
+    public void persistTemplate() {
         try {
-            this.template = dao.getTemplateJpaController().findOrAdd(tmp);
+            this.template = dao.getTemplateJpaController().findOrAdd(this.template);
         } catch (Exception ex) {
             Logger.getLogger(TemplateReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -93,11 +92,14 @@ public class TemplateReferenceObject {
     public DatabaseSelect getDatabaseSelect() {
         return databaseSelect;
     }
-
+    
     public void setDatabaseSelect(String databaseName, String value) {
-        DatabaseSelect tmp = new DatabaseSelect(0, databaseName, value);
+        this.databaseSelect = new DatabaseSelect(0, databaseName, value);
+    }
+
+    public void persistDatabaseSelect() {
         try {
-            this.databaseSelect = this.dao.getDatabaseSelectJpaController().findOrAdd(tmp);
+            this.databaseSelect = this.dao.getDatabaseSelectJpaController().findOrAdd(this.databaseSelect);
         } catch (Exception ex) {
             Logger.getLogger(ParameterReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -110,6 +112,4 @@ public class TemplateReferenceObject {
     public void setDao(DataAccessObject dao) {
         this.dao = dao;
     }
-    
-    
 }

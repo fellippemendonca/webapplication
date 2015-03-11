@@ -6,15 +6,11 @@
 package DAO;
 
 import Entities.ReferenceEntities.HeaderReference;
-import Entities.Parameter;
 import Entities.ReferenceEntities.ParameterReference;
 import Entities.ReferenceEntities.RequestReference;
 import Entities.ReferenceEntities.TemplateReference;
 import java.io.Serializable;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import jpa.DatabaseSelectJpaController;
 import jpa.EnvironmentJpaController;
@@ -48,8 +44,10 @@ public class DataAccessObject implements Serializable{
     SchemeJpaController schemeJpaController;
     HostAddressJpaController hostAddressJpaController;
     PathJpaController pathJpaController;
+    
     TemplateReferenceJpaController templateReferenceJpaController;
     TemplateJpaController templateJpaController;
+    
     HeaderReferenceJpaController headerReferenceJpaController;
     HeaderJpaController headerJpaController;
     
@@ -62,18 +60,21 @@ public class DataAccessObject implements Serializable{
         this.emf = javax.persistence.Persistence.createEntityManagerFactory("ServletStatelessPU");
 
         this.requestReferenceJpaController = new RequestReferenceJpaController(this.emf);
+        
         this.methodJpaController = new MethodJpaController(this.emf);
         this.environmentJpaController = new EnvironmentJpaController(this.emf);
         this.storeJpaController = new StoreJpaController(this.emf);
         this.schemeJpaController = new SchemeJpaController(this.emf);
         this.hostAddressJpaController = new HostAddressJpaController(this.emf);
         this.pathJpaController = new PathJpaController(this.emf);
+        
         this.templateReferenceJpaController = new TemplateReferenceJpaController(this.emf);
         this.templateJpaController = new TemplateJpaController(this.emf);
         this.headerReferenceJpaController = new HeaderReferenceJpaController(this.emf);
         this.headerJpaController = new HeaderJpaController(this.emf);
         this.parameterReferenceJpaController = new ParameterReferenceJpaController(this.emf);
         this.parameterJpaController = new ParameterJpaController(this.emf);
+        
         this.databaseSelectJpaController = new DatabaseSelectJpaController(this.emf);
     }
 
@@ -91,20 +92,6 @@ public class DataAccessObject implements Serializable{
     
     public List<HeaderReference> getHeaderReference(RequestReference requestReference){
         return this.headerReferenceJpaController.findByIdRequestReference(requestReference.getIdRequestReference());
-    }
-    
-    
-    public boolean createParameter(int id, String name, String value, int fix) throws NamingException{
-        Parameter parameter = new Parameter(id, name, value, fix);
-        ParameterJpaController paramJpaCtrl = new ParameterJpaController(this.emf);
-        try {
-            paramJpaCtrl.create(parameter);
-            System.out.println("Parameter inserido com sucesso.: "+ parameter.getIdParameter() + " : " +parameter.getParameterName());
-            return true;
-        } catch (Exception ex) {
-            Logger.getLogger(DataAccessObject.class.getName()).log(Level.SEVERE, "Erro durante inserção do Parameter", ex);
-            return false;
-        }
     }
    
 
@@ -165,8 +152,4 @@ public class DataAccessObject implements Serializable{
     public DatabaseSelectJpaController getDatabaseSelectJpaController() {
         return databaseSelectJpaController;
     }
-    
-    
-    
-
 }

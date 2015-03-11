@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package DAO;
 
 import Entities.Environment;
@@ -14,12 +9,16 @@ import Entities.Path;
 import Entities.ReferenceEntities.RequestReference;
 import Entities.Scheme;
 import Entities.ReferenceEntities.TemplateReference;
+import JsonObjects.JHeader;
+import JsonObjects.JParameter;
+import JsonObjects.JsonRequestObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.NamingException;
 import jpa.exceptions.RollbackFailureException;
+import com.google.gson.Gson;
 
 /*
  * @author fellippe.mendonca
@@ -48,6 +47,44 @@ public class RequestReferenceObject {
         this.templateReferenceObjectList = new ArrayList();
         this.parameterReferenceObjectList = new ArrayList();
         this.headerReferenceObjectList = new ArrayList();
+    }
+    
+    public RequestReferenceObject(DataAccessObject dao, String json) {
+        Gson gson = new Gson();
+        JsonRequestObject obj = gson.fromJson(json, JsonRequestObject.class);
+        this.environment = new Environment(0, obj.getEnvironment());
+        this.method = new Method(0, obj.getMethod());
+        this.scheme = new Scheme(0, obj.getScheme());
+        this.host = new HostAddress(0, obj.getHost());
+        this.path = new Path(0, obj.getPath());
+        this.templateReferenceObjectList = new ArrayList();
+        this.parameterReferenceObjectList = new ArrayList();
+        this.headerReferenceObjectList = new ArrayList();
+        int i = 1;
+        for (String template : obj.getTemplates()) {
+            if (template.isEmpty() || template.isEmpty()) {
+                System.out.println("Empty value not inserted.");
+            } else {
+                this.templateReferenceObjectList.add(new TemplateReferenceObject(this.dao, template, i, 1));
+            }
+            i++;
+        }
+
+        for (JHeader header : obj.getHeaders()) {
+            if (header.getName().isEmpty() || header.getValue().isEmpty()) {
+                System.out.println("Empty value not inserted.");
+            } else {
+                this.headerReferenceObjectList.add(new HeaderReferenceObject(this.dao, header.getName(), header.getValue()));
+            }
+        }
+
+        for (JParameter parameter : obj.getParameters()) {
+            if (parameter.getName().isEmpty() || parameter.getValue().isEmpty()) {
+                System.out.println("Empty value not inserted.");
+            } else {
+                this.parameterReferenceObjectList.add(new ParameterReferenceObject(this.dao, parameter.getName(), parameter.getValue(), 1));
+            }
+        }
     }
 
     public RequestReferenceObject(RequestReference requestReference, DataAccessObject dao) throws NamingException {
@@ -87,6 +124,12 @@ public class RequestReferenceObject {
     }
 
     public boolean persistRequestReference() {
+        persistEnvironment();
+        persistMethod();
+        persistScheme();
+        persistHost();
+        persistPath();
+
         RequestReference tmp = new RequestReference(0, this.environment.getIdEnvironment(), this.method.getIdMethod(), this.scheme.getIdScheme(), this.host.getIdHostAddress(), this.path.getIdPath());
         try {
             this.requestReference = this.dao.getRequestReferenceJpaController().create(tmp);
@@ -122,9 +165,12 @@ public class RequestReferenceObject {
     }
 
     public void setEnvironment(String environment) {
-        Environment tmp = new Environment(0, environment);
+        this.environment = new Environment(0, environment);
+    }
+
+    public void persistEnvironment() {
         try {
-            this.environment = this.dao.getEnvironmentJpaController().findOrAdd(tmp);
+            this.environment = this.dao.getEnvironmentJpaController().findOrAdd(this.environment);
         } catch (Exception ex) {
             Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -135,9 +181,12 @@ public class RequestReferenceObject {
     }
 
     public void setMethod(String method) {
-        Method tmp = new Method(0, method);
+        this.method = new Method(0, method);
+    }
+
+    public void persistMethod() {
         try {
-            this.method = this.dao.getMethodJpaController().findOrAdd(tmp);
+            this.method = this.dao.getMethodJpaController().findOrAdd(this.method);
         } catch (Exception ex) {
             Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -148,9 +197,12 @@ public class RequestReferenceObject {
     }
 
     public void setScheme(String scheme) {
-        Scheme tmp = new Scheme(0, scheme);
+        this.scheme = new Scheme(0, scheme);
+    }
+
+    public void persistScheme() {
         try {
-            this.scheme = this.dao.getSchemeJpaController().findOrAdd(tmp);
+            this.scheme = this.dao.getSchemeJpaController().findOrAdd(this.scheme);
         } catch (Exception ex) {
             Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -161,9 +213,12 @@ public class RequestReferenceObject {
     }
 
     public void setHost(String host) {
-        HostAddress tmp = new HostAddress(0, host);
+        this.host = new HostAddress(0, host);
+    }
+
+    public void persistHost() {
         try {
-            this.host = this.dao.getHostAddressJpaController().findOrAdd(tmp);
+            this.host = this.dao.getHostAddressJpaController().findOrAdd(this.host);
         } catch (Exception ex) {
             Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -174,9 +229,12 @@ public class RequestReferenceObject {
     }
 
     public void setPath(String path) {
-        Path tmp = new Path(0, path);
+        this.path = new Path(0, path);
+    }
+
+    public void persistPath() {
         try {
-            this.path = this.dao.getPathJpaController().findOrAdd(tmp);
+            this.path = this.dao.getPathJpaController().findOrAdd(this.path);
         } catch (Exception ex) {
             Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -218,4 +276,50 @@ public class RequestReferenceObject {
         this.headerReferenceObjectList.add(headerReferenceObject);
     }
 
+    public String getJsonFromRequestObject() {
+        Gson gson = new Gson();
+        JsonRequestObject obj = new JsonRequestObject();
+        obj.setEnvironment(getEnvironment().getEnvironmentName());
+        obj.setMethod(getMethod().getMethodValue());
+        obj.setScheme(getScheme().getSchemeValue());
+        obj.setHost(getHost().getHostAddressValue());
+        obj.setPath(getPath().getPathValue());
+        for (TemplateReferenceObject template : templateReferenceObjectList) {
+            obj.getTemplates().add(template.getTemplate().getTemplateValue());
+        }
+
+        for (HeaderReferenceObject header : headerReferenceObjectList) {
+            JHeader jheader = new JHeader(header.getHeader().getHeaderName(), header.getHeader().getHeaderName());
+            obj.getHeaders().add(jheader);
+        }
+
+        for (ParameterReferenceObject parameter : parameterReferenceObjectList) {
+            JParameter jparameter = new JParameter(parameter.getParameter().getParameterName(), parameter.getParameter().getParameterName());
+            obj.getParameters().add(jparameter);
+        }
+        return gson.toJson(obj);
+    }
+    
+    public JsonRequestObject getRequestObject() {
+        JsonRequestObject obj = new JsonRequestObject();
+        obj.setEnvironment(getEnvironment().getEnvironmentName());
+        obj.setMethod(getMethod().getMethodValue());
+        obj.setScheme(getScheme().getSchemeValue());
+        obj.setHost(getHost().getHostAddressValue());
+        obj.setPath(getPath().getPathValue());
+        for (TemplateReferenceObject template : templateReferenceObjectList) {
+            obj.getTemplates().add(template.getTemplate().getTemplateValue());
+        }
+
+        for (HeaderReferenceObject header : headerReferenceObjectList) {
+            JHeader jheader = new JHeader(header.getHeader().getHeaderName(), header.getHeader().getHeaderName());
+            obj.getHeaders().add(jheader);
+        }
+
+        for (ParameterReferenceObject parameter : parameterReferenceObjectList) {
+            JParameter jparameter = new JParameter(parameter.getParameter().getParameterName(), parameter.getParameter().getParameterName());
+            obj.getParameters().add(jparameter);
+        }
+        return obj;
+    }
 }
