@@ -8,11 +8,12 @@ package jpa;
 
 import Entities.Environment;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import jpa.exceptions.NonexistentEntityException;
@@ -177,6 +178,14 @@ public class EnvironmentJpaController implements Serializable {
         } finally {
             em.close();
         }
+    }
+    
+    public List<String> listEnvironmentEntities() {
+        List<String> list = new ArrayList();
+        for(Environment m : findEnvironmentEntities(true, -1, -1)){
+            list.add(m.getEnvironmentName());
+        }
+        return list;
     }
     
 }

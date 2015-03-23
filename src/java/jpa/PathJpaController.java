@@ -8,11 +8,12 @@ package jpa;
 
 import Entities.Path;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.UserTransaction;
@@ -173,6 +174,14 @@ public class PathJpaController implements Serializable {
             create(path);
             return find(path);
         }
+    }
+    
+    public List<String> listPathEntities() {
+        List<String> list = new ArrayList();
+        for(Path m : findPathEntities(true, -1, -1)){
+            list.add(m.getPathValue());
+        }
+        return list;
     }
     
 }

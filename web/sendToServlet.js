@@ -12,7 +12,10 @@ $(document).ready(function() {
         populateDualArray(Headers, "HeaderName", "HeaderValue");
         
         var Templates = new Array();
-        populateArray(Templates, "Templates");
+        populateArray(Templates, "TemplateName");
+        
+        var Texugos = new Array();
+        populateArray(Texugos, "TexugoName");
 
         var Parameters = new Array();
         populateDualArray(Parameters, "ParameterName", "ParameterValue");        
@@ -29,6 +32,7 @@ $(document).ready(function() {
            ,host:Host
            ,path:Path
            ,templates:Templates
+           ,texugos:Texugos
            ,headers:Headers
            ,parameters:Parameters};
         

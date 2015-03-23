@@ -42,33 +42,26 @@ import javax.naming.NamingException;
 @Stateless
 public class StatelessSessionBean implements Serializable{
     AutoScenario autoScenario;
-
-    
     public String getRequest() throws NamingException{
-        this.autoScenario = new AutoScenario();
-        return this.autoScenario.getRequest();
+        AutoScenario autoScenario = new AutoScenario();
+        autoScenario.fillRequestListFromDB();
+        return autoScenario.getRequest();
     } 
-    
-     public String executaNovoCenario() throws NamingException{
-        this.autoScenario = new AutoScenario();
-        return this.autoScenario.executaNovoCenario();
+     
+    public ResponseContents executaNovoCenario(String json) throws NamingException, IOException, URISyntaxException{
+        AutoScenario autoScenario  = new AutoScenario();
+        return autoScenario.execRequest(json);
     }
      
-    public ResponseContents executaNovoCenario(String json) throws NamingException{
-        this.autoScenario = new AutoScenario();
-        return this.autoScenario.newScenarioExec(json);
-    }
-     
-    /*
-    public int countScenario(String env, String shop) throws NamingException{
-        this.autoScenario = new AutoScenario();
-        this.autoScenario.addRequest(env, shop);
-        return this.autoScenario.getScenarioListSize();
+    public int countScenario() throws NamingException{
+        AutoScenario autoScenario  = new AutoScenario();
+        autoScenario.fillRequestListFromDB();
+        return autoScenario.getScenarioListSize();
     }
     
-    public ResponseContents executeScenario(String env, String shop ,int index) throws IOException, URISyntaxException, NamingException{
-        this.autoScenario = new AutoScenario();
-        this.autoScenario.addRequest(env, shop);
+    public ResponseContents executeScenario(int index) throws IOException, URISyntaxException, NamingException{
+        this.autoScenario  = new AutoScenario();
+        this.autoScenario.fillRequestListFromDB();
         return this.autoScenario.executeScenario(index);
     }
     
@@ -80,7 +73,4 @@ public class StatelessSessionBean implements Serializable{
     
     
     
-    public boolean insereNovoCenario(){
-        return this.autoScenario.insereNovoCenario();
-    }*/
 }

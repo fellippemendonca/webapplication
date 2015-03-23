@@ -8,11 +8,12 @@ package jpa;
 
 import Entities.Method;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import jpa.exceptions.NonexistentEntityException;
@@ -172,5 +173,13 @@ public class MethodJpaController implements Serializable {
             create(method);
             return find(method);
         }
+    }
+    
+    public List<String> listMethodEntities() {
+        List<String> list = new ArrayList();
+        for(Method m : findMethodEntities(true, -1, -1)){
+            list.add(m.getMethodValue());
+        }
+        return list;
     }
 }

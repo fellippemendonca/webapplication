@@ -8,11 +8,12 @@ package jpa;
 
 import Entities.Store;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import jpa.exceptions.NonexistentEntityException;
@@ -199,5 +200,13 @@ public class StoreJpaController implements Serializable {
             create(store);
             return find(store);
         }
+    }
+    
+    public List<String> listStoreEntities() {
+        List<String> list = new ArrayList();
+        for(Store m : findStoreEntities(true, -1, -1)){
+            list.add(m.getStoreName());
+        }
+        return list;
     }
 }

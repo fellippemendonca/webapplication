@@ -8,11 +8,12 @@ package jpa;
 
 import Entities.Template;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.UserTransaction;
@@ -173,6 +174,14 @@ public class TemplateJpaController implements Serializable {
             create(template);
             return find(template);
         }
+    }
+    
+    public List<String> listTemplateEntities() {
+        List<String> list = new ArrayList();
+        for(Template m : findTemplateEntities(true, -1, -1)){
+            list.add(m.getTemplateValue());
+        }
+        return list;
     }
     
 }

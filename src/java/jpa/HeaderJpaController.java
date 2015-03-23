@@ -8,11 +8,12 @@ package jpa;
 
 import Entities.Header;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.UserTransaction;
@@ -176,6 +177,21 @@ public class HeaderJpaController implements Serializable {
         } finally {
             em.close();
         }
+    }
+    
+    public List<String> listHeaderNameEntities() {
+        List<String> list = new ArrayList();
+        for(Header m : findHeaderEntities(true, -1, -1)){
+            list.add(m.getHeaderName());
+        }
+        return list;
+    }
+    public List<String> listHeaderValueEntities() {
+        List<String> list = new ArrayList();
+        for(Header m : findHeaderEntities(true, -1, -1)){
+            list.add(m.getHeaderValue());
+        }
+        return list;
     }
     
 }

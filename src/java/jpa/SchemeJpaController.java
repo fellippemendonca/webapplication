@@ -8,11 +8,12 @@ package jpa;
 
 import Entities.Scheme;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.UserTransaction;
@@ -173,6 +174,14 @@ public class SchemeJpaController implements Serializable {
             create(scheme);
             return find(scheme);
         }
+    }
+    
+    public List<String> listSchemeEntities() {
+        List<String> list = new ArrayList();
+        for(Scheme m : findSchemeEntities(true, -1, -1)){
+            list.add(m.getSchemeValue());
+        }
+        return list;
     }
     
 }

@@ -6,17 +6,8 @@
 package servlet.stateless;
 
 import HttpConnections.ResponseContents;
-import JsonObjects.JHeader;
-import JsonObjects.JParameter;
-import JsonObjects.JsonRequestObject;
-import com.google.gson.Gson;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -53,19 +44,14 @@ public class RestExecutorServlet extends HttpServlet {
         
         try {
             ResponseContents RC2 = sless.executaNovoCenario(request.getParameter("jsonRequestObj"));
-            //System.out.println("Request: "+RC2.getRequest()+" , Status: "+RC2.getStatus()+" , ");
+            System.out.println("Request Enviado ao Servlet:\n"+request.getParameter("jsonRequestObj")+"\n");
             response.setStatus(200);
             response.getWriter().write("Request: "+RC2.getRequest()+" , Status: "+RC2.getStatus()+"<br>");
-        } catch (NamingException ex) {
+        } catch (NamingException | URISyntaxException ex) {
             Logger.getLogger(RestExecutorServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";

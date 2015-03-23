@@ -9,6 +9,7 @@ import Entities.Path;
 import Entities.ReferenceEntities.RequestReference;
 import Entities.Scheme;
 import Entities.ReferenceEntities.TemplateReference;
+import HttpConnections.RestRequester;
 import JsonObjects.JHeader;
 import JsonObjects.JParameter;
 import JsonObjects.JsonRequestObject;
@@ -19,6 +20,7 @@ import java.util.logging.Logger;
 import javax.naming.NamingException;
 import jpa.exceptions.RollbackFailureException;
 import com.google.gson.Gson;
+
 
 /*
  * @author fellippe.mendonca
@@ -35,6 +37,8 @@ public class RequestReferenceObject {
     List<TemplateReferenceObject> templateReferenceObjectList;
     List<ParameterReferenceObject> parameterReferenceObjectList;
     List<HeaderReferenceObject> headerReferenceObjectList;
+    JsonRequestObject jsonRequestObject;
+
 
     public RequestReferenceObject(DataAccessObject dao) {
         this.requestReference = new RequestReference();
@@ -47,11 +51,13 @@ public class RequestReferenceObject {
         this.templateReferenceObjectList = new ArrayList();
         this.parameterReferenceObjectList = new ArrayList();
         this.headerReferenceObjectList = new ArrayList();
+        this.jsonRequestObject = new JsonRequestObject();
     }
     
     public RequestReferenceObject(DataAccessObject dao, String json) {
         Gson gson = new Gson();
         JsonRequestObject obj = gson.fromJson(json, JsonRequestObject.class);
+        this.jsonRequestObject = obj;
         this.environment = new Environment(0, obj.getEnvironment());
         this.method = new Method(0, obj.getMethod());
         this.scheme = new Scheme(0, obj.getScheme());
@@ -88,30 +94,45 @@ public class RequestReferenceObject {
     }
 
     public RequestReferenceObject(RequestReference requestReference, DataAccessObject dao) throws NamingException {
+        this.jsonRequestObject = new JsonRequestObject();
         this.dao = dao;
         this.requestReference = requestReference;
         this.environment = this.dao.getEnvironmentJpaController().findEnvironment(this.requestReference.getIdEnvironment());
+        this.jsonRequestObject.setEnvironment(this.environment.getEnvironmentName());
+        
         this.method = this.dao.getMethodJpaController().findMethod(this.requestReference.getIdMethod());
+        this.jsonRequestObject.setMethod(this.method.getMethodValue());
+        
         this.scheme = this.dao.getSchemeJpaController().findScheme(this.requestReference.getIdScheme());
+        this.jsonRequestObject.setScheme(this.scheme.getSchemeValue());
+        
         this.host = this.dao.getHostAddressJpaController().findHostAddress(this.requestReference.getIdHostAddress());
+        this.jsonRequestObject.setHost(this.host.getHostAddressValue());
+        
         this.path = this.dao.getPathJpaController().findPath(this.requestReference.getIdPath());
+        this.jsonRequestObject.setPath(this.path.getPathValue());
 
-        templateReferenceObjectList = new ArrayList<>();
+        this.templateReferenceObjectList = new ArrayList<>();
         for (TemplateReference tr : this.dao.getTemplateReferece(requestReference)) {
             TemplateReferenceObject templateObject = new TemplateReferenceObject(tr, dao);
-            templateReferenceObjectList.add(templateObject);
+            this.templateReferenceObjectList.add(templateObject);
+            this.jsonRequestObject.getTemplates().add(templateObject.getTemplate().getTemplateValue());
         }
 
-        parameterReferenceObjectList = new ArrayList<>();
-        for (ParameterReference pr : this.dao.getParameterReference(requestReference)) {
-            ParameterReferenceObject parameterObject = new ParameterReferenceObject(pr, dao);
-            parameterReferenceObjectList.add(parameterObject);
-        }
-
-        headerReferenceObjectList = new ArrayList<>();
+        this.headerReferenceObjectList = new ArrayList<>();
         for (HeaderReference hr : this.dao.getHeaderReference(requestReference)) {
             HeaderReferenceObject headerObject = new HeaderReferenceObject(hr, dao);
-            headerReferenceObjectList.add(headerObject);
+            this.headerReferenceObjectList.add(headerObject);
+            JHeader jheader = new JHeader(headerObject.getHeader().getHeaderName(), headerObject.getHeader().getHeaderValue());
+            this.jsonRequestObject.getHeaders().add(jheader);
+        }
+        
+        this.parameterReferenceObjectList = new ArrayList<>();
+        for (ParameterReference pr : this.dao.getParameterReference(requestReference)) {
+            ParameterReferenceObject parameterObject = new ParameterReferenceObject(pr, dao);
+            this.parameterReferenceObjectList.add(parameterObject);
+            JParameter jparameter = new JParameter(parameterObject.getParameter().getParameterName(), parameterObject.getParameter().getParameterValue());
+            this.jsonRequestObject.getParameters().add(jparameter);
         }
     }
 
@@ -276,50 +297,36 @@ public class RequestReferenceObject {
         this.headerReferenceObjectList.add(headerReferenceObject);
     }
 
-    public String getJsonFromRequestObject() {
+    public String getRequestObjectJson() {
         Gson gson = new Gson();
-        JsonRequestObject obj = new JsonRequestObject();
-        obj.setEnvironment(getEnvironment().getEnvironmentName());
-        obj.setMethod(getMethod().getMethodValue());
-        obj.setScheme(getScheme().getSchemeValue());
-        obj.setHost(getHost().getHostAddressValue());
-        obj.setPath(getPath().getPathValue());
-        for (TemplateReferenceObject template : templateReferenceObjectList) {
-            obj.getTemplates().add(template.getTemplate().getTemplateValue());
-        }
-
-        for (HeaderReferenceObject header : headerReferenceObjectList) {
-            JHeader jheader = new JHeader(header.getHeader().getHeaderName(), header.getHeader().getHeaderName());
-            obj.getHeaders().add(jheader);
-        }
-
-        for (ParameterReferenceObject parameter : parameterReferenceObjectList) {
-            JParameter jparameter = new JParameter(parameter.getParameter().getParameterName(), parameter.getParameter().getParameterName());
-            obj.getParameters().add(jparameter);
-        }
-        return gson.toJson(obj);
+        return gson.toJson(this.jsonRequestObject);
     }
     
     public JsonRequestObject getRequestObject() {
-        JsonRequestObject obj = new JsonRequestObject();
-        obj.setEnvironment(getEnvironment().getEnvironmentName());
-        obj.setMethod(getMethod().getMethodValue());
-        obj.setScheme(getScheme().getSchemeValue());
-        obj.setHost(getHost().getHostAddressValue());
-        obj.setPath(getPath().getPathValue());
-        for (TemplateReferenceObject template : templateReferenceObjectList) {
-            obj.getTemplates().add(template.getTemplate().getTemplateValue());
-        }
-
-        for (HeaderReferenceObject header : headerReferenceObjectList) {
-            JHeader jheader = new JHeader(header.getHeader().getHeaderName(), header.getHeader().getHeaderName());
-            obj.getHeaders().add(jheader);
-        }
-
-        for (ParameterReferenceObject parameter : parameterReferenceObjectList) {
-            JParameter jparameter = new JParameter(parameter.getParameter().getParameterName(), parameter.getParameter().getParameterName());
-            obj.getParameters().add(jparameter);
-        }
-        return obj;
+        return this.jsonRequestObject;
+    }
+    
+    public RestRequester generateRestRequester(){
+        RestRequester restRequester = new RestRequester();
+            restRequester.setMethod(getMethod().getMethodValue());
+            restRequester.setScheme(getScheme().getSchemeValue());
+            restRequester.setHost(getHost().getHostAddressValue());
+            restRequester.setPath(getPath().getPathValue());
+            if (getHeaderReferenceObjectList().isEmpty() == false) {
+                for (HeaderReferenceObject hro : getHeaderReferenceObjectList()) {
+                    restRequester.addHeader(hro.getHeader().getHeaderName(), hro.getHeader().getHeaderValue());
+                }
+            }
+            if (getTemplateReferenceObjectList().isEmpty() == false) {
+                for (TemplateReferenceObject tro : getTemplateReferenceObjectList()) {
+                    restRequester.addTemplate(tro.getTemplate().getTemplateValue());
+                }
+            }
+            if (getParameterReferenceObjectList().isEmpty() == false) {
+                for (ParameterReferenceObject pro : getParameterReferenceObjectList()) {
+                    restRequester.addParameter(pro.getParameter().getParameterName(), pro.getParameter().getParameterValue());
+                }
+            }
+            return restRequester;
     }
 }

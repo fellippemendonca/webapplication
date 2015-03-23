@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
+import java.net.URISyntaxException;
 
 /**
  *
@@ -28,14 +29,13 @@ public class JsonRequestServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
 
             String buttonID = request.getParameter("button-id");
             switch (buttonID) {
                 case "execute-requests":
-                    response.getWriter().write(new Gson().toJson(sless.executaNovoCenario()));
+                    response.getWriter().write(new Gson().toJson(sless.getRequest()));
                     break;
 
                 case "bands-albums":

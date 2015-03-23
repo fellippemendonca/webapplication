@@ -9,6 +9,7 @@ import Entities.Parameter;
 import static com.sun.faces.facelets.util.Path.context;
 import java.io.Serializable;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import javax.annotation.Resource;
@@ -194,6 +195,21 @@ public class ParameterJpaController implements Serializable {
             create(parameter);
             return find(parameter);
         }
+    }
+    
+    public List<String> listParameterNameEntities() {
+        List<String> list = new ArrayList();
+        for(Parameter m : findParameterEntities(true, -1, -1)){
+            list.add(m.getParameterName());
+        }
+        return list;
+    }
+    public List<String> listParameterValueEntities() {
+        List<String> list = new ArrayList();
+        for(Parameter m : findParameterEntities(true, -1, -1)){
+            list.add(m.getParameterValue());
+        }
+        return list;
     }
 
 }

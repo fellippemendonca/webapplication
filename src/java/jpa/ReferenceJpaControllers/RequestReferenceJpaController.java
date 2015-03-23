@@ -90,7 +90,6 @@ public class RequestReferenceJpaController implements Serializable {
     public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-
             em = getEntityManager();
             RequestReference requestReference;
             try {

@@ -18,29 +18,21 @@ import javax.naming.NamingException;
  * @author fellippe.mendonca
  */
 public class RequestObjectList {
-    
-    List<RequestReferenceObject> requestObjectList;
     DataAccessObject dao;
-    
+    RequestReferenceObject requestRefObj;
     
     public RequestObjectList() throws NamingException{
-        this.requestObjectList = new ArrayList<>();
         this.dao = new DataAccessObject();
+        this.requestRefObj = null;
     }
     
-    public RequestReferenceObject addRequest(String json){
-        RequestReferenceObject rro = new RequestReferenceObject(this.dao,json);
-        this.requestObjectList.add(rro);
-        return rro;
-    }
-
-    /*RETORNA LISTA APENAS COM REQUESTS DA MEMORIA*/
-    public List<RequestReferenceObject> getRequestObjectList() {
-        return this.requestObjectList;
+    public RequestReferenceObject setRequest(String json){
+        this.requestRefObj = new RequestReferenceObject(this.dao,json);
+        return this.requestRefObj;
     }
     
-    /*RETORNA LISTA APENAS COM REQUESTS DA BASE DE DADOS*/
-    public List<RequestReferenceObject> getRequestObjectListFromDB() throws NamingException {
+    /*RETORNA LISTA COM REQUESTS DA BASE DE DADOS*/
+    public List<RequestReferenceObject> getObjectRequestList() throws NamingException {
         List<RequestReferenceObject> requestObjectListDB = new ArrayList<>();
         for (RequestReference rr : this.dao.getRequestReferece()) {
             requestObjectListDB.add(new RequestReferenceObject(rr,this.dao));
@@ -48,12 +40,46 @@ public class RequestObjectList {
         return requestObjectListDB;
     }
     
-    public String generateJsonRequestList() throws NamingException{
+    public String getJsonRequestList() throws NamingException{
         List<JsonRequestObject> requestList = new ArrayList();
-        for (RequestReferenceObject rro : getRequestObjectListFromDB()) {
+        for (RequestReferenceObject rro : getObjectRequestList()) {
             requestList.add(rro.getRequestObject());
         }
         return "{\"requestList\":"+(new Gson().toJson(requestList))+"}";
     }
-
+    
+    
+    /*METODOS DE LISTAGEM DE PARAMETROS*/
+    public List<String> listMethodsFromDB(){
+        return this.dao.getMethodJpaController().listMethodEntities();
+    }
+    public List<String> listEnvironmentsFromDB(){
+        return this.dao.getEnvironmentJpaController().listEnvironmentEntities();
+    }
+    public List<String> listSchemesFromDB(){
+        return this.dao.getSchemeJpaController().listSchemeEntities();
+    }
+    public List<String> listHostsFromDB(){
+        return this.dao.getHostAddressJpaController().listHostAddressEntities();
+    }
+    public List<String> listPathsFromDB(){
+        return this.dao.getPathJpaController().listPathEntities();
+    }
+    public List<String> listTemplatesFromDB(){
+        return this.dao.getTemplateJpaController().listTemplateEntities();
+    }
+    
+    public List<String> listParameterNamesFromDB(){
+        return this.dao.getParameterJpaController().listParameterNameEntities();
+    }
+    public List<String> listParameterValuesFromDB(){
+        return this.dao.getParameterJpaController().listParameterValueEntities();
+    }
+    
+    public List<String> listHeaderNamesFromDB(){
+        return this.dao.getHeaderJpaController().listHeaderNameEntities();
+    }
+    public List<String> listHeaderValuesFromDB(){
+        return this.dao.getHeaderJpaController().listHeaderValueEntities();
+    }
 }
