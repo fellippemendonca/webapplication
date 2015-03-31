@@ -58,4 +58,16 @@ public class AutoScenario implements Serializable {
         RequestObjectList rob = new RequestObjectList();
         return rob.setRequest(json).generateRestRequester().Request();
     }
+    
+    public boolean createRequest(String json) throws NamingException, IOException, URISyntaxException {
+        RequestObjectList rob = new RequestObjectList();
+        rob.persistRequest(json);
+        return true;
+    }
+    
+    public boolean updateRequest(String json) throws NamingException, IOException, URISyntaxException {
+        RequestObjectList rob = new RequestObjectList();
+        rob.updateRequest(json);
+        return true;
+    }
 }

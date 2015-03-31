@@ -65,7 +65,20 @@ public class ParameterReferenceObject {
             return true;
         } catch (NamingException ex) {
             Logger.getLogger(ParameterReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+        } catch (RollbackFailureException ex) {
+            Logger.getLogger(ParameterReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(ParameterReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+    
+    public boolean deleteParameterReference(){
+        try {
+             this.dao.getParameterReferenceJpaController().destroy(this.parameterReference.getIdParameterReference());
+            return true;
+       } catch (NamingException ex) {
+            Logger.getLogger(ParameterReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RollbackFailureException ex) {
             Logger.getLogger(ParameterReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {

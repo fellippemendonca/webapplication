@@ -31,13 +31,16 @@ public class RequestObjectList {
         return this.requestRefObj;
     }
     
-    /*RETORNA LISTA COM REQUESTS DA BASE DE DADOS*/
-    public List<RequestReferenceObject> getObjectRequestList() throws NamingException {
-        List<RequestReferenceObject> requestObjectListDB = new ArrayList<>();
-        for (RequestReference rr : this.dao.getRequestReferece()) {
-            requestObjectListDB.add(new RequestReferenceObject(rr,this.dao));
-        }
-        return requestObjectListDB;
+    public RequestReferenceObject persistRequest(String json){
+        this.requestRefObj = new RequestReferenceObject(this.dao,json);
+        this.requestRefObj.persistRequestReference();
+        return this.requestRefObj;
+    }
+    
+    public RequestReferenceObject updateRequest(String json){
+        this.requestRefObj = new RequestReferenceObject(this.dao,json);
+        this.requestRefObj.updateRequestReference();
+        return this.requestRefObj;
     }
     
     public String getJsonRequestList() throws NamingException{
@@ -47,6 +50,26 @@ public class RequestObjectList {
         }
         return "{\"requestList\":"+(new Gson().toJson(requestList))+"}";
     }
+    
+    /*RETORNA LISTA COM REQUESTS DA BASE DE DADOS*/
+    public List<RequestReferenceObject> getObjectRequestList() throws NamingException {
+        List<RequestReferenceObject> requestObjectListDB = new ArrayList<>();
+        for (RequestReference rr : this.dao.getRequestReferece()) {
+            requestObjectListDB.add(new RequestReferenceObject(this.dao,rr));
+        }
+        return requestObjectListDB;
+    }
+    
+    /*RETORNA LISTA COM REQUESTS DA BASE DE DADOS*/
+    public List<RequestReferenceObject> getObjectRequestListTagFiltered(String json) throws NamingException {
+        List<RequestReferenceObject> requestObjectListDB = new ArrayList<>();
+        for (RequestReference rr : this.dao.getRequestReferece()) {
+            requestObjectListDB.add(new RequestReferenceObject(this.dao,rr));
+        }
+        return requestObjectListDB;
+    }
+    
+    
     
     
     /*METODOS DE LISTAGEM DE PARAMETROS*/
@@ -65,6 +88,7 @@ public class RequestObjectList {
     public List<String> listPathsFromDB(){
         return this.dao.getPathJpaController().listPathEntities();
     }
+    
     public List<String> listTemplatesFromDB(){
         return this.dao.getTemplateJpaController().listTemplateEntities();
     }
@@ -82,4 +106,9 @@ public class RequestObjectList {
     public List<String> listHeaderValuesFromDB(){
         return this.dao.getHeaderJpaController().listHeaderValueEntities();
     }
+    
+    public List<String> listTagValuesFromDB(){
+        return this.dao.getRequestTagJpaController().listRequestTagEntities();
+    }
+    
 }

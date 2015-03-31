@@ -55,11 +55,12 @@ public class RequestReferenceObject {
     }
     
     public RequestReferenceObject(DataAccessObject dao, String json) {
+        this.dao = dao;
         Gson gson = new Gson();
         JsonRequestObject obj = gson.fromJson(json, JsonRequestObject.class);
         this.jsonRequestObject = obj;
-        this.environment = new Environment(0, obj.getEnvironment());
-        this.method = new Method(0, obj.getMethod());
+        this.environment = new Environment(0, obj.getEnvironment().toUpperCase());
+        this.method = new Method(0, obj.getMethod().toUpperCase());
         this.scheme = new Scheme(0, obj.getScheme());
         this.host = new HostAddress(0, obj.getHost());
         this.path = new Path(0, obj.getPath());
@@ -93,10 +94,13 @@ public class RequestReferenceObject {
         }
     }
 
-    public RequestReferenceObject(RequestReference requestReference, DataAccessObject dao) throws NamingException {
+    public RequestReferenceObject(DataAccessObject dao, RequestReference requestReference) throws NamingException {
         this.jsonRequestObject = new JsonRequestObject();
         this.dao = dao;
+        
         this.requestReference = requestReference;
+        this.jsonRequestObject.setRequestReference(this.requestReference.getIdRequestReference());
+        
         this.environment = this.dao.getEnvironmentJpaController().findEnvironment(this.requestReference.getIdEnvironment());
         this.jsonRequestObject.setEnvironment(this.environment.getEnvironmentName());
         
@@ -144,6 +148,22 @@ public class RequestReferenceObject {
         this.requestReference = requestReference;
     }
 
+    public boolean updateRequestReference() {
+        try {
+            RequestReference rr = this.dao.getRequestReferenceJpaController().findRequestReference(this.jsonRequestObject.getRequestReference());
+            clearReferences(rr);
+            this.dao.getRequestReferenceJpaController().destroy(this.jsonRequestObject.getRequestReference());
+            persistRequestReference();
+            return true;
+        } catch (DAO.exceptions.RollbackFailureException ex) {
+            Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    return false;
+    }
+    
     public boolean persistRequestReference() {
         persistEnvironment();
         persistMethod();
@@ -305,6 +325,29 @@ public class RequestReferenceObject {
     public JsonRequestObject getRequestObject() {
         return this.jsonRequestObject;
     }
+    
+    
+    
+    
+    public boolean clearReferences(RequestReference requestReference) throws NamingException{
+        for (TemplateReference tr : this.dao.getTemplateReferece(requestReference)) {
+            TemplateReferenceObject templateObject = new TemplateReferenceObject(tr, dao);
+            templateObject.deleteTemplateReference();
+        }
+
+        for (HeaderReference hr : this.dao.getHeaderReference(requestReference)) {
+            HeaderReferenceObject headerObject = new HeaderReferenceObject(hr, dao);
+            headerObject.deleteHeaderReference();
+        }
+        
+        for (ParameterReference pr : this.dao.getParameterReference(requestReference)) {
+            ParameterReferenceObject parameterObject = new ParameterReferenceObject(pr, dao);
+            parameterObject.deleteParameterReference();
+        }
+        return true;
+    }
+    
+    
     
     public RestRequester generateRestRequester(){
         RestRequester restRequester = new RestRequester();

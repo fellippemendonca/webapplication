@@ -72,6 +72,20 @@ public class TemplateReferenceObject {
         }
         return false;
     }
+    
+    public boolean deleteTemplateReference(){
+        try {
+             this.dao.getTemplateReferenceJpaController().destroy(this.templateReference.getIdTemplateReference());
+            return true;
+        } catch (NamingException ex) {
+            Logger.getLogger(TemplateReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RollbackFailureException ex) {
+            Logger.getLogger(TemplateReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(TemplateReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
 
     public Template getTemplate() {
         return template;

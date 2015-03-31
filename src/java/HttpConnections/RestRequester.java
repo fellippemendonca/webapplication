@@ -46,7 +46,7 @@ public class RestRequester {
                 System.out.println("GET : " + this.uri.getHost() + this.uri.getPath() + this.uri.getTemplate());
                 this.httpget.setURI(this.uri.getFinalURI().build());
                 this.RC = connFactory.RestRequest(this.httpget);
-                this.RC.setRequest("GET : " + this.uri.getHost() + this.uri.getPath());
+                this.RC.setRequest("GET : " + this.uri.getScheme()+ "://" + this.uri.getHost() + this.uri.getPath());
                 System.out.println("GET : " + this.RC.status);
                 break;
 
@@ -55,7 +55,7 @@ public class RestRequester {
                 this.httpput.setURI(this.uri.getFinalURI().build());
                 this.httpput.setEntity(uri.getEntity());
                 this.RC = connFactory.RestRequest(this.httpput);
-                this.RC.setRequest("PUT : " + this.uri.getHost() + this.uri.getPath());
+                this.RC.setRequest("PUT : " + this.uri.getScheme()+ "://" + this.uri.getHost() + this.uri.getPath());
                 System.out.println("PUT : " + this.RC.status);
                 break;
 
@@ -64,7 +64,7 @@ public class RestRequester {
                 this.httppost.setURI(this.uri.getFinalURI().build());
                 this.httppost.setEntity(uri.getEntity());
                 this.RC = connFactory.RestRequest(this.httppost);
-                this.RC.setRequest("POST : " + this.uri.getHost() + this.uri.getPath());
+                this.RC.setRequest("POST : " + this.uri.getScheme()+ "://" + this.uri.getHost() + this.uri.getPath());
                 System.out.println("POST : " + this.RC.status);
                 break;
         }
@@ -84,7 +84,7 @@ public class RestRequester {
                 System.out.println("GET : " + this.uri.getHost() + this.uri.getPath() + this.uri.getTemplate());
                 this.httpget.setURI(this.uri.getFinalURI().build());
                 this.RC = connFactory.RestRequest(this.httpget);
-                this.RC.setRequest("GET : " + this.uri.getHost() + this.uri.getPath());
+                this.RC.setRequest("GET : " + this.uri.getScheme()+ "://" + this.uri.getHost() + this.uri.getPath());
                 System.out.println("GET : " + this.RC.status);
                 break;
 
@@ -93,7 +93,7 @@ public class RestRequester {
                 this.httpput.setURI(this.uri.getFinalURI().build());
                 this.httpput.setEntity(uri.getEntity());
                 this.RC = connFactory.RestRequest(this.httpput);
-                this.RC.setRequest("PUT : " + this.uri.getHost() + this.uri.getPath());
+                this.RC.setRequest("PUT : " + this.uri.getScheme()+ "://" + this.uri.getHost() + this.uri.getPath());
                 System.out.println("PUT : " + this.RC.status);
                 break;
 
@@ -102,7 +102,7 @@ public class RestRequester {
                 this.httppost.setURI(this.uri.getFinalURI().build());
                 this.httppost.setEntity(uri.getEntity());
                 this.RC = connFactory.RestRequest(this.httppost);
-                this.RC.setRequest("POST : " + this.uri.getHost() + this.uri.getPath());
+                this.RC.setRequest("POST : " + this.uri.getScheme()+ "://" + this.uri.getHost() + this.uri.getPath());
                 System.out.println("POST : " + this.RC.status);
                 break;
         }

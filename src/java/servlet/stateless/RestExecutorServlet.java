@@ -17,6 +17,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  *
@@ -24,32 +26,40 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/restexecutorservlet")
 public class RestExecutorServlet extends HttpServlet {
+
     @EJB
     private StatelessSessionBean sless;
-    
+
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        /*    
+         for (String name : Collections.<String>list(request.getParameterNames())) {
+         String value = request.getParameter(name); 
+         System.out.println(name+" : "+value);
+         }     
+         */
+        response.setContentType("application/json;charset=UTF-8");
+        try {
+            Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+            ResponseContents RC2 = sless.executaNovoCenario(request.getParameter("jsonRequestObj"));
+            System.out.println("Request Enviado ao Servlet:\n" + request.getParameter("jsonRequestObj") + "\n");
+            response.setStatus(200);
+            response.getWriter().write(gson.toJson(RC2));
+        } catch (NamingException | URISyntaxException ex) {
+            Logger.getLogger(RestExecutorServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        /*    
-        for (String name : Collections.<String>list(request.getParameterNames())) {
-            String value = request.getParameter(name); 
-            System.out.println(name+" : "+value);
-        }     
-        */
-        
-        try {
-            ResponseContents RC2 = sless.executaNovoCenario(request.getParameter("jsonRequestObj"));
-            System.out.println("Request Enviado ao Servlet:\n"+request.getParameter("jsonRequestObj")+"\n");
-            response.setStatus(200);
-            response.getWriter().write("Request: "+RC2.getRequest()+" , Status: "+RC2.getStatus()+"<br>");
-        } catch (NamingException | URISyntaxException ex) {
-            Logger.getLogger(RestExecutorServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequest(request, response);
     }
 
     @Override

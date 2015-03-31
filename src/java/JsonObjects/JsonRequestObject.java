@@ -14,6 +14,7 @@ import java.util.List;
  * @author fellippe.mendonca
  */
 public class JsonRequestObject {
+    int dbId;
     String environment;
     String method;
     String scheme;
@@ -25,6 +26,7 @@ public class JsonRequestObject {
 
     
     public JsonRequestObject(){
+        this.dbId = 0;
         this.environment = "";
         this.method = "";
         this.scheme = "";
@@ -35,7 +37,8 @@ public class JsonRequestObject {
         this.parameters = new ArrayList();
     }
     
-    public JsonRequestObject(String environment, String method, String scheme, String host, String path, List<String> templates, List<JHeader> headers, List<JParameter> parameters) {
+    public JsonRequestObject(int dbId, String environment, String method, String scheme, String host, String path, List<String> templates, List<JHeader> headers, List<JParameter> parameters) {
+        this.dbId = dbId;
         this.environment = environment;
         this.method = method;
         this.scheme = scheme;
@@ -46,8 +49,16 @@ public class JsonRequestObject {
         this.parameters = parameters;
     }
 
+    public int getRequestReference() {
+        return this.dbId;
+    }
+
+    public void setRequestReference(int dbId) {
+        this.dbId = dbId;
+    }
+    
     public String getEnvironment() {
-        return environment;
+        return this.environment;
     }
 
     public void setEnvironment(String environment) {
@@ -55,7 +66,7 @@ public class JsonRequestObject {
     }
 
     public String getMethod() {
-        return method;
+        return this.method;
     }
 
     public void setMethod(String method) {
@@ -63,7 +74,7 @@ public class JsonRequestObject {
     }
 
     public String getScheme() {
-        return scheme;
+        return this.scheme;
     }
 
     public void setScheme(String scheme) {
@@ -71,7 +82,7 @@ public class JsonRequestObject {
     }
 
     public String getHost() {
-        return host;
+        return this.host;
     }
 
     public void setHost(String host) {
@@ -79,7 +90,7 @@ public class JsonRequestObject {
     }
 
     public String getPath() {
-        return path;
+        return this.path;
     }
 
     public void setPath(String path) {
@@ -87,7 +98,7 @@ public class JsonRequestObject {
     }
 
     public List<String> getTemplates() {
-        return templates;
+        return this.templates;
     }
 
     public void setTemplates(List<String> templates) {
@@ -95,7 +106,7 @@ public class JsonRequestObject {
     }
 
     public List<JHeader> getHeaders() {
-        return headers;
+        return this.headers;
     }
 
     public void setHeaders(List<JHeader> headers) {
@@ -103,7 +114,7 @@ public class JsonRequestObject {
     }
 
     public List<JParameter> getParameters() {
-        return parameters;
+        return this.parameters;
     }
 
     public void setParameters(List<JParameter> parameters) {

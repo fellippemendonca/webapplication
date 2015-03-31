@@ -51,7 +51,20 @@ public class HeaderReferenceObject {
             return true;
         } catch (NamingException ex) {
             Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+        } catch (RollbackFailureException ex) {
+            Logger.getLogger(HeaderReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(HeaderReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+    
+    public boolean deleteHeaderReference(){
+        try {
+             this.dao.getHeaderReferenceJpaController().destroy(this.headerReference.getIdHeaderReference());
+            return true;
+        } catch (NamingException ex) {
+            Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         } catch (RollbackFailureException ex) {
             Logger.getLogger(HeaderReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {

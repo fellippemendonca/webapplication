@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package jpa;
 
-import Entities.Parameter;
+import Entities.RequestTag;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.UserTransaction;
 import jpa.exceptions.NonexistentEntityException;
 import jpa.exceptions.RollbackFailureException;
 
@@ -22,27 +24,28 @@ import jpa.exceptions.RollbackFailureException;
  *
  * @author fellippe.mendonca
  */
-public class ParameterJpaController implements Serializable {
-    
-    private EntityManagerFactory emf = null;
+public class RequestTagJpaController implements Serializable {
 
-    public ParameterJpaController(EntityManagerFactory emf) {
+    public RequestTagJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
-    
+
+    private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public Parameter create(Parameter parameter) throws RollbackFailureException, Exception {
+    public void create(RequestTag requestTag) throws RollbackFailureException, Exception {
         EntityManager em = null;
         try {
+
             em = getEntityManager();
-            em.persist(parameter);
+            em.persist(requestTag);
             em.flush();
         } catch (Exception ex) {
             try {
+
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -52,15 +55,14 @@ public class ParameterJpaController implements Serializable {
                 em.close();
             }
         }
-        return parameter;
     }
 
-    public void edit(Parameter parameter) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void edit(RequestTag requestTag) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
 
             em = getEntityManager();
-            parameter = em.merge(parameter);
+            requestTag = em.merge(requestTag);
 
         } catch (Exception ex) {
             try {
@@ -70,9 +72,9 @@ public class ParameterJpaController implements Serializable {
             }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = parameter.getIdParameter();
-                if (findParameter(id) == null) {
-                    throw new NonexistentEntityException("The parameter with id " + id + " no longer exists.");
+                Integer id = requestTag.getIdRequestTag();
+                if (findRequestTag(id) == null) {
+                    throw new NonexistentEntityException("The requestTag with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -88,14 +90,14 @@ public class ParameterJpaController implements Serializable {
         try {
 
             em = getEntityManager();
-            Parameter parameter;
+            RequestTag requestTag;
             try {
-                parameter = em.getReference(Parameter.class, id);
-                parameter.getIdParameter();
+                requestTag = em.getReference(RequestTag.class, id);
+                requestTag.getIdRequestTag();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The parameter with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The requestTag with id " + id + " no longer exists.", enfe);
             }
-            em.remove(parameter);
+            em.remove(requestTag);
 
         } catch (Exception ex) {
             try {
@@ -111,19 +113,19 @@ public class ParameterJpaController implements Serializable {
         }
     }
 
-    public List<Parameter> findParameterEntities() {
-        return findParameterEntities(true, -1, -1);
+    public List<RequestTag> findRequestTagEntities() {
+        return findRequestTagEntities(true, -1, -1);
     }
 
-    public List<Parameter> findParameterEntities(int maxResults, int firstResult) {
-        return findParameterEntities(false, maxResults, firstResult);
+    public List<RequestTag> findRequestTagEntities(int maxResults, int firstResult) {
+        return findRequestTagEntities(false, maxResults, firstResult);
     }
 
-    private List<Parameter> findParameterEntities(boolean all, int maxResults, int firstResult) {
+    private List<RequestTag> findRequestTagEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(Parameter.class));
+            cq.select(cq.from(RequestTag.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -135,20 +137,20 @@ public class ParameterJpaController implements Serializable {
         }
     }
 
-    public Parameter findParameter(Integer id) {
+    public RequestTag findRequestTag(Integer id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(Parameter.class, id);
+            return em.find(RequestTag.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int getParameterCount() {
+    public int getRequestTagCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<Parameter> rt = cq.from(Parameter.class);
+            Root<RequestTag> rt = cq.from(RequestTag.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
@@ -157,15 +159,14 @@ public class ParameterJpaController implements Serializable {
         }
     }
     
-    public Parameter find(Parameter parameter) {
+    public RequestTag find(RequestTag requestTag) {
         EntityManager em = getEntityManager();
-        Query query = em.createNamedQuery("Parameter.findByParameterNameAndValue");
-        query.setParameter("parameterName", parameter.getParameterName());
-        query.setParameter("parameterValue", parameter.getParameterValue());
-        List<Parameter> parameterList = (List<Parameter>) query.getResultList();
+        Query query = em.createNamedQuery("RequestTag.findByTagValue");
+        query.setParameter("tagValue", requestTag.getTagValue());
+        List<RequestTag> requestTagList = (List<RequestTag>) query.getResultList();
         try {
-            if (parameterList.size() > 0) {
-                return parameterList.get(0);
+            if (requestTagList.size() > 0) {
+                return requestTagList.get(0);
             } else {
                 return null;
             }
@@ -174,28 +175,21 @@ public class ParameterJpaController implements Serializable {
         }
     }
 
-    public Parameter findOrAdd(Parameter parameter) throws Exception {
-        if (find(parameter) != null) {
-            return find(parameter);
+    public RequestTag findOrAdd(RequestTag requestTag) throws Exception {
+        if (find(requestTag) != null) {
+            return find(requestTag);
         } else {
-            create(parameter);
-            return find(parameter);
+            create(requestTag);
+            return find(requestTag);
         }
-    }
-    
-    public List<String> listParameterNameEntities() {
-        List<String> list = new ArrayList();
-        for(Parameter m : findParameterEntities(true, -1, -1)){
-            list.add(m.getParameterName());
-        }
-        return list;
-    }
-    public List<String> listParameterValueEntities() {
-        List<String> list = new ArrayList();
-        for(Parameter m : findParameterEntities(true, -1, -1)){
-            list.add(m.getParameterValue());
-        }
-        return list;
     }
 
+    public List<String> listRequestTagEntities() {
+        List<String> list = new ArrayList();
+        for(RequestTag m : findRequestTagEntities(true, -1, -1)){
+            list.add(m.getTagValue());
+        }
+        return list;
+    }
+    
 }

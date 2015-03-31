@@ -1,0 +1,24 @@
+#request-list {
+    overflow-y: scroll;
+    display:block;
+    height:200px;
+}
+#responseContents-div {
+    border: 2px solid #a1a1a1;
+    padding: 20px; 
+    background: #dddddd;
+    width: 1200px;
+    overflow-y: scroll;
+    display:block;
+    height:200px;
+}
+
+#requestTable tr.normal td {
+    color: #235A81;
+    background-color: white;
+}
+#requestTable tr.highlighted td {
+    color: #FFFFFF;
+    background-color: #235A81;
+}
+

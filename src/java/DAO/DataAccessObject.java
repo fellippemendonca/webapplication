@@ -8,6 +8,7 @@ package DAO;
 import Entities.ReferenceEntities.HeaderReference;
 import Entities.ReferenceEntities.ParameterReference;
 import Entities.ReferenceEntities.RequestReference;
+import Entities.ReferenceEntities.RequestTagReference;
 import Entities.ReferenceEntities.TemplateReference;
 import java.io.Serializable;
 import java.util.List;
@@ -15,17 +16,19 @@ import javax.persistence.EntityManagerFactory;
 import jpa.DatabaseSelectJpaController;
 import jpa.EnvironmentJpaController;
 import jpa.HeaderJpaController;
-import jpa.ReferenceJpaControllers.HeaderReferenceJpaController;
 import jpa.HostAddressJpaController;
 import jpa.MethodJpaController;
 import jpa.ParameterJpaController;
-import jpa.ReferenceJpaControllers.ParameterReferenceJpaController;
 import jpa.PathJpaController;
+import jpa.ReferenceJpaControllers.HeaderReferenceJpaController;
+import jpa.ReferenceJpaControllers.ParameterReferenceJpaController;
 import jpa.ReferenceJpaControllers.RequestReferenceJpaController;
+import jpa.ReferenceJpaControllers.RequestTagReferenceJpaController;
+import jpa.ReferenceJpaControllers.TemplateReferenceJpaController;
+import jpa.RequestTagJpaController;
 import jpa.SchemeJpaController;
 import jpa.StoreJpaController;
 import jpa.TemplateJpaController;
-import jpa.ReferenceJpaControllers.TemplateReferenceJpaController;
 
 /**
  *
@@ -37,6 +40,8 @@ import jpa.ReferenceJpaControllers.TemplateReferenceJpaController;
 public class DataAccessObject implements Serializable{
 
     private final EntityManagerFactory emf;
+    
+    /*Atributos simples dos requests*/
     RequestReferenceJpaController requestReferenceJpaController;
     MethodJpaController methodJpaController;
     EnvironmentJpaController environmentJpaController;
@@ -45,6 +50,7 @@ public class DataAccessObject implements Serializable{
     HostAddressJpaController hostAddressJpaController;
     PathJpaController pathJpaController;
     
+    /*Atributos Referenciados dos requests*/
     TemplateReferenceJpaController templateReferenceJpaController;
     TemplateJpaController templateJpaController;
     
@@ -54,8 +60,12 @@ public class DataAccessObject implements Serializable{
     ParameterReferenceJpaController parameterReferenceJpaController;
     ParameterJpaController parameterJpaController;
     
-    DatabaseSelectJpaController databaseSelectJpaController = new DatabaseSelectJpaController(this.emf);
-
+    DatabaseSelectJpaController databaseSelectJpaController;
+    
+    /*Tags Associadas aos requests*/
+    RequestTagJpaController requestTagJpaController;
+    RequestTagReferenceJpaController requestTagReferenceJpaController;
+    
     public DataAccessObject()  {
         this.emf = javax.persistence.Persistence.createEntityManagerFactory("ServletStatelessPU");
 
@@ -70,15 +80,23 @@ public class DataAccessObject implements Serializable{
         
         this.templateReferenceJpaController = new TemplateReferenceJpaController(this.emf);
         this.templateJpaController = new TemplateJpaController(this.emf);
+        
         this.headerReferenceJpaController = new HeaderReferenceJpaController(this.emf);
         this.headerJpaController = new HeaderJpaController(this.emf);
+        
         this.parameterReferenceJpaController = new ParameterReferenceJpaController(this.emf);
         this.parameterJpaController = new ParameterJpaController(this.emf);
         
         this.databaseSelectJpaController = new DatabaseSelectJpaController(this.emf);
+        
+        this.requestTagJpaController = new RequestTagJpaController(this.emf);
+        this.requestTagReferenceJpaController = new RequestTagReferenceJpaController(this.emf);
     }
 
     public List<RequestReference> getRequestReferece(){
+        return this.requestReferenceJpaController.findRequestReferenceEntities();
+    }
+    public List<RequestReference> getRequestRefereceTagFiltered(){
         return this.requestReferenceJpaController.findRequestReferenceEntities();
     }
     
@@ -92,6 +110,10 @@ public class DataAccessObject implements Serializable{
     
     public List<HeaderReference> getHeaderReference(RequestReference requestReference){
         return this.headerReferenceJpaController.findByIdRequestReference(requestReference.getIdRequestReference());
+    }
+    
+    public List<RequestTagReference> getRequestTagReference(RequestReference requestReference){
+        return this.requestTagReferenceJpaController.findByIdRequestReference(requestReference.getIdRequestReference());
     }
    
 
@@ -151,5 +173,13 @@ public class DataAccessObject implements Serializable{
 
     public DatabaseSelectJpaController getDatabaseSelectJpaController() {
         return databaseSelectJpaController;
+    }
+
+    public RequestTagJpaController getRequestTagJpaController() {
+        return requestTagJpaController;
+    }
+
+    public RequestTagReferenceJpaController getRequestTagReferenceJpaController() {
+        return requestTagReferenceJpaController;
     }
 }

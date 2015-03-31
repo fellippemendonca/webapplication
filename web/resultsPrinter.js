@@ -7,14 +7,16 @@
 // 	bands with albums, which essentially means a list of objects
 // 	which hold (1) a band name and (2) a list of albums.
 
-function printBands(json) {
-        var data = json;
-    
-	// First empty the <div> completely and add a title.
-	$("#request-list").empty()
-		.append("<h3>Request List 1</h3>");
+function printBands(jsonString) {
+        var json = JSON.parse(jsonString);
         
-        $("#request-list").append(data);
+        var tableshow = "<tr><th>Host</th><th>Method</th></tr>";
+            tableshow += "<tr><td>"+json.requestList[0].host+"</td><td>"+json.requestList[0].method+"</td></tr>";
+            tableshow += "<tr><td>"+json.requestList[1].host+"</td><td>"+json.requestList[1].method+"</td></tr>";
+
+        $("#request-list").empty()
+		.append("<br>");
+        $("#request-list").append(tableshow);
         //$("#request-list").append();
 		
 	// Then add every band name contained in the list.	
