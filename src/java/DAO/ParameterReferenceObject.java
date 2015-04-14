@@ -35,6 +35,7 @@ public class ParameterReferenceObject {
 
     
     public ParameterReferenceObject(ParameterReference parameterReference, DataAccessObject dao) throws NamingException{
+        this.dao = dao;
         this.parameterReference = parameterReference;
         this.parameter = dao.getParameterJpaController().findParameter(this.parameterReference.getIdParameter());
         if(this.parameter.getParameterStatic()==0){

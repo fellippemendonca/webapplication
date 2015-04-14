@@ -3,6 +3,13 @@
     display:block;
     height:200px;
 }
+
+/*#requestTable tbody {
+    overflow-y: scroll;
+    display:block;
+    height:200px;
+}*/
+
 #responseContents-div {
     border: 2px solid #a1a1a1;
     padding: 20px; 
@@ -20,5 +27,16 @@
 #requestTable tr.highlighted td {
     color: #FFFFFF;
     background-color: #235A81;
+}
+
+#Payload {
+    height: 4em;
+    width: 70%;
+    padding: 3px;
+    transition: all 0.5s ease;
+}
+
+#Payload:focus{
+    height: 20em;
 }
 

@@ -34,7 +34,7 @@ public class RestConnFactory {
             this.httpResponse = this.httpclient.execute(httprequest);
             this.responseObj.setStatus(this.httpResponse.getStatusLine().toString());
             if (this.httpResponse.getEntity() == null) {
-            this.responseObj.setContents("{\"no\":\"value\"}");
+                this.responseObj.setContents("{\"no\":\"value\"}");
             } else {
                 this.responseObj.setContents(EntityUtils.toString(this.httpResponse.getEntity()));
             }

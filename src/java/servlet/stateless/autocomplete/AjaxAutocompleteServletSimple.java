@@ -3,10 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package servlet.stateless.autocomplete;
 
+import Entities.RequestTag;
+import JsonObjects.Tags.JsonTag;
+import JsonObjects.Tags.JsonTagNameList;
+import JsonObjects.Tags.JsonTagNameOnly;
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,33 +29,44 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author fellippe.mendonca
  */
-@WebServlet("/ajaxautocompleteservlet/*")
-public class AjaxAutocompleteServlet extends HttpServlet {
+@WebServlet("/ajaxautocompleteservletsimple/*")
+public class AjaxAutocompleteServletSimple extends HttpServlet {
 
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, NamingException {
 
         // Map real data into JSON
         response.setContentType("application/json;charset=UTF-8");
         SearchInDatabank search = new SearchInDatabank();
-        List<String> suggestions = search.selectStringArrayFrom(request.getParameter("field"));
-        Collections.sort(suggestions);
+        List<JsonTag> suggestions = search.selectTagArrayFrom();
+        //Collections.sort(suggestions);
         String param = request.getParameter("term");
-        List<AutoCompleteData> result = new ArrayList<>();
-
+        List<JsonTagNameOnly> result = new ArrayList<>();
         if (param.equals("")) {
-            for (String suggestion : suggestions) {
-                result.add(new AutoCompleteData(suggestion, suggestion));
+            for (JsonTag suggestion : suggestions) {
+                result.add(new JsonTagNameOnly(suggestion.getName()));
             }
         } else {
-            for (String suggestion : suggestions) {
-                if (suggestion.toLowerCase().startsWith(param.toLowerCase())) {
-                    result.add(new AutoCompleteData(suggestion, suggestion));
+            for (JsonTag suggestion : suggestions) {
+                if (suggestion.getName().toLowerCase().startsWith(param.toLowerCase())) {
+                    result.add(new JsonTagNameOnly(suggestion.getName()));
                 }
             }
         }
-
-        response.getWriter().write(new Gson().toJson(result));
+        JsonTagNameList jtnl = new JsonTagNameList(result);
+        
+        System.out.println("Response do ajaxautocompleteservletsimple: "+new Gson().toJson(jtnl));
+        response.getWriter().write(new Gson().toJson(jtnl));
+        response.setStatus(200);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -67,7 +84,7 @@ public class AjaxAutocompleteServlet extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (NamingException ex) {
-            Logger.getLogger(AjaxAutocompleteServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AjaxAutocompleteServletSimple.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -85,7 +102,7 @@ public class AjaxAutocompleteServlet extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (NamingException ex) {
-            Logger.getLogger(AjaxAutocompleteServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AjaxAutocompleteServletSimple.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

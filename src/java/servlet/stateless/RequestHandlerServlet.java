@@ -31,21 +31,42 @@ public class RequestHandlerServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("application/json;charset=UTF-8");
-
+        response.setContentType("text/html");
+        boolean status;
         try {
             switch (request.getParameter("operation")) {
                 case "insert":
-                    boolean insert = sless.criaNovoCenario(request.getParameter("jsonRequestObj"));
-                    System.out.println("Request enviado para criar:\n" + request.getParameter("jsonRequestObj") + "\n");
-                    response.setStatus(200);
-                    response.getWriter().write("Insertion Status: " + insert + "<br>");
+                    status = sless.criaNovoCenario(request.getParameter("jsonRequestObj"));
+                    System.out.println("Request enviado para ser criado:\n" + request.getParameter("jsonRequestObj") + "\n");
+                    if(status == true){
+                        response.setStatus(200);
+                        response.getWriter().write("Status: Success.");
+                    }else{
+                        response.setStatus(500);
+                        response.getWriter().write("Status: Fail.");
+                    }
                     break;
                 case "update":
-                    boolean update = sless.editaNovoCenario(request.getParameter("jsonRequestObj"));
-                    System.out.println("Request enviado para editar:\n" + request.getParameter("jsonRequestObj") + "\n");
-                    response.setStatus(200);
-                    response.getWriter().write("Update Status: " + update + "<br>");
+                    status = sless.editaNovoCenario(request.getParameter("jsonRequestObj"));
+                    System.out.println("Request enviado para ser editado:\n" + request.getParameter("jsonRequestObj") + "\n");
+                    if(status == true){
+                        response.setStatus(200);
+                        response.getWriter().write("Status: Success.");
+                    }else{
+                        response.setStatus(500);
+                        response.getWriter().write("Status: Fail.");
+                    }
+                    break;
+                case "remove":
+                    System.out.println("Request enviado para ser removido:\n" + request.getParameter("jsonRequestObj") + "\n");
+                    status = sless.removeNovoCenario(request.getParameter("jsonRequestObj"));
+                    if(status == true){
+                        response.setStatus(200);
+                        response.getWriter().write("Status: Success.");
+                    }else{
+                        response.setStatus(500);
+                        response.getWriter().write("Status: Fail.");
+                    }
                     break;
             }
 

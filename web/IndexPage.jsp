@@ -110,7 +110,7 @@
             </div>
         </form>
 
-        <jsp:include page="/servlet" flush="false" />
+        <!--jsp:include page="/servlet" flush="false" /-->
 
         </br>Ajax Requests
         <div id="requests-results"></div>

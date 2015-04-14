@@ -30,19 +30,19 @@ public class HeaderReferenceObject {
     }
     
     public HeaderReferenceObject(HeaderReference headerReference, DataAccessObject dao){
-        this.headerReference = headerReference;
         this.dao = dao;
+        this.headerReference = headerReference;
         this.header = this.dao.getHeaderJpaController().findHeader(this.headerReference.getIdHeader());
     }
-
-    public HeaderReference getHeaderReference() {
-        return headerReference;
-    }
-
-    public void setHeaderReference(HeaderReference headerReference) {
-        this.headerReference = headerReference;
-    }
     
+    public void persistHeader() {
+        try {
+            this.header = this.dao.getHeaderJpaController().findOrAdd(this.header);
+        } catch (Exception ex) {
+            Logger.getLogger(HeaderReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public boolean persistHeaderReference(RequestReference requestReference) {
         persistHeader();
         HeaderReference tmp = new HeaderReference(0, requestReference.getIdRequestReference(), this.header.getIdHeader());
@@ -73,29 +73,23 @@ public class HeaderReferenceObject {
         return false;
     }
 
+    
+
+    
+
+    public void setHeader(String name, String value) {
+        this.header = new Header(0, name, value);
+    }
+    
     public Header getHeader() {
         return this.header;
     }
     
-    public void setHeader(String name, String value) {
-        this.header = new Header(0, name, value);
+    public HeaderReference getHeaderReference() {
+        return headerReference;
     }
 
-    public void persistHeader() {
-        try {
-            this.header = this.dao.getHeaderJpaController().findOrAdd(this.header);
-        } catch (Exception ex) {
-            Logger.getLogger(HeaderReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public void setHeaderReference(HeaderReference headerReference) {
+        this.headerReference = headerReference;
     }
-
-    public DataAccessObject getDao() {
-        return dao;
-    }
-
-    public void setDao(DataAccessObject dao) {
-        this.dao = dao;
-    }
-    
-    
 }

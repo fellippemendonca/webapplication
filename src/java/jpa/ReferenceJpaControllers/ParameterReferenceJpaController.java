@@ -164,9 +164,9 @@ public class ParameterReferenceJpaController implements Serializable {
         EntityManager em = getEntityManager();
         Query query = em.createNamedQuery("ParameterReference.findByIdRequestReference");
         query.setParameter("idRequestReference", id);
-        List<ParameterReference> headerReferenceList = (List<ParameterReference>) query.getResultList();
+        List<ParameterReference> parameterReferenceList = (List<ParameterReference>) query.getResultList();
         try {
-            return headerReferenceList;
+            return parameterReferenceList;
         } finally {
             em.close();
         }

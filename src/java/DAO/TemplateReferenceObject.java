@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package DAO;
 
 import Entities.DatabaseSelect;
@@ -20,6 +19,7 @@ import jpa.exceptions.RollbackFailureException;
  * @author fellippe.mendonca
  */
 public class TemplateReferenceObject {
+
     int sequence;
     TemplateReference templateReference;
     Template template;
@@ -33,11 +33,12 @@ public class TemplateReferenceObject {
         this.dao = dao;
         this.databaseSelect = new DatabaseSelect(0, "", "");
     }
-    
-    public TemplateReferenceObject(TemplateReference templateReference, DataAccessObject dao){
+
+    public TemplateReferenceObject(TemplateReference templateReference, DataAccessObject dao) {
+        this.dao = dao;
         this.templateReference = templateReference;
         this.template = dao.getTemplateJpaController().findTemplate(this.templateReference.getIdTemplate());
-        if(this.template.getTemplateStatic()==0){
+        if (this.template.getTemplateStatic() == 0) {
             this.databaseSelect = dao.getDatabaseSelectJpaController().findDatabaseSelect(this.templateReference.getIdDatabaseSelect());
         }
     }
@@ -49,17 +50,17 @@ public class TemplateReferenceObject {
     public void setTemplateReference(TemplateReference templateReference) {
         this.templateReference = templateReference;
     }
-    
-    public boolean persistTemplateReference(RequestReference requestReference){
+
+    public boolean persistTemplateReference(RequestReference requestReference) {
         persistTemplate();
         TemplateReference tmp;
-        if(this.template.getTemplateStatic()==1){
+        if (this.template.getTemplateStatic() == 1) {
             tmp = new TemplateReference(0, requestReference.getIdRequestReference(), this.template.getIdTemplate(), this.sequence, 0);
-        }else{
+        } else {
             persistDatabaseSelect();
             tmp = new TemplateReference(0, requestReference.getIdRequestReference(), this.template.getIdTemplate(), this.sequence, this.databaseSelect.getIdDatabaseSelect());
         }
-        
+
         try {
             this.templateReference = this.dao.getTemplateReferenceJpaController().create(tmp);
             return true;
@@ -72,10 +73,10 @@ public class TemplateReferenceObject {
         }
         return false;
     }
-    
-    public boolean deleteTemplateReference(){
+
+    public boolean deleteTemplateReference() {
         try {
-             this.dao.getTemplateReferenceJpaController().destroy(this.templateReference.getIdTemplateReference());
+            this.dao.getTemplateReferenceJpaController().destroy(this.templateReference.getIdTemplateReference());
             return true;
         } catch (NamingException ex) {
             Logger.getLogger(TemplateReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
@@ -90,7 +91,7 @@ public class TemplateReferenceObject {
     public Template getTemplate() {
         return template;
     }
-    
+
     public void setTemplate(String name, int fix) {
         this.template = new Template(0, name, fix);
     }
@@ -106,7 +107,7 @@ public class TemplateReferenceObject {
     public DatabaseSelect getDatabaseSelect() {
         return databaseSelect;
     }
-    
+
     public void setDatabaseSelect(String databaseName, String value) {
         this.databaseSelect = new DatabaseSelect(0, databaseName, value);
     }

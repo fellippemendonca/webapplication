@@ -149,10 +149,8 @@ public class HostAddressJpaController implements Serializable {
         List<HostAddress> hostList = (List<HostAddress>) query.getResultList();
         try{
         if(hostList.size()>0){
-            System.out.println("HostAddressValue Encontrado");
             return hostList.get(0);
         } else{
-            System.out.println("HostAddressValue Não Encontrado");
             return null;
         }
         }

@@ -6,6 +6,7 @@
 
 package JsonObjects;
 
+import JsonObjects.Tags.JsonTag;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,10 +21,11 @@ public class JsonRequestObject {
     String scheme;
     String host;
     String path;
+    String payload;
     List<String> templates;
     List<JHeader> headers;
     List<JParameter> parameters;
-
+    List<JsonTag> jsonTags;
     
     public JsonRequestObject(){
         this.dbId = 0;
@@ -32,21 +34,25 @@ public class JsonRequestObject {
         this.scheme = "";
         this.host = "";
         this.path = "";
+        this.payload = "";
         this.templates = new ArrayList();
         this.headers = new ArrayList();
         this.parameters = new ArrayList();
+        this.jsonTags = new ArrayList();
     }
     
-    public JsonRequestObject(int dbId, String environment, String method, String scheme, String host, String path, List<String> templates, List<JHeader> headers, List<JParameter> parameters) {
+    public JsonRequestObject(int dbId, String environment, String method, String scheme, String host, String path, String payload, List<String> templates, List<JHeader> headers, List<JParameter> parameters, List<JsonTag> jsonTags) {
         this.dbId = dbId;
         this.environment = environment;
         this.method = method;
         this.scheme = scheme;
         this.host = host;
         this.path = path;
+        this.payload = payload;
         this.templates = templates;
         this.headers = headers;
         this.parameters = parameters;
+        this.jsonTags = jsonTags;
     }
 
     public int getRequestReference() {
@@ -96,6 +102,14 @@ public class JsonRequestObject {
     public void setPath(String path) {
         this.path = path;
     }
+    
+    public String getPayload() {
+        return this.payload;
+    }
+
+    public void setPayload(String payload) {
+        this.payload = payload;
+    }
 
     public List<String> getTemplates() {
         return this.templates;
@@ -119,6 +133,14 @@ public class JsonRequestObject {
 
     public void setParameters(List<JParameter> parameters) {
         this.parameters = parameters;
+    }
+
+    public List<JsonTag> getJsonTags() {
+        return jsonTags;
+    }
+
+    public void setJsonTags(List<JsonTag> jsonTags) {
+        this.jsonTags = jsonTags;
     }
     
 }

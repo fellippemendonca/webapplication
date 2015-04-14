@@ -30,44 +30,47 @@ public class AutoScenario implements Serializable {
         return this.restRequesterList;
     }
     
-    public void fillRequestListFromDB() throws NamingException{
+    /*public void fillRequestListFromDB() throws NamingException{
         this.restRequesterList.clear();
         this.restRequesterList = new ArrayList<>();
         RequestObjectList rob = new RequestObjectList();
         for(RequestReferenceObject rro:rob.getObjectRequestList()){
             this.restRequesterList.add(rro.generateRestRequester());
         }
-    }
-
-    public int getScenarioListSize() {
-        return this.restRequesterList.size();
-    }
-
-    public ResponseContents executeScenario(int index) throws IOException, URISyntaxException {
-        ResponseContents rc = new ResponseContents();
-        rc = restRequesterList.get(index).Request();
-        return rc;
-    }
+    }*/
 
     public String getRequest() throws NamingException {
         RequestObjectList rob = new RequestObjectList();
         return rob.getJsonRequestList();
     }
     
+    public String getFilteredRequest(String jsonList) throws NamingException {
+        RequestObjectList rob = new RequestObjectList();
+        return rob.getJsonFilteredRequestList(jsonList);
+    }
+    
+    
+    
     public ResponseContents execRequest(String json) throws NamingException, IOException, URISyntaxException {
         RequestObjectList rob = new RequestObjectList();
         return rob.setRequest(json).generateRestRequester().Request();
     }
     
+    
+    
+//--------------------------------CRUD REQUESTS---------------------------------
     public boolean createRequest(String json) throws NamingException, IOException, URISyntaxException {
         RequestObjectList rob = new RequestObjectList();
-        rob.persistRequest(json);
-        return true;
+        return rob.persistRequest(json);
     }
     
     public boolean updateRequest(String json) throws NamingException, IOException, URISyntaxException {
         RequestObjectList rob = new RequestObjectList();
-        rob.updateRequest(json);
-        return true;
+        return rob.updateRequest(json);
+    }
+    
+    public boolean removeRequest(String json) throws NamingException, IOException, URISyntaxException {
+        RequestObjectList rob = new RequestObjectList();
+        return rob.deleteRequest(json);
     }
 }

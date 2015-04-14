@@ -35,7 +35,7 @@ public class RequestTagReferenceJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(RequestTagReference requestTagReference) throws RollbackFailureException, Exception {
+    public RequestTagReference create(RequestTagReference requestTagReference) throws RollbackFailureException, Exception {
         EntityManager em = null;
         try {
 
@@ -54,6 +54,7 @@ public class RequestTagReferenceJpaController implements Serializable {
                 em.close();
             }
         }
+        return requestTagReference;
     }
 
     public void edit(RequestTagReference requestTagReference) throws NonexistentEntityException, RollbackFailureException, Exception {

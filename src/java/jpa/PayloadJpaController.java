@@ -6,8 +6,7 @@
 
 package jpa;
 
-import Entities.RequestTag;
-import JsonObjects.Tags.JsonTag;
+import Entities.Payload;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +24,9 @@ import jpa.exceptions.RollbackFailureException;
  *
  * @author fellippe.mendonca
  */
-public class RequestTagJpaController implements Serializable {
+public class PayloadJpaController implements Serializable {
 
-    public RequestTagJpaController(EntityManagerFactory emf) {
+    public PayloadJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
 
@@ -37,12 +36,12 @@ public class RequestTagJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public RequestTag create(RequestTag requestTag) throws RollbackFailureException, Exception {
+    public Payload create(Payload payload) throws RollbackFailureException, Exception {
         EntityManager em = null;
         try {
 
             em = getEntityManager();
-            em.persist(requestTag);
+            em.persist(payload);
             em.flush();
         } catch (Exception ex) {
             try {
@@ -56,15 +55,15 @@ public class RequestTagJpaController implements Serializable {
                 em.close();
             }
         }
-        return requestTag; 
+        return payload;
     }
 
-    public void edit(RequestTag requestTag) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void edit(Payload payload) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         try {
 
             em = getEntityManager();
-            requestTag = em.merge(requestTag);
+            payload = em.merge(payload);
 
         } catch (Exception ex) {
             try {
@@ -74,9 +73,9 @@ public class RequestTagJpaController implements Serializable {
             }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = requestTag.getIdRequestTag();
-                if (findRequestTag(id) == null) {
-                    throw new NonexistentEntityException("The requestTag with id " + id + " no longer exists.");
+                Integer id = payload.getIdPayload();
+                if (findPayload(id) == null) {
+                    throw new NonexistentEntityException("The payload with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -92,14 +91,14 @@ public class RequestTagJpaController implements Serializable {
         try {
 
             em = getEntityManager();
-            RequestTag requestTag;
+            Payload payload;
             try {
-                requestTag = em.getReference(RequestTag.class, id);
-                requestTag.getIdRequestTag();
+                payload = em.getReference(Payload.class, id);
+                payload.getIdPayload();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The requestTag with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The payload with id " + id + " no longer exists.", enfe);
             }
-            em.remove(requestTag);
+            em.remove(payload);
 
         } catch (Exception ex) {
             try {
@@ -115,19 +114,19 @@ public class RequestTagJpaController implements Serializable {
         }
     }
 
-    public List<RequestTag> findRequestTagEntities() {
-        return findRequestTagEntities(true, -1, -1);
+    public List<Payload> findPayloadEntities() {
+        return findPayloadEntities(true, -1, -1);
     }
 
-    public List<RequestTag> findRequestTagEntities(int maxResults, int firstResult) {
-        return findRequestTagEntities(false, maxResults, firstResult);
+    public List<Payload> findPayloadEntities(int maxResults, int firstResult) {
+        return findPayloadEntities(false, maxResults, firstResult);
     }
 
-    private List<RequestTag> findRequestTagEntities(boolean all, int maxResults, int firstResult) {
+    private List<Payload> findPayloadEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(RequestTag.class));
+            cq.select(cq.from(Payload.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -139,20 +138,20 @@ public class RequestTagJpaController implements Serializable {
         }
     }
 
-    public RequestTag findRequestTag(Integer id) {
+    public Payload findPayload(Integer id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(RequestTag.class, id);
+            return em.find(Payload.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int getRequestTagCount() {
+    public int getPayloadCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<RequestTag> rt = cq.from(RequestTag.class);
+            Root<Payload> rt = cq.from(Payload.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
@@ -161,15 +160,17 @@ public class RequestTagJpaController implements Serializable {
         }
     }
     
-    public RequestTag find(RequestTag requestTag) {
+    public Payload find(Payload payload) {
         EntityManager em = getEntityManager();
-        Query query = em.createNamedQuery("RequestTag.findByTagValue");
-        query.setParameter("tagValue", requestTag.getTagValue());
-        List<RequestTag> requestTagList = (List<RequestTag>) query.getResultList();
+        Query query = em.createNamedQuery("Payload.findByPayloadValue");
+        query.setParameter("payloadValue", payload.getPayloadValue());
+        List<Payload> payloadList = (List<Payload>) query.getResultList();
         try {
-            if (requestTagList.size() > 0) {
-                return requestTagList.get(0);
+            if (payloadList.size() > 0) {
+                System.out.println("payloadValue Encontrado");
+                return payloadList.get(0);
             } else {
+                System.out.println("payloadValue Não Encontrado");
                 return null;
             }
         } finally {
@@ -177,42 +178,21 @@ public class RequestTagJpaController implements Serializable {
         }
     }
 
-    public RequestTag findOrAdd(RequestTag requestTag) throws Exception {
-        if (find(requestTag) != null) {
-            return find(requestTag);
+    public Payload findOrAdd(Payload payload) throws Exception {
+        if (find(payload) != null) {
+            return find(payload);
         } else {
-            create(requestTag);
-            return find(requestTag);
+            create(payload);
+            return find(payload);
         }
     }
-
-    public List<String> listRequestTagEntities() {
+    
+    public List<String> listPayloadEntities() {
         List<String> list = new ArrayList();
-        for(RequestTag m : findRequestTagEntities(true, -1, -1)){
-            list.add(m.getTagValue());
+        for(Payload m : findPayloadEntities(true, -1, -1)){
+            list.add(m.getPayloadValue());
         }
         return list;
     }
-    
-    public List<JsonTag> listJsonTagEntities() {
-        List<JsonTag> list = new ArrayList();
-        for(RequestTag m : findRequestTagEntities(true, -1, -1)){
-            //System.out.println("Found Tags... ID:"+m.getIdRequestTag()+", Name:"+m.getTagValue());
-            list.add(new JsonTag(m.getIdRequestTag(), m.getTagValue()));
-        }
-        return list;
-    }
-    
-    public List<JsonTag> listFilteredJsonTagEntities(List<String> nameList) {
-        List<JsonTag> list = new ArrayList();
-        for(String tagName: nameList){
-            RequestTag m = find(new RequestTag(0,tagName));
-            if(m != null){
-                list.add(new JsonTag(m.getIdRequestTag(), m.getTagValue()));
-            }
-        }
-        return list;
-    }
-
     
 }

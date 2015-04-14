@@ -42,13 +42,13 @@ public class RequestFilter extends HttpServlet {
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
         try (PrintWriter out = response.getWriter()) {
+            
                 try {
-                    /* TODO output your page here. You may use following sample code. */
+                    String param = request.getParameter("tag_array");
                     out.write(new Gson().toJson(sless.getRequest()));
                 } catch (NamingException ex) {
                     Logger.getLogger(RequestFilter.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            
         }
     }
 

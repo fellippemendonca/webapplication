@@ -13,10 +13,15 @@ import javax.naming.NamingException;
 @Stateless
 public class StatelessSessionBean implements Serializable{
     AutoScenario autoScenario;
+    
     public String getRequest() throws NamingException{
         AutoScenario autoScenario = new AutoScenario();
-        autoScenario.fillRequestListFromDB();
         return autoScenario.getRequest();
+    } 
+    
+    public String getFilteredRequest(String jsonList) throws NamingException{
+        AutoScenario autoScenario = new AutoScenario();
+        return autoScenario.getFilteredRequest(jsonList);
     } 
      
     public ResponseContents executaNovoCenario(String json) throws NamingException, IOException, URISyntaxException{
@@ -33,28 +38,9 @@ public class StatelessSessionBean implements Serializable{
         AutoScenario autoScenario  = new AutoScenario();
         return autoScenario.updateRequest(json);
     }
-     
     
-    /*
-    public int countScenario() throws NamingException{
+    public boolean removeNovoCenario(String json) throws NamingException, IOException, URISyntaxException{
         AutoScenario autoScenario  = new AutoScenario();
-        autoScenario.fillRequestListFromDB();
-        return autoScenario.getScenarioListSize();
+        return autoScenario.removeRequest(json);
     }
-    
-    public ResponseContents executeScenario(int index) throws IOException, URISyntaxException, NamingException{
-        this.autoScenario  = new AutoScenario();
-        this.autoScenario.fillRequestListFromDB();
-        return this.autoScenario.executeScenario(index);
-    }
-    */
-    
-    
-    
-   
-    
-    
-    
-    
-    
 }

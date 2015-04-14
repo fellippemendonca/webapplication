@@ -61,6 +61,10 @@ public class RequestReference implements Serializable {
     @NotNull
     @Column(name = "id_path")
     private int idPath;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "id_payload")
+    private int idPayload;
 
     public RequestReference() {
     }
@@ -69,13 +73,14 @@ public class RequestReference implements Serializable {
         this.idRequestReference = idRequestReference;
     }
 
-    public RequestReference(Integer idRequestReference, int idEnvironment, int idMethod, int idScheme, int idHostAddress, int idPath) {
+    public RequestReference(Integer idRequestReference, int idEnvironment, int idMethod, int idScheme, int idHostAddress, int idPath, int idPayload) {
         this.idRequestReference = idRequestReference;
         this.idEnvironment = idEnvironment;
         this.idMethod = idMethod;
         this.idScheme = idScheme;
         this.idHostAddress = idHostAddress;
         this.idPath = idPath;
+        this.idPayload = idPayload;
     }
 
     public Integer getIdRequestReference() {
@@ -124,6 +129,14 @@ public class RequestReference implements Serializable {
 
     public void setIdPath(int idPath) {
         this.idPath = idPath;
+    }
+    
+    public int getIdPayload() {
+        return idPayload;
+    }
+
+    public void setIdPayload(int idPayload) {
+        this.idPayload = idPayload;
     }
 
     @Override

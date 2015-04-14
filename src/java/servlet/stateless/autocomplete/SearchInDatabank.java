@@ -6,6 +6,8 @@
 package servlet.stateless.autocomplete;
 
 import DAO.RequestObjectList;
+import Entities.RequestTag;
+import JsonObjects.Tags.JsonTag;
 import java.util.ArrayList;
 import java.util.List;
 import javax.naming.NamingException;
@@ -22,7 +24,7 @@ public class SearchInDatabank {
         this.rob = new RequestObjectList();
     }
 
-    public List<String> selectStarFrom(String param) {
+    public List<String> selectStringArrayFrom(String param) {
         List<String> search = new ArrayList();
         switch (param.toLowerCase()) {
             case "method":
@@ -58,4 +60,9 @@ public class SearchInDatabank {
         }
         return search;
     }
+    
+    public List<JsonTag> selectTagArrayFrom() {
+        return this.rob.listTagValuesFromDB();
+    }
+    
 }

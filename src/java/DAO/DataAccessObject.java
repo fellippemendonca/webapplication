@@ -20,6 +20,7 @@ import jpa.HostAddressJpaController;
 import jpa.MethodJpaController;
 import jpa.ParameterJpaController;
 import jpa.PathJpaController;
+import jpa.PayloadJpaController;
 import jpa.ReferenceJpaControllers.HeaderReferenceJpaController;
 import jpa.ReferenceJpaControllers.ParameterReferenceJpaController;
 import jpa.ReferenceJpaControllers.RequestReferenceJpaController;
@@ -49,6 +50,7 @@ public class DataAccessObject implements Serializable{
     SchemeJpaController schemeJpaController;
     HostAddressJpaController hostAddressJpaController;
     PathJpaController pathJpaController;
+    PayloadJpaController payloadJpaController;
     
     /*Atributos Referenciados dos requests*/
     TemplateReferenceJpaController templateReferenceJpaController;
@@ -77,6 +79,7 @@ public class DataAccessObject implements Serializable{
         this.schemeJpaController = new SchemeJpaController(this.emf);
         this.hostAddressJpaController = new HostAddressJpaController(this.emf);
         this.pathJpaController = new PathJpaController(this.emf);
+        this.payloadJpaController = new PayloadJpaController(this.emf);
         
         this.templateReferenceJpaController = new TemplateReferenceJpaController(this.emf);
         this.templateJpaController = new TemplateJpaController(this.emf);
@@ -124,27 +127,31 @@ public class DataAccessObject implements Serializable{
     }
 
     public MethodJpaController getMethodJpaController() {
-        return methodJpaController;
+        return this.methodJpaController;
     }
 
     public EnvironmentJpaController getEnvironmentJpaController() {
-        return environmentJpaController;
+        return this.environmentJpaController;
     }
 
     public StoreJpaController getStoreJpaController() {
-        return storeJpaController;
+        return this.storeJpaController;
     }
 
     public SchemeJpaController getSchemeJpaController() {
-        return schemeJpaController;
+        return this.schemeJpaController;
     }
 
     public HostAddressJpaController getHostAddressJpaController() {
-        return hostAddressJpaController;
+        return this.hostAddressJpaController;
     }
 
     public PathJpaController getPathJpaController() {
-        return pathJpaController;
+        return this.pathJpaController;
+    }
+    
+    public PayloadJpaController getPayloadJpaController() {
+        return this.payloadJpaController;
     }
 
     public TemplateReferenceJpaController getTemplateReferenceJpaController() {
@@ -152,34 +159,34 @@ public class DataAccessObject implements Serializable{
     }
 
     public TemplateJpaController getTemplateJpaController() {
-        return templateJpaController;
+        return this.templateJpaController;
     }
 
     public HeaderReferenceJpaController getHeaderReferenceJpaController() {
-        return headerReferenceJpaController;
+        return this.headerReferenceJpaController;
     }
 
     public HeaderJpaController getHeaderJpaController() {
-        return headerJpaController;
+        return this.headerJpaController;
     }
 
     public ParameterReferenceJpaController getParameterReferenceJpaController() {
-        return parameterReferenceJpaController;
+        return this.parameterReferenceJpaController;
     }
 
     public ParameterJpaController getParameterJpaController() {
-        return parameterJpaController;
+        return this.parameterJpaController;
     }
 
     public DatabaseSelectJpaController getDatabaseSelectJpaController() {
-        return databaseSelectJpaController;
+        return this.databaseSelectJpaController;
     }
 
     public RequestTagJpaController getRequestTagJpaController() {
-        return requestTagJpaController;
+        return this.requestTagJpaController;
     }
 
     public RequestTagReferenceJpaController getRequestTagReferenceJpaController() {
-        return requestTagReferenceJpaController;
+        return this.requestTagReferenceJpaController;
     }
 }

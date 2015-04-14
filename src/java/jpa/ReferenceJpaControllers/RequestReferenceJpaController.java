@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package jpa.ReferenceJpaControllers;
 
 import DAO.exceptions.NonexistentEntityException;
@@ -17,7 +16,6 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-
 
 /**
  *
@@ -43,7 +41,6 @@ public class RequestReferenceJpaController implements Serializable {
             em = getEntityManager();
             em.persist(requestReference);
             em.flush();
-            System.out.println("getIdRequestReference():"+ requestReference.getIdRequestReference());
         } catch (Exception ex) {
             try {
 
@@ -68,7 +65,7 @@ public class RequestReferenceJpaController implements Serializable {
 
         } catch (Exception ex) {
             try {
- 
+
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -159,5 +156,5 @@ public class RequestReferenceJpaController implements Serializable {
             em.close();
         }
     }
-    
+
 }
