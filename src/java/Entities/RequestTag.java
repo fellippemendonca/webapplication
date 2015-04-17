@@ -57,7 +57,7 @@ public class RequestTag implements Serializable {
     }
 
     public Integer getIdRequestTag() {
-        return idRequestTag;
+        return this.idRequestTag;
     }
 
     public void setIdRequestTag(Integer idRequestTag) {
@@ -65,7 +65,7 @@ public class RequestTag implements Serializable {
     }
 
     public String getTagValue() {
-        return tagValue;
+        return this.tagValue;
     }
 
     public void setTagValue(String tagValue) {

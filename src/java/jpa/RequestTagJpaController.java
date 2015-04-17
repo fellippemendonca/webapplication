@@ -17,7 +17,6 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.transaction.UserTransaction;
 import jpa.exceptions.NonexistentEntityException;
 import jpa.exceptions.RollbackFailureException;
 
@@ -40,13 +39,11 @@ public class RequestTagJpaController implements Serializable {
     public RequestTag create(RequestTag requestTag) throws RollbackFailureException, Exception {
         EntityManager em = null;
         try {
-
             em = getEntityManager();
             em.persist(requestTag);
             em.flush();
         } catch (Exception ex) {
             try {
-
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -181,8 +178,8 @@ public class RequestTagJpaController implements Serializable {
         if (find(requestTag) != null) {
             return find(requestTag);
         } else {
-            create(requestTag);
-            return find(requestTag);
+            
+            return create(requestTag);//find(requestTag);
         }
     }
 
@@ -197,7 +194,6 @@ public class RequestTagJpaController implements Serializable {
     public List<JsonTag> listJsonTagEntities() {
         List<JsonTag> list = new ArrayList();
         for(RequestTag m : findRequestTagEntities(true, -1, -1)){
-            //System.out.println("Found Tags... ID:"+m.getIdRequestTag()+", Name:"+m.getTagValue());
             list.add(new JsonTag(m.getIdRequestTag(), m.getTagValue()));
         }
         return list;
@@ -213,6 +209,4 @@ public class RequestTagJpaController implements Serializable {
         }
         return list;
     }
-
-    
 }

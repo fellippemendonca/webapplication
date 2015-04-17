@@ -162,8 +162,8 @@ public class EnvironmentJpaController implements Serializable {
         if(find(environment)!=null){
             return find(environment);
         }else{
-            create(environment);
-            return find(environment);
+           
+            return create(environment);//find(environment);
         }
     }
 

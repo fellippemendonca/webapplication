@@ -182,8 +182,8 @@ public class PayloadJpaController implements Serializable {
         if (find(payload) != null) {
             return find(payload);
         } else {
-            create(payload);
-            return find(payload);
+            
+            return create(payload);//find(payload);
         }
     }
     

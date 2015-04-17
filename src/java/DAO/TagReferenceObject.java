@@ -31,19 +31,17 @@ public class TagReferenceObject {
         this.requestTag = new RequestTag(0, "");
     }
     
-    public TagReferenceObject(DataAccessObject dao, String json) {
-        //Gson gson = new Gson();
-        //this.jsonTag = gson.fromJson(json, JsonTag.class);
-        this.jsonTag = new JsonTag(0,json);
-        this.requestTag = new RequestTag(0, jsonTag.getName());
-        this.requestTagReference = null;
+    public TagReferenceObject(DataAccessObject dao, String name) {
         this.dao = dao;
+        this.requestTag = new RequestTag(0, name);
+        this.jsonTag = new JsonTag(0,name);
+        this.requestTagReference = null;
     }
     
     public TagReferenceObject(RequestTagReference requestTagReference, DataAccessObject dao) {
         this.requestTagReference = requestTagReference;
         this.dao = dao;
-        this.requestTag = this.dao.getRequestTagJpaController().findRequestTag(this.requestTagReference.getIdRequestTag());
+        this.requestTag = dao.getRequestTagJpaController().findRequestTag(this.requestTagReference.getIdRequestTag());
         this.jsonTag = new JsonTag(this.requestTag.getIdRequestTag(), this.requestTag.getTagValue());
     }
 
@@ -59,7 +57,7 @@ public class TagReferenceObject {
         persistRequestTag();
         RequestTagReference tmp = new RequestTagReference(0, requestReference.getIdRequestReference(), this.requestTag.getIdRequestTag());
         try {
-            this.requestTagReference = dao.getRequestTagReferenceJpaController().create(tmp);
+            this.requestTagReference = this.dao.getRequestTagReferenceJpaController().create(tmp);
             return true;
         } catch (NamingException ex) {
             Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);

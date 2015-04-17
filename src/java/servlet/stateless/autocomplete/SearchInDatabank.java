@@ -57,12 +57,15 @@ public class SearchInDatabank {
             case "headervalue":
                 search = this.rob.listHeaderValuesFromDB();
                 break;
+            case "tag":
+                search = this.rob.listTagValuesFromDB();
+                break;
         }
         return search;
     }
     
     public List<JsonTag> selectTagArrayFrom() {
-        return this.rob.listTagValuesFromDB();
+        return this.rob.listJsonTagValuesFromDB();
     }
     
 }

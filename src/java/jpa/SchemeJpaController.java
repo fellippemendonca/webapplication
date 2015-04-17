@@ -171,8 +171,8 @@ public class SchemeJpaController implements Serializable {
         if (find(scheme) != null) {
             return find(scheme);
         } else {
-            create(scheme);
-            return find(scheme);
+            
+            return create(scheme);//find(scheme);
         }
     }
     

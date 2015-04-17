@@ -171,8 +171,7 @@ public class PathJpaController implements Serializable {
         if (find(path) != null) {
             return find(path);
         } else {
-            create(path);
-            return find(path);
+            return create(path);
         }
     }
     

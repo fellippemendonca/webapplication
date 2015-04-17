@@ -2,15 +2,18 @@
 $(document).ready(function() {
 
     $("#submit-request-info").click(function() {
+        $("body").toggleClass("wait");
         var jsonRequestObj = fillRequestObject();
         if (jsonRequestObj === null) {
             //do nothing
         } else {
             $.post('restexecutorservlet', {"jsonRequestObj": jsonRequestObj},
             function(resp) { // on success
+                $("body").toggleClass("wait");
                 printResponse(resp);
             })
                     .fail(function() { //on failure
+                        $("body").toggleClass("wait");
                         alert("Falha ao executar o request!!");
                     });
         }
@@ -24,6 +27,8 @@ $(document).ready(function() {
             $.post('requesthandlerservlet', {"jsonRequestObj": jsonRequestObj, operation: "insert"},
             function(resp) { // on success
                 alert(resp);
+                elementClear();
+                RequestTableData('tag-array');
             })
                     .fail(function() { //on failure
                         alert("Falha inserir o novo request!");
@@ -39,6 +44,8 @@ $(document).ready(function() {
             $.post('requesthandlerservlet', {"jsonRequestObj": jsonRequestObj, operation: "update"},
             function(resp) { // on success
                 alert(resp);
+                elementClear();
+                RequestTableData('tag-array');
             })
                     .fail(function() { //on failure
                         alert("Falha ao atualizar o request!");
@@ -54,6 +61,8 @@ $(document).ready(function() {
             $.post('requesthandlerservlet', {"jsonRequestObj": jsonRequestObj, operation: "remove"},
             function(resp) { // on success
                 alert(resp);
+                elementClear();
+                RequestTableData('tag-array');
             })
                     .fail(function() { //on failure
                         alert("Falha ao remover o request!");
@@ -66,7 +75,15 @@ $(document).ready(function() {
 
 
 function fillRequestObject() {
+    
     var id = $("#request-id").val();
+    if ($("#request-id").val() === "") {
+        id = "0";
+    } else {
+        id = $("#request-id").val();
+    }
+    
+    
     var Environment = $("#environment").val();
     var Method = $("#method").val();
     var Scheme = $("#scheme").val();
@@ -91,8 +108,9 @@ function fillRequestObject() {
     populateDualArray(Parameters, "ParameterName", "ParameterValue");
 
     var Tags = new Array();
+    //Tags = $("#request-tags").tagit("assignedTags");
     populateTagArray(Tags, "request-tags");
-
+    //populateTagList(Tags, "request-tags");
     //-----
 
     if (Environment === "" || Method === "" || Scheme === "" || Host === "" || Path === "") {
@@ -114,7 +132,6 @@ function fillRequestObject() {
             , jsonTags: Tags};
 
         var jsonRequestObj = JSON.stringify(RequestObj);
-        alert(jsonRequestObj);
         return jsonRequestObj;
     }
 }
@@ -143,10 +160,10 @@ function populateDualArray(arrayToFill, input1, input2) {
     }
 }
 
-function populateTagArray(arrayToFill, input2) {
-    if (document.getElementById(input2).value != "") {
-        var arr1 = new Array();
-        arr1 = document.getElementById(input2).value.split(",").map(String);
+function populateTagArray(arrayToFill, tagElement) {
+    var arr1 = new Array();
+    arr1 = $("#"+tagElement).tagit("assignedTags");
+    if (arr1.length > 0) {
         $.each(arr1, function(i, tag) {
             var h = {id: 0, name: tag};
             arrayToFill.push(h);
@@ -157,7 +174,7 @@ function populateTagArray(arrayToFill, input2) {
 function printResponse(json) {
     var request = json.request;
     var responseStatus = json.status;
-    var responseContents = json.contents;
+    var responseContents = JSON.stringify(JSON.parse(json.contents),null,4);  
 
     var responseTable = "<table id='responseTable1' class='table table-bordered' cellspacing='0' width='100%'>";
     responseTable += "<thead><tr><th>Request</th><th>Response Status</th></th></tr></thead><tbody>";
@@ -165,8 +182,30 @@ function printResponse(json) {
     responseTable += "</tbody></table>";
 
     responseTable += "<br><h4>Response Contents:</h4><br>";
+    responseTable += "<div id='responseContents-div'>"+syntaxHighlight(responseContents)+"</div>";
 
-    responseTable += "<div id='responseContents-div'>" + responseContents + "</div>";
     $("#response-div").empty();
     $("#response-div").append(responseTable);
+}
+
+function syntaxHighlight(json) {
+    if (typeof json != 'string') {
+         json = JSON.stringify(json, undefined, 2);
+    }
+    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+        var cls = 'number';
+        if (/^"/.test(match)) {
+            if (/:$/.test(match)) {
+                cls = 'key';
+            } else {
+                cls = 'string';
+            }
+        } else if (/true|false/.test(match)) {
+            cls = 'boolean';
+        } else if (/null/.test(match)) {
+            cls = 'null';
+        }
+        return '<span class="' + cls + '">' + match + '</span>';
+    });
 }

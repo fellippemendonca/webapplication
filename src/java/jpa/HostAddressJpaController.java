@@ -163,8 +163,8 @@ public class HostAddressJpaController implements Serializable {
         if(find(host)!=null){
             return find(host);
         }else{
-            create(host);
-            return find(host);
+            
+            return create(host);//find(host);
         }
     }
 

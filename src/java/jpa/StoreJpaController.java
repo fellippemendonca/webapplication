@@ -197,8 +197,8 @@ public class StoreJpaController implements Serializable {
         if(find(store)!=null){
             return find(store);
         }else{
-            create(store);
-            return find(store);
+            
+            return create(store);//find(store);
         }
     }
     

@@ -25,7 +25,7 @@ public class ResponseContents {
     public ResponseContents() {
         this.request  = "";
         this.status   = "";
-        this.contents = null;
+        this.contents = "";
     }
     
     public ResponseContents(String request, String status, String contents) {

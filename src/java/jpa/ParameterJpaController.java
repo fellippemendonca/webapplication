@@ -23,13 +23,12 @@ import jpa.exceptions.RollbackFailureException;
  * @author fellippe.mendonca
  */
 public class ParameterJpaController implements Serializable {
-    
+
     private EntityManagerFactory emf = null;
 
     public ParameterJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
-    
 
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
@@ -156,7 +155,7 @@ public class ParameterJpaController implements Serializable {
             em.close();
         }
     }
-    
+
     public Parameter find(Parameter parameter) {
         EntityManager em = getEntityManager();
         Query query = em.createNamedQuery("Parameter.findByParameterNameAndValue");
@@ -178,22 +177,27 @@ public class ParameterJpaController implements Serializable {
         if (find(parameter) != null) {
             return find(parameter);
         } else {
-            create(parameter);
-            return find(parameter);
+
+            return create(parameter);//find(parameter);
         }
     }
-    
+
     public List<String> listParameterNameEntities() {
         List<String> list = new ArrayList();
-        for(Parameter m : findParameterEntities(true, -1, -1)){
-            list.add(m.getParameterName());
+        for (Parameter m : findParameterEntities(true, -1, -1)) {
+            if (list.contains(m.getParameterName()) == false) {
+                list.add(m.getParameterName());
+            }
         }
         return list;
     }
+
     public List<String> listParameterValueEntities() {
         List<String> list = new ArrayList();
-        for(Parameter m : findParameterEntities(true, -1, -1)){
-            list.add(m.getParameterValue());
+        for (Parameter m : findParameterEntities(true, -1, -1)) {
+            if (list.contains(m.getParameterValue()) == false) {
+                list.add(m.getParameterValue());
+            }
         }
         return list;
     }

@@ -1,9 +1,10 @@
 // When the page is fully loaded...
 $(document).ready(function() {
     RequestTableData('tag-array');
-
+   
     $("#submit-tag-filter").click(function() {
         $("#request-list").empty();
+        elementClear();
         RequestTableData('tag-array');
     });
 
@@ -74,19 +75,19 @@ function Synthesizer(list) {
         el('path').value = requestList[row.cells[0].innerHTML].path;
         el('Payload').value = requestList[row.cells[0].innerHTML].payload;
 
-        document.getElementById('Template').innerHTML = "";
+        //document.getElementById('Template').innerHTML = "";
         var templateList = requestList[row.cells[0].innerHTML].templates;
         $.each(templateList, function(i, template) {
             addElement('Template', template);
         });
 
-        document.getElementById('Header').innerHTML = "";
+        //document.getElementById('Header').innerHTML = "";
         var headerList = requestList[row.cells[0].innerHTML].headers;
         $.each(headerList, function(i, header) {
             addElement2('Header', header.name, header.value);
         });
 
-        document.getElementById('Parameter').innerHTML = "";
+        //document.getElementById('Parameter').innerHTML = "";
         var parameterList = requestList[row.cells[0].innerHTML].parameters;
         $.each(parameterList, function(i, parameter) {
             addElement2('Parameter', parameter.name, parameter.value);
@@ -94,15 +95,13 @@ function Synthesizer(list) {
 
         var tagList = requestList[row.cells[0].innerHTML].jsonTags;
         $.each(tagList, function(i, tag) {
-            $('#request-tags').tagsinput('add', tag.name);
+            //$('#request-tags').tagsinput('add', tag.name);
+            //myFunction("request-tags",tag.name);
+            $('#request-tags').tagit('createTag', tag.name);
         });
-        
-        
-
+        document.getElementById("navbar").focus();
     }
 }
-
-
 
 //------------------------------------------------------------------------------
 function compareLists(list1, list2) {

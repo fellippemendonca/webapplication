@@ -14,10 +14,12 @@
     border: 2px solid #a1a1a1;
     padding: 20px; 
     background: #dddddd;
-    width: 1200px;
+    width: 800px;
     overflow-y: scroll;
     display:block;
-    height:200px;
+    height:620px;
+    white-space: pre; 
+    font-family: monospace;
 }
 
 #requestTable tr.normal td {
@@ -40,3 +42,23 @@
     height: 20em;
 }
 
+
+
+html,body{
+    height: 100%;
+}
+
+body.wait, body.wait *{
+ cursor: wait !important;   
+}
+
+div{
+   cursor: pointer;   
+}
+
+pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
+.string { color: blue; }
+.number { color: blue; }
+.boolean { color: blue; }
+.null { color: blue; }
+.key { color: black; }

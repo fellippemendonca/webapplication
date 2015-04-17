@@ -42,11 +42,23 @@ function removeLastElement(divName) {
 }
 
 function elementClear() {
+    //RequestTableData('tag-array');
     ElementCounter = 0;
     ElementCounter2 = 0;
     document.getElementById("response-div").innerHTML = "";
-    $('#request-tags').tagsinput('removeAll');
-    //document.getElementById("update-button-div").innerHTML = "";
+    $('#request-tags').tagit('removeAll');
+    
+    document.getElementById('request-id').value = "";
+    document.getElementById('method').value = "";
+    document.getElementById('environment').value = "";
+    document.getElementById('scheme').value = "";
+    document.getElementById('host').value = "";
+    document.getElementById('path').value = "";
+    document.getElementById('Payload').value = "";
+
+    document.getElementById('Template').innerHTML = "";
+    document.getElementById('Header').innerHTML = "";
+    document.getElementById('Parameter').innerHTML = "";
 }
 
 //função para buscar valores dos campos dinamicos no servlet
@@ -70,6 +82,8 @@ function searchParameters(parameter) {
 
 //Busca valores dos campos fixos no documento.
 $(document).ready(function() {
+    document.getElementById("navbar").focus();
+    
     $("#method").autocomplete(searchParameters("method"), "").focus(function() {
         $(this).autocomplete('search', $(this).val());
     });
@@ -85,19 +99,21 @@ $(document).ready(function() {
     $("#path").autocomplete(searchParameters("path"), "").focus(function() {
         $(this).autocomplete('search', $(this).val());
     });
-});
 
-$(document).ready(function() {
-    $('#tag-array').tagsinput({
-        itemValue: 'name',
-        typeaheadjs: {
-            name: 'jsonTagNameOnly',
-            displayKey: 'name',
-            source: function(query, process) {
-                return $.get('ajaxautocompleteservletsimple', {"term": query}, function(data) {
-                    return process(data.jsonTagNameOnly);
-                });
-            }
-        }
+    $("#tag-array").tagit({
+        autocomplete: searchParameters("tag"),
+        triggerKeys: ['enter', 'comma', 'tab'],
+        sortable: true,
+        allowSpaces: true,
+        showAutocompleteOnFocus: true
     });
+
+    $("#request-tags").tagit({
+        autocomplete: searchParameters("tag"),
+        triggerKeys: ['enter', 'comma', 'tab'],
+        sortable: true,
+        allowSpaces: true//,
+        //showAutocompleteOnFocus: false
+    });
+
 });

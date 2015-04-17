@@ -147,13 +147,12 @@ public class RequestObjectList {
     }
     
     //Tags
-    public List<JsonTag> listTagValuesFromDB(){
+    public List<JsonTag> listJsonTagValuesFromDB(){
         return this.dao.getRequestTagJpaController().listJsonTagEntities();
     }
     
-    /*public List<JsonTag> getTagIdFromDB(String jsonTagList){
-        
-        //return this.dao.getRequestTagJpaController().findRequestTag();
-    }*/
+    public List<String> listTagValuesFromDB(){
+        return this.dao.getRequestTagJpaController().listRequestTagEntities();
+    }
     
 }

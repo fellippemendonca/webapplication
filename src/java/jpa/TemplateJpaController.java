@@ -153,6 +153,7 @@ public class TemplateJpaController implements Serializable {
     
     public Template find(Template template) {
         EntityManager em = getEntityManager();
+        em.flush();
         Query query = em.createNamedQuery("Template.findByTemplateValue");
         query.setParameter("templateValue", template.getTemplateValue());
         List<Template> templateList = (List<Template>) query.getResultList();
@@ -171,17 +172,18 @@ public class TemplateJpaController implements Serializable {
         if (find(template) != null) {
             return find(template);
         } else {
-            create(template);
-            return find(template);
+            
+            return create(template);//find(template);
         }
     }
     
     public List<String> listTemplateEntities() {
         List<String> list = new ArrayList();
         for(Template m : findTemplateEntities(true, -1, -1)){
-            list.add(m.getTemplateValue());
+            if (list.contains(m.getTemplateValue()) == false) {
+                list.add(m.getTemplateValue());
+            }
         }
         return list;
     }
-    
 }

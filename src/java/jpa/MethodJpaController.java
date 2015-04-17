@@ -170,8 +170,8 @@ public class MethodJpaController implements Serializable {
         if (find(method) != null) {
             return find(method);
         } else {
-            create(method);
-            return find(method);
+            
+            return create(method);//find(method);
         }
     }
     

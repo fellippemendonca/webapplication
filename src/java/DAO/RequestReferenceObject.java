@@ -47,9 +47,9 @@ public class RequestReferenceObject {
 
 //-----------------------JSON CONSTRUCTOR---------------------------------------
     public RequestReferenceObject(DataAccessObject dao, String json) {
+        System.out.println("--------Sent JSON : "+json);
         this.dao = dao;
         this.jsonRequestObject = new Gson().fromJson(json, JsonRequestObject.class);
-
         this.environment = new Environment(0, this.jsonRequestObject.getEnvironment().toUpperCase());
         this.method = new Method(0, this.jsonRequestObject.getMethod().toUpperCase());
         this.scheme = new Scheme(0, this.jsonRequestObject.getScheme());
@@ -91,7 +91,6 @@ public class RequestReferenceObject {
             if (tag.getName().isEmpty()) {
                 System.out.println("Empty tag value not inserted.");
             } else {
-                System.out.println("JsonTags:"+tag.getName().toUpperCase());
                 this.tagReferenceObjectList.add(new TagReferenceObject(this.dao, tag.getName().toUpperCase()));
             }
         }
@@ -254,7 +253,7 @@ public class RequestReferenceObject {
             }
             if (this.tagReferenceObjectList.isEmpty() == false) {
                 for (TagReferenceObject t : this.tagReferenceObjectList) {
-                    t.persistTagReference(requestReference);
+                    t.persistTagReference(this.requestReference);
                 }
             }
             return true;

@@ -161,8 +161,8 @@ public class HeaderJpaController implements Serializable {
         if (find(object) != null) {
             return find(object);
         } else {
-            create(object);
-            return find(object);
+            
+            return create(object);//find(object);
         }
     }
 
@@ -182,14 +182,18 @@ public class HeaderJpaController implements Serializable {
     public List<String> listHeaderNameEntities() {
         List<String> list = new ArrayList();
         for(Header m : findHeaderEntities(true, -1, -1)){
-            list.add(m.getHeaderName());
+            if (list.contains(m.getHeaderName()) == false) {
+                list.add(m.getHeaderName());
+            }
         }
         return list;
     }
     public List<String> listHeaderValueEntities() {
         List<String> list = new ArrayList();
         for(Header m : findHeaderEntities(true, -1, -1)){
-            list.add(m.getHeaderValue());
+            if (list.contains(m.getHeaderValue()) == false) {
+                list.add(m.getHeaderValue());
+            }
         }
         return list;
     }

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -33,7 +34,8 @@ public class RestConnFactory {
         try {
             this.httpResponse = this.httpclient.execute(httprequest);
             this.responseObj.setStatus(this.httpResponse.getStatusLine().toString());
-            if (this.httpResponse.getEntity() == null) {
+            
+            if (this.httpResponse.getEntity() == null || this.httpResponse.getStatusLine().toString().contains("500")) {
                 this.responseObj.setContents("{\"no\":\"value\"}");
             } else {
                 this.responseObj.setContents(EntityUtils.toString(this.httpResponse.getEntity()));

@@ -40,11 +40,14 @@ public class RestExecutorServlet extends HttpServlet {
          */
         response.setContentType("application/json;charset=UTF-8");
         try {
-            Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+            
             ResponseContents RC2 = sless.executaNovoCenario(request.getParameter("jsonRequestObj"));
             System.out.println("Request Enviado ao Servlet:\n" + request.getParameter("jsonRequestObj") + "\n");
+            
+            Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+            String responseContents = gson.toJson(RC2);
             response.setStatus(200);
-            response.getWriter().write(gson.toJson(RC2));
+            response.getWriter().write(responseContents);
         } catch (NamingException | URISyntaxException ex) {
             Logger.getLogger(RestExecutorServlet.class.getName()).log(Level.SEVERE, null, ex);
         }

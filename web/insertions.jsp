@@ -15,9 +15,6 @@
         <title>Ajax - Integrado a Servlets</title>
 
         <!-- Load the scripts needed for the application.-->
-
-
-
         <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.3.min.js" language="Javascript"></script> 
         <script type="text/javascript" src="http://code.jquery.com/ui/1.11.4/jquery-ui.js" language="Javascript"></script>
 
@@ -25,19 +22,15 @@
         <link rel="stylesheet" href="http://cdn.datatables.net/1.10.5/css/jquery.dataTables.css"/>
         <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
 
+        <!-- Bootstrap -->
+        <script type="text/javascript" src="bootstrap-3.3.4-dist/js/bootstrap.min.js" language="Javascript"></script>
+        <link rel="stylesheet" href="bootstrap-3.3.4-dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="bootstrap-3.3.4-dist/css/bootstrap-theme.min.css" >
 
-        <!-- Bootstrap 
-        <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">-->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap-theme.min.css">
-        <script type="text/javascript" src="bootstrap/js/bootstrap.min.js" language="Javascript"></script>
-
-        <!--  Bootstrap TagsInput -->
-        <script type="text/javascript" src="bootstrap/bootstrap-tagsinput/bootstrap-tagsinput.min.js" language="Javascript" ></script>
-        <link href="bootstrap/bootstrap-tagsinput/bootstrap-tagsinput.css" rel="stylesheet">
-        <link href="bootstrap/bootstrap-tagsinput/bootstrap-tagsinput.less" rel="stylesheet">
-
-        <script type="text/javascript" src="typehead/typehead.js" language="Javascript" ></script>
+        <!--  TagIt -->
+        <link href="tagit/css/jquery.tagit.css" rel="stylesheet" type="text/css">
+        <link href="tagit/css/tagit.ui-zendesk.css" rel="stylesheet" type="text/css">
+        <script src="tagit/js/tag-it.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Load the scripts needed for page functions. -->
         <script type="text/javascript" src="javascript-files/sendToServlet.js" language="Javascript" ></script>
@@ -62,138 +55,143 @@
             </div>
             <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">Cadastro</a></li>
-                    <li><a href="#about">Sobre</a></li>
-                    <li><a href="#contact">Contato</a></li>
+                    <li class="active"><a href="http://10.116.45.34:8080/servlet-stateless/insertions.jsp">Cadastro</a></li>
+                    <li><a href="http://10.116.45.34:8080/servlet-stateless/About.html">Sobre</a></li>
+                    <li><a href="https://mktplace.atlassian.net/secure/Dashboard.jspa">Contato</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
         </div>
     </nav>
     <br><br><br>
 
-    
+
     <div class="container">
-       
+
+        <!--<div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">Rótulos</span>-->
+        <h4>Labels:</h4>
+        <input type="text" id="tag-array" class="form-control" placeholder="Rótulos..." size="5">
+        <!--</div>
+        
+        <input type="text" id="tag-array" class="typeahead form-control" size="10"/>
+        <!--<input type="text" id="tag-array2" class="typeahead form-control" size="10"/>-->
+        <input type="submit" class="btn btn-primary" id="submit-tag-filter" value="Filtrar" align="left"/>  
+    </div>
+
+
+    <br>
+
+    <div class="container">
+        <div id="request-list"></div><br>
+    </div>
+
+    <!--h4>Preencha com as informações da requisição e pressione Executar.</h4-->
+    <br>
+    <div id="section">
         <table class="table">
             <tbody>
-            <td>   <!--input type="text" class="typeahead" id="tag-array" size="30"/-->  
-                <input type="text" id="tag-array" class="form-control" size="10" placeholder="Request tags..." aria-describedby="basic-addon1" autocomplete="on">
-            </td>
-            <td><input type="submit" class="btn btn-primary" id="submit-tag-filter" value="Filtrar" align="left"/></td>
+                <tr>
+                    <td>
+                        <fieldset disabled>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1">ID</span>
+                                <input type="text" id="request-id" class="form-control" size="1" placeholder="#" aria-describedby="basic-addon1" autocomplete="on">
+                            </div>
+                        </fieldset>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">Method</span>
+                            <input type="text" id="method" class="form-control" size="5" placeholder="GET" aria-describedby="basic-addon1" autocomplete="on">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">Environment</span>
+                            <input type="text" id="environment" class="form-control" size="5" placeholder="HLG" aria-describedby="basic-addon1" autocomplete="on">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">Scheme</span>
+                            <input type="text" id="scheme" class="form-control" size="5" placeholder="http" aria-describedby="basic-addon1" autocomplete="on">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">Host</span>
+                            <input type="text" id="host" class="form-control" size="5" placeholder="api.extra.com.br" aria-describedby="basic-addon1" autocomplete="on">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">Path</span>
+                            <input type="text" id="path" class="form-control" size="5" placeholder="api/v1/sellerItems" aria-describedby="basic-addon1" autocomplete="on">
+                        </div>
+                    </td>
+                </tr>
             </tbody>
         </table>
-    </div>
 
-</div>
-<br>
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td>
+                        <span class="input-group-addon" id="basic-addon1">Template:</span>
+                        <div id="Template" align="left">
 
-<div class="container">
-    <div id="request-list"></div><br>
-</div>
-
-<!--h4>Preencha com as informações da requisição e pressione Executar.</h4-->
-<br>
-<div id="section">
-    <table class="table">
-        <tbody>
-            <tr>
-                <td>
-                    <fieldset disabled>
-                        <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon1">ID</span>
-                            <input type="text" id="request-id" class="form-control" size="1" placeholder="#" aria-describedby="basic-addon1" autocomplete="on">
                         </div>
-                    </fieldset>
-                </td>
-                <td>
-                    <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon1">Method</span>
-                        <input type="text" id="method" class="form-control" size="5" placeholder="GET" aria-describedby="basic-addon1" autocomplete="on">
-                    </div>
-                </td>
-                <td>
-                    <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon1">Environment</span>
-                        <input type="text" id="environment" class="form-control" size="5" placeholder="HLG" aria-describedby="basic-addon1" autocomplete="on">
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon1">Scheme</span>
-                        <input type="text" id="scheme" class="form-control" size="5" placeholder="http" aria-describedby="basic-addon1" autocomplete="on">
-                    </div>
-                </td>
-                <td>
-                    <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon1">Host</span>
-                        <input type="text" id="host" class="form-control" size="5" placeholder="api.extra.com.br" aria-describedby="basic-addon1" autocomplete="on">
-                    </div>
-                </td>
-                <td>
-                    <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon1">Path</span>
-                        <input type="text" id="path" class="form-control" size="5" placeholder="api/v1/sellerItems" aria-describedby="basic-addon1" autocomplete="on">
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+                        <input type="button" class="btn btn-primary" value="+" onClick="addElement('Template', '');">
+                        <input type="button"  class="btn btn-danger" value="clear" onClick="removeLastElement('Template');">
+                    </td>
+                    <td>
+                        <span class="input-group-addon" id="basic-addon1">Header:</span>
+                        <div id="Header" align="left">
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <td>
-                    <span class="input-group-addon" id="basic-addon1">Template:</span>
-                    <div id="Template" align="left">
+                        </div>
+                        <input type="button" class="btn btn-primary" value="+" onClick="addElement2('Header', '', '');">
+                        <input type="button"  class="btn btn-danger" value="clear" onClick="removeLastElement('Header');">
+                    </td>
+                    <td>
+                        <span class="input-group-addon" id="basic-addon1">Parameter:</span>
+                        <div id="Parameter" align="left">
 
-                    </div>
-                    <input type="button" class="btn btn-primary" value="+" onClick="addElement('Template', '');">
-                    <input type="button"  class="btn btn-danger" value="-" onClick="removeLastElement('Template');">
-                </td>
-                <td>
-                    <span class="input-group-addon" id="basic-addon1">Header:</span>
-                    <div id="Header" align="left">
+                        </div>
+                        <input type="button"  class="btn btn-primary" value="+" onClick="addElement2('Parameter', '', '');">
+                        <input type="button"  class="btn btn-danger" value="clear" onClick="removeLastElement('Parameter');">
+                    </td>
+                </tr>  
+            </tbody>
+        </table>
 
-                    </div>
-                    <input type="button" class="btn btn-primary" value="+" onClick="addElement2('Header', '', '');">
-                    <input type="button"  class="btn btn-danger" value="-" onClick="removeLastElement('Header');">
-                </td>
-                <td>
-                    <span class="input-group-addon" id="basic-addon1">Parameter:</span>
-                    <div id="Parameter" align="left">
+        <div class="container">
+            <h4>Json:</h4>
+            <textarea id="Payload" rows="1" cols="10"></textarea>
+            <!--<input type="text" id="request-tags" class="form-control" size="30" placeholder="Request tags..." aria-describedby="basic-addon1">
+            <input type="text" id="request-tags" class="form-control" placeholder="Rótulos..." size="5">-->
+            <h4>Labels:</h4><ul id="request-tags">
+ 
+            </ul>
+        </div>
+        <br><br><br>
 
-                    </div>
-                    <input type="button"  class="btn btn-primary" value="+" onClick="addElement2('Parameter', '', '');">
-                    <input type="button"  class="btn btn-danger" value="-" onClick="removeLastElement('Parameter');">
-                </td>
-            </tr>  
-        </tbody>
-    </table>
+        <div id="update-button-div">
+            <input type="submit" class="btn btn-primary" id="submit-request-info" value="Executar" align="left">
+            <input type="submit" class="btn btn-success" id="insert-request-info" value="Criar" align="center">
+            <input type="submit" class="btn btn-warning" id="update-request-info" value="Atualizar" align="right">
+            <input type="submit" class="btn btn-danger disabled" id="remove-request-info" value="Remover" align="right">
+        </div>
+        <!--input type="submit" class="btn btn-warning" id="update-request-info" value="Update"-->
 
-    <div class="container"><h4>Json:</h4><textarea id="Payload" rows="1" cols="10"></textarea>
-        <div class="input-group">
-            <input type="text" id="request-tags" class="form-control" size="30" placeholder="Request tags..." aria-describedby="basic-addon1" data-role="tagsinput" autocomplete="on">
+        <br><br>
+        <div class="container">
+            <div id="response-div"></div>
         </div>
     </div>
-    <br><br><br>
 
-    <div id="update-button-div">
-        <input type="submit" class="btn btn-primary" id="submit-request-info" value="Executar" align="left">
-        <input type="submit" class="btn btn-success" id="insert-request-info" value="Criar" align="center">
-        <input type="submit" class="btn btn-warning" id="update-request-info" value="Atualizar" align="right">
-        <input type="submit" class="btn btn-danger" id="remove-request-info" value="Remover" align="right">
-    </div>
-    <!--input type="submit" class="btn btn-warning" id="update-request-info" value="Update"-->
-
-    <br><br>
-    <div class="container">
-        <div id="response-div"></div>
-    </div>
-</div>
-
-<br>    
+    <br>   
 
 </body>
 </html>
