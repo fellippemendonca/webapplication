@@ -75,7 +75,6 @@ $(document).ready(function() {
 
 
 function fillRequestObject() {
-    
     var id = $("#request-id").val();
     if ($("#request-id").val() === "") {
         id = "0";
@@ -117,7 +116,6 @@ function fillRequestObject() {
         alert("Dados insuficientes para realizar o request!");
         return null;
     } else {
-
         var RequestObj = {
             dbId: id
             , environment: Environment

@@ -12,7 +12,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-        <title>Ajax - Integrado a Servlets</title>
+        <title>Cadastro de APIs</title>
 
         <!-- Load the scripts needed for the application.-->
         <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.3.min.js" language="Javascript"></script> 
@@ -66,26 +66,14 @@
 
 
     <div class="container">
-
-        <!--<div class="input-group">
-            <span class="input-group-addon" id="basic-addon1">Rótulos</span>-->
         <h4>Labels:</h4>
         <input type="text" id="tag-array" class="form-control" placeholder="Rótulos..." size="5">
-        <!--</div>
-        
-        <input type="text" id="tag-array" class="typeahead form-control" size="10"/>
-        <!--<input type="text" id="tag-array2" class="typeahead form-control" size="10"/>-->
         <input type="submit" class="btn btn-primary" id="submit-tag-filter" value="Filtrar" align="left"/>  
     </div>
-
-
     <br>
-
     <div class="container">
         <div id="request-list"></div><br>
     </div>
-
-    <!--h4>Preencha com as informações da requisição e pressione Executar.</h4-->
     <br>
     <div id="section">
         <table class="table">
@@ -102,13 +90,13 @@
                     <td>
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1">Method</span>
-                            <input type="text" id="method" class="form-control" size="5" placeholder="GET" aria-describedby="basic-addon1" autocomplete="on">
+                            <input type="text" id="method" class="form-control" size="5" placeholder="GET" aria-describedby="basic-addon1" maxlength="45" autocomplete="on">
                         </div>
                     </td>
                     <td>
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1">Environment</span>
-                            <input type="text" id="environment" class="form-control" size="5" placeholder="HLG" aria-describedby="basic-addon1" autocomplete="on">
+                            <input type="text" id="environment" class="form-control" size="5" placeholder="HLG" aria-describedby="basic-addon1" maxlength="45" autocomplete="on">
                         </div>
                     </td>
                 </tr>
@@ -116,19 +104,19 @@
                     <td>
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1">Scheme</span>
-                            <input type="text" id="scheme" class="form-control" size="5" placeholder="http" aria-describedby="basic-addon1" autocomplete="on">
+                            <input type="text" id="scheme" class="form-control" size="5" placeholder="http" aria-describedby="basic-addon1" maxlength="45" autocomplete="on">
                         </div>
                     </td>
                     <td>
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1">Host</span>
-                            <input type="text" id="host" class="form-control" size="5" placeholder="api.extra.com.br" aria-describedby="basic-addon1" autocomplete="on">
+                            <input type="text" id="host" class="form-control" size="5" placeholder="api.extra.com.br" aria-describedby="basic-addon1" maxlength="45" autocomplete="on">
                         </div>
                     </td>
                     <td>
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1">Path</span>
-                            <input type="text" id="path" class="form-control" size="5" placeholder="api/v1/sellerItems" aria-describedby="basic-addon1" autocomplete="on">
+                            <input type="text" id="path" class="form-control" size="5" placeholder="api/v1/sellerItems" aria-describedby="basic-addon1" maxlength="45" autocomplete="on">
                         </div>
                     </td>
                 </tr>
@@ -169,19 +157,27 @@
         <div class="container">
             <h4>Json:</h4>
             <textarea id="Payload" rows="1" cols="10"></textarea>
-            <!--<input type="text" id="request-tags" class="form-control" size="30" placeholder="Request tags..." aria-describedby="basic-addon1">
-            <input type="text" id="request-tags" class="form-control" placeholder="Rótulos..." size="5">-->
-            <h4>Labels:</h4><ul id="request-tags">
- 
+            <h4>Labels:</h4>
+            <ul id="request-tags">
             </ul>
         </div>
         <br><br><br>
 
         <div id="update-button-div">
-            <input type="submit" class="btn btn-primary" id="submit-request-info" value="Executar" align="left">
-            <input type="submit" class="btn btn-success" id="insert-request-info" value="Criar" align="center">
-            <input type="submit" class="btn btn-warning" id="update-request-info" value="Atualizar" align="right">
-            <input type="submit" class="btn btn-danger disabled" id="remove-request-info" value="Remover" align="right">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td>
+                            <input type="submit" class="btn btn-primary" id="submit-request-info" value="Executar" align="left">
+                        </td>
+                        <td>
+                            <input type="submit" class="btn btn-success" id="insert-request-info" value="Criar" align="center">
+                            <input type="submit" class="btn btn-warning" id="update-request-info" value="Atualizar" align="right">
+                            <input type="submit" class="btn btn-danger disabled" id="remove-request-info" value="Remover" align="right">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
         <!--input type="submit" class="btn btn-warning" id="update-request-info" value="Update"-->
 
@@ -190,9 +186,7 @@
             <div id="response-div"></div>
         </div>
     </div>
-
     <br>   
-
 </body>
 </html>
 
