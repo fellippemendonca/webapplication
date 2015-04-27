@@ -7,11 +7,8 @@
 package DAO;
 
 import Entities.ReferenceEntities.RequestReference;
-import Entities.ReferenceEntities.RequestTagReference;
-import Entities.RequestTag;
 import JsonObjects.JsonRequestObject;
 import JsonObjects.Tags.JsonTag;
-import JsonObjects.Tags.JsonTagList;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,26 +27,31 @@ public class RequestObjectList {
         this.requestRefObj = null;
     }
     
+    
+    
     public RequestReferenceObject setRequest(String json){
         this.requestRefObj = new RequestReferenceObject(this.dao,json);
         return this.requestRefObj;
     }
     
-    public boolean persistRequest(String json){
+    
+    /*--------------------------CRUD REQUESTS---------------------------------*/
+    public boolean createRequest(String json){
         this.requestRefObj = new RequestReferenceObject(this.dao,json);
         return this.requestRefObj.persistRequestReference();
     }
-    
     public boolean updateRequest(String json){
         this.requestRefObj = new RequestReferenceObject(this.dao,json);
         return this.requestRefObj.updateRequestReference();
     }
-    
     public boolean deleteRequest(String json){
         this.requestRefObj = new RequestReferenceObject(this.dao,json);
         return this.requestRefObj.deleteRequestReference();
     }
+    /*------------------------------------------------------------------------*/
     
+    
+    /*-----------RETORNA LISTA COM REQUESTS DA BASE DE DADOS------------------*/
     public String getJsonRequestList() throws NamingException{
         List<JsonRequestObject> requestList = new ArrayList();
         for (RequestReferenceObject rro : getObjectRequestList()) {
@@ -58,7 +60,6 @@ public class RequestObjectList {
         return "{\"requestList\":"+(new Gson().toJson(requestList))+"}";
     }
     
-    /*RETORNA LISTA COM REQUESTS DA BASE DE DADOS*/
     public List<RequestReferenceObject> getObjectRequestList() throws NamingException {
         List<RequestReferenceObject> requestObjectListDB = new ArrayList<>();
         for (RequestReference rr : this.dao.getRequestReferece()) {
@@ -66,35 +67,10 @@ public class RequestObjectList {
         }
         return requestObjectListDB;
     }
+    /*------------------------------------------------------------------------*/
     
     
-    public String getJsonFilteredRequestList(String jsonList) throws NamingException{
-        List<JsonRequestObject> requestList = new ArrayList();
-        for (RequestReferenceObject rro : getObjectRequestListTagFiltered(jsonList)) {
-            requestList.add(rro.getRequestObject());
-        }
-        return "{\"requestList\":"+(new Gson().toJson(requestList))+"}";
-    }
-    
-    /*RETORNA LISTA COM REQUESTS DA BASE DE DADOS FILTRADOS POR jsonList*/
-    public List<RequestReferenceObject> getObjectRequestListTagFiltered(String jsonList) throws NamingException {
-        JsonTagList jsonTagList = new Gson().fromJson(jsonList, JsonTagList.class);
-        List<RequestReferenceObject> requestObjectListDB = new ArrayList<>();
-        for (RequestReference rr : this.dao.getRequestReferece()) {
-            List<JsonTag> tagList2 = new ArrayList();
-            for(RequestTagReference tag: this.dao.getRequestTagReference(rr)){
-                tagList2.add(new TagReferenceObject(tag, this.dao).getJsonTag());
-            }
-            if(jsonTagList.getJsonTagList().containsAll(tagList2)){
-                requestObjectListDB.add(new RequestReferenceObject(this.dao,rr));
-            }
-        }
-        return requestObjectListDB;
-    }
-    
-    
-    /*METODOS DE LISTAGEM DE PARAMETROS*/
-    
+    /*-------------------METODOS DE LISTAGEM DE PARAMETROS--------------------*/
     //Methods
     public List<String> listMethodsFromDB(){
         return this.dao.getMethodJpaController().listMethodEntities();
@@ -154,5 +130,5 @@ public class RequestObjectList {
     public List<String> listTagValuesFromDB(){
         return this.dao.getRequestTagJpaController().listRequestTagEntities();
     }
-    
+    /*------------------------------------------------------------------------*/
 }

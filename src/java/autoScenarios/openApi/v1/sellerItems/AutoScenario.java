@@ -30,38 +30,20 @@ public class AutoScenario implements Serializable {
         return this.restRequesterList;
     }
     
-    /*public void fillRequestListFromDB() throws NamingException{
-        this.restRequesterList.clear();
-        this.restRequesterList = new ArrayList<>();
-        RequestObjectList rob = new RequestObjectList();
-        for(RequestReferenceObject rro:rob.getObjectRequestList()){
-            this.restRequesterList.add(rro.generateRestRequester());
-        }
-    }*/
-
     public String getRequest() throws NamingException {
         RequestObjectList rob = new RequestObjectList();
         return rob.getJsonRequestList();
     }
-    
-    public String getFilteredRequest(String jsonList) throws NamingException {
-        RequestObjectList rob = new RequestObjectList();
-        return rob.getJsonFilteredRequestList(jsonList);
-    }
-    
-    
     
     public ResponseContents execRequest(String json) throws NamingException, IOException, URISyntaxException {
         RequestObjectList rob = new RequestObjectList();
         return rob.setRequest(json).generateRestRequester().Request();
     }
     
-    
-    
 //--------------------------------CRUD REQUESTS---------------------------------
     public boolean createRequest(String json) throws NamingException, IOException, URISyntaxException {
         RequestObjectList rob = new RequestObjectList();
-        return rob.persistRequest(json);
+        return rob.createRequest(json);
     }
     
     public boolean updateRequest(String json) throws NamingException, IOException, URISyntaxException {

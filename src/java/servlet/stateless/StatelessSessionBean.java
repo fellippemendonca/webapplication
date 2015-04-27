@@ -18,17 +18,14 @@ public class StatelessSessionBean implements Serializable{
         AutoScenario autoScenario = new AutoScenario();
         return autoScenario.getRequest();
     } 
-    
-    public String getFilteredRequest(String jsonList) throws NamingException{
-        AutoScenario autoScenario = new AutoScenario();
-        return autoScenario.getFilteredRequest(jsonList);
-    } 
      
     public ResponseContents executaNovoCenario(String json) throws NamingException, IOException, URISyntaxException{
         AutoScenario autoScenario  = new AutoScenario();
         return autoScenario.execRequest(json);
     }
     
+    
+    /*-------------------------CRUD REQUEST REFERENCES------------------------*/
     public boolean criaNovoCenario(String json) throws NamingException, IOException, URISyntaxException{
         AutoScenario autoScenario  = new AutoScenario();
         return autoScenario.createRequest(json);
@@ -43,4 +40,5 @@ public class StatelessSessionBean implements Serializable{
         AutoScenario autoScenario  = new AutoScenario();
         return autoScenario.removeRequest(json);
     }
+    /*------------------------------------------------------------------------*/
 }

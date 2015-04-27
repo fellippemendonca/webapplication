@@ -56,6 +56,7 @@
             <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="http://10.116.45.34:8080/servlet-stateless/insertions.jsp">Cadastro</a></li>
+                    <li><a href="http://10.116.45.34:8080/servlet-stateless/validations.jsp">Validações</a></li>
                     <li><a href="http://10.116.45.34:8080/servlet-stateless/About.html">Sobre</a></li>
                     <li><a href="https://mktplace.atlassian.net/secure/Dashboard.jspa">Contato</a></li>
                 </ul>

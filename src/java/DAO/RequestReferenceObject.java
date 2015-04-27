@@ -47,7 +47,6 @@ public class RequestReferenceObject {
 
 //-----------------------JSON CONSTRUCTOR---------------------------------------
     public RequestReferenceObject(DataAccessObject dao, String json) {
-        System.out.println("--------Sent JSON : "+json);
         this.dao = dao;
         this.jsonRequestObject = new Gson().fromJson(json, JsonRequestObject.class);
         this.environment = new Environment(0, this.jsonRequestObject.getEnvironment().toUpperCase());
@@ -365,57 +364,54 @@ public class RequestReferenceObject {
             Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-//------------------------------------------------------------------------------
-
+    
+    /*------------------------------------------------------------------------*/
     public Payload getPayload() {
         return this.payload;
     }
 
     public void persistPayload() {
         try {
-            this.payload = this.dao.getPayloadJpaController().create(this.payload);//.findOrAdd(this.payload);
+            this.payload = this.dao.getPayloadJpaController().create(this.payload);
         } catch (Exception ex) {
             Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-//------------------------------------------------------------------------------
-
+    
+    /*------------------------------------------------------------------------*/
     public List<TemplateReferenceObject> getTemplateReferenceObjectList() {
         return templateReferenceObjectList;
     }
-
     public void setTemplateReferenceObjectList(List<TemplateReferenceObject> templateReferenceObjectList) {
         this.templateReferenceObjectList = templateReferenceObjectList;
     }
-
     public void addTemplateReferenceObject(TemplateReferenceObject templateReferenceObject) {
         this.templateReferenceObjectList.add(templateReferenceObject);
     }
 
+    /*------------------------------------------------------------------------*/
     public List<ParameterReferenceObject> getParameterReferenceObjectList() {
         return parameterReferenceObjectList;
     }
-
     public void setParameterReferenceObjectList(List<ParameterReferenceObject> parameterReferenceObjectList) {
         this.parameterReferenceObjectList = parameterReferenceObjectList;
     }
-
     public void addParameterReferenceObject(ParameterReferenceObject parameterReferenceObject) {
         this.parameterReferenceObjectList.add(parameterReferenceObject);
     }
 
+    /*------------------------------------------------------------------------*/
     public List<HeaderReferenceObject> getHeaderReferenceObjectList() {
         return headerReferenceObjectList;
     }
-
     public void setHeaderReferenceObjectList(List<HeaderReferenceObject> headerReferenceObjectList) {
         this.headerReferenceObjectList = headerReferenceObjectList;
     }
-
     public void addHeaderReferenceObject(HeaderReferenceObject headerReferenceObject) {
         this.headerReferenceObjectList.add(headerReferenceObject);
     }
 
+    /*------------------------------------------------------------------------*/
     public String getRequestObjectJson() {
         Gson gson = new Gson();
         return gson.toJson(this.jsonRequestObject);
@@ -424,37 +420,4 @@ public class RequestReferenceObject {
     public JsonRequestObject getRequestObject() {
         return this.jsonRequestObject;
     }
-
-    //public void setPath(String path) {
-    //    this.path = new Path(0, path);
-    //}
-    //public void setHost(String host) {
-    //    this.host = new HostAddress(0, host);
-    //}
-    //public void setScheme(String scheme) {
-    //    this.scheme = new Scheme(0, scheme);
-    //}
-    //public void setMethod(String method) {
-    //    this.method = new Method(0, method);
-    //}
-    //public void setEnvironment(String environment) {
-    //    this.environment = new Environment(0, environment);
-    //}
-    //public void setRequestReference(RequestReference requestReference) {
-    //    this.requestReference = requestReference;
-    //}
-
-    /*public RequestReferenceObject(DataAccessObject dao) {
-     this.requestReference = new RequestReference();
-     this.environment = new Environment();
-     this.method = new Method();
-     this.scheme = new Scheme();
-     this.host = new HostAddress();
-     this.path = new Path();
-     this.dao = dao;
-     this.templateReferenceObjectList = new ArrayList();
-     this.parameterReferenceObjectList = new ArrayList();
-     this.headerReferenceObjectList = new ArrayList();
-     this.jsonRequestObject = new JsonRequestObject();
-     }*/
 }
