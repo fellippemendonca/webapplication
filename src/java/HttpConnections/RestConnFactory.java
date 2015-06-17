@@ -36,15 +36,17 @@ public class RestConnFactory {
             this.responseObj.setStatus(this.httpResponse.getStatusLine().toString());
             
             if (this.httpResponse.getEntity() == null || this.httpResponse.getStatusLine().toString().contains("500")) {
-                this.responseObj.setContents("{\"no\":\"value\"}");
+                this.responseObj.setContents("No Content");
             } else {
                 this.responseObj.setContents(EntityUtils.toString(this.httpResponse.getEntity()));
             }
-            this.httpclient.close();
         } catch (IOException ex) {
             Logger.getLogger(RestConnFactory.class.getName()).log(Level.SEVERE, null, ex);
+            this.responseObj.setContents(ex.toString());
+        } finally {
+            this.httpclient.close();
+            return this.responseObj;
         }
-
-        return this.responseObj;
+        
     }
 }

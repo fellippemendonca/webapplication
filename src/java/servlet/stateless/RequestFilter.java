@@ -44,7 +44,7 @@ public class RequestFilter extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             
                 try {
-                    String param = request.getParameter("tag_array");
+                    //String param = request.getParameter("tag_array");
                     out.write(new Gson().toJson(sless.getRequest()));
                 } catch (NamingException ex) {
                     Logger.getLogger(RequestFilter.class.getName()).log(Level.SEVERE, null, ex);

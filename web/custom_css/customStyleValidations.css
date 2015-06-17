@@ -1,0 +1,163 @@
+#request-list {
+    overflow-y: scroll;
+    display:block;
+    height:300px;
+}
+
+
+#requestTable th{
+    //position:fixed;
+}
+
+#responseTable{
+    width: 45%;
+}
+
+#responseContentsDiv001 {
+    width: 45%;
+}
+
+
+#responseContents-div {
+    border: 2px solid #a1a1a1;
+    padding: 3px; 
+    background: #dddddd;
+  //width: 45%;
+    overflow-y: scroll;
+    display:block;
+    height:20em;
+    white-space: pre; 
+    font-family: monospace;
+}
+
+#requestTable tr.normal td {
+    color: #235A81;
+    background-color: white;
+}
+#requestTable tr.highlighted td {
+    color: #FFFFFF;
+    background-color: #235A81;
+}
+
+
+
+
+#Payload {
+    height: 7em;
+    width: 45%;
+    padding: 3px;
+    transition: all 0.5s ease;
+}
+
+#Payload:focus {
+    height: 20em;
+}
+
+#message-text{
+    height: 7em;
+    width: 100%;
+    padding: 3px;
+    transition: all 0.5s ease;
+}
+
+#message-text:focus{
+    height: 20em;
+}
+
+#scenario-description {
+    width: 35%;
+}
+
+#Validation {
+    width: 45%;
+}
+
+html,body{
+    height: 100%;
+}
+
+body.wait, body.wait *{
+    cursor : wait !important;   
+}
+
+pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
+.string { color: blue; }
+.number { color: blue; }
+.boolean { color: blue; }
+.null { color: blue; }
+.key { color: black; }
+
+
+.ui-autocomplete {
+    position: absolute;
+}
+
+
+/*---------------LEDs-----------------*/
+
+.led-red {
+    //vertical-align: middle;
+    margin: 10px auto;
+    width: 12px;
+    height: 12px;
+    background-color: red;
+    border-radius: 50%;
+    box-shadow: #000 0 -1px 7px 1px, inset #600 0 -1px 9px, #F00 0 2px 12px;
+}
+
+.led-yellow {
+    //vertical-align: middle;
+    margin: 10px auto;
+    width: 12px;
+    height: 12px;
+    background-color: yellow;
+    border-radius: 50%;
+    box-shadow: #000 0 -1px 7px 1px, inset #660 0 -1px 9px, #DD0 0 2px 12px;
+}
+
+.led-green {
+    //vertical-align: middle;
+    margin: 10px auto;
+    width: 12px;
+    height: 12px;
+    background-color: green;
+    border-radius: 50%;
+    box-shadow: #000 0 -1px 7px 1px, inset #460 0 -1px 9px, #7D0 0 2px 12px;
+}
+
+.led-blue {
+    //vertical-align: middle;
+    margin: 10px auto;
+    width: 12px;
+    height: 12px;
+    background-color: blue;
+    border-radius: 50%;
+    box-shadow: #000 0 -1px 7px 1px, inset #006 0 -1px 9px, #06F 0 2px 14px;
+}
+
+/*----------------------------------------------------------------------------*/
+/*
+#Payload {
+    height: 7em;
+    width: 45%;
+    padding: 3px;
+    transition: all 0.5s ease;
+}
+
+#Payload:focus {
+    height: 20em;
+}
+*/
+
+textarea {
+    height: 10em;
+    width: 45%;
+    padding: 3px;
+    transition: all 0.5s ease;
+}
+
+textarea:focus {
+    height: 20em;
+}
+
+

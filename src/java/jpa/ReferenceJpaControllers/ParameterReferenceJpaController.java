@@ -15,6 +15,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.EntityTransaction;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.UserTransaction;
@@ -38,16 +39,19 @@ public class ParameterReferenceJpaController implements Serializable {
 
     public ParameterReference create(ParameterReference parameterReference) throws RollbackFailureException, Exception {
         EntityManager em = null;
+        EntityTransaction etx = null;
         try {
-
             em = getEntityManager();
+            etx = em.getTransaction();
+            etx.begin();
             em.persist(parameterReference);
             em.flush();
+            etx.commit();
         } catch (Exception ex) {
             try {
-
+                etx.rollback();
             } catch (Exception re) {
-                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+                throw new jpa.exceptions.RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
             throw ex;
         } finally {

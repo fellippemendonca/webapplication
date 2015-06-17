@@ -14,6 +14,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -38,12 +39,17 @@ public class RequestTagJpaController implements Serializable {
 
     public RequestTag create(RequestTag requestTag) throws RollbackFailureException, Exception {
         EntityManager em = null;
+        EntityTransaction etx = null;
         try {
             em = getEntityManager();
+            etx = em.getTransaction();
+            etx.begin();
             em.persist(requestTag);
             em.flush();
+            etx.commit();
         } catch (Exception ex) {
             try {
+                etx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }

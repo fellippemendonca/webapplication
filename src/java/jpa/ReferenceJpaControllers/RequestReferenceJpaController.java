@@ -5,8 +5,6 @@
  */
 package jpa.ReferenceJpaControllers;
 
-import DAO.exceptions.NonexistentEntityException;
-import DAO.exceptions.RollbackFailureException;
 import Entities.ReferenceEntities.RequestReference;
 import java.io.Serializable;
 import java.util.List;
@@ -14,8 +12,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.EntityTransaction;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.UserTransaction;
+import jpa.ReferenceJpaControllers.exceptions.NonexistentEntityException;
+import jpa.ReferenceJpaControllers.exceptions.RollbackFailureException;
 
 /**
  *
@@ -24,10 +26,8 @@ import javax.persistence.criteria.Root;
 public class RequestReferenceJpaController implements Serializable {
 
     public RequestReferenceJpaController(EntityManagerFactory emf) {
-
         this.emf = emf;
     }
-
     private EntityManagerFactory emf = null;
 
     public EntityManager getEntityManager() {
@@ -36,16 +36,19 @@ public class RequestReferenceJpaController implements Serializable {
 
     public RequestReference create(RequestReference requestReference) throws RollbackFailureException, Exception {
         EntityManager em = null;
+        EntityTransaction etx = null;
         try {
-
             em = getEntityManager();
+            etx = em.getTransaction();
+            etx.begin();
             em.persist(requestReference);
             em.flush();
+            etx.commit();
         } catch (Exception ex) {
             try {
-
+                etx.rollback();
             } catch (Exception re) {
-                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+                throw new jpa.exceptions.RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
             throw ex;
         } finally {
@@ -58,14 +61,15 @@ public class RequestReferenceJpaController implements Serializable {
 
     public void edit(RequestReference requestReference) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        EntityTransaction etx = null;
         try {
-
             em = getEntityManager();
+            etx = em.getTransaction();
             requestReference = em.merge(requestReference);
-
+            etx.commit();
         } catch (Exception ex) {
             try {
-
+                etx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -86,8 +90,11 @@ public class RequestReferenceJpaController implements Serializable {
 
     public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        EntityTransaction etx = null;
         try {
             em = getEntityManager();
+            etx = em.getTransaction();
+            etx.begin();
             RequestReference requestReference;
             try {
                 requestReference = em.getReference(RequestReference.class, id);
@@ -96,10 +103,10 @@ public class RequestReferenceJpaController implements Serializable {
                 throw new NonexistentEntityException("The requestReference with id " + id + " no longer exists.", enfe);
             }
             em.remove(requestReference);
-
+            etx.commit();
         } catch (Exception ex) {
             try {
-
+                etx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }

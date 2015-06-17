@@ -1,4 +1,8 @@
 // When the page is fully loaded...
+/* RequestTableData(tagElementId); //Preenche tabela tendo como base a lista de tags pela qual deve utilizar como filtro
+ * 
+ */
+
 $(document).ready(function() {
     RequestTableData('tag-array');
    
@@ -20,11 +24,11 @@ function RequestTableData(tagElementId) {
     function(resp) {
         var requestList = JSON.parse(resp).requestList;
         var tableshow = "<table id='requestTable' class='table table-bordered' cellspacing='0' width='100%'>";
-        tableshow += "<thead><tr><th>id</th><th>Method</th><th>Environment</th><th>Host</th><th>Path</th></tr></thead><tbody>";
+        tableshow += "<thead><tr><th>id</th><th>Env</th><th>Name</th><th>Path</th></tr></thead><tbody>";
 
         $.each(requestList, function(i, request) {
             if (compareLists(filter, getNameList(request))) {
-                tableshow += "<tr><td>" + i + "</td><td>" + request.method + "</td><td>" + request.environment + "</td><td>" + request.host + "</td><td>" + request.path + "</td></tr>";
+                tableshow += "<tr><td>" + i + "</td><td>" + request.environment + "</td><td>" + request.requestName + "</td><td>" + request.path + "</td></tr>";
             }
         });
 
@@ -48,6 +52,7 @@ function Synthesizer(list) {
     var tbody = table.getElementsByTagName("tbody")[0];
     var ishigh;
 
+
     tbody.onclick = function(e) {
         e = e || window.event;
         var td = e.target || e.srcElement;
@@ -68,6 +73,7 @@ function Synthesizer(list) {
     function populateFields(row) {
         elementClear();
         el('request-id').value = requestList[row.cells[0].innerHTML].dbId;
+        el('requestName').value = requestList[row.cells[0].innerHTML].requestName;
         el('method').value = requestList[row.cells[0].innerHTML].method;
         el('environment').value = requestList[row.cells[0].innerHTML].environment;
         el('scheme').value = requestList[row.cells[0].innerHTML].scheme;
@@ -75,19 +81,16 @@ function Synthesizer(list) {
         el('path').value = requestList[row.cells[0].innerHTML].path;
         el('Payload').value = requestList[row.cells[0].innerHTML].payload;
 
-        //document.getElementById('Template').innerHTML = "";
         var templateList = requestList[row.cells[0].innerHTML].templates;
         $.each(templateList, function(i, template) {
             addElement('Template', template);
         });
 
-        //document.getElementById('Header').innerHTML = "";
         var headerList = requestList[row.cells[0].innerHTML].headers;
         $.each(headerList, function(i, header) {
             addElement2('Header', header.name, header.value);
         });
 
-        //document.getElementById('Parameter').innerHTML = "";
         var parameterList = requestList[row.cells[0].innerHTML].parameters;
         $.each(parameterList, function(i, parameter) {
             addElement2('Parameter', parameter.name, parameter.value);
@@ -95,11 +98,9 @@ function Synthesizer(list) {
 
         var tagList = requestList[row.cells[0].innerHTML].jsonTags;
         $.each(tagList, function(i, tag) {
-            //$('#request-tags').tagsinput('add', tag.name);
-            //myFunction("request-tags",tag.name);
             $('#request-tags').tagit('createTag', tag.name);
         });
-        document.getElementById("navbar").focus();
+        document.getElementById("filter-view-div").scrollIntoView();
     }
 }
 
@@ -137,15 +138,13 @@ function getNameList(request) {
     return idList;
 }
 
-
-
 function simpleRequest(url, busca) {
     var dataOutput;
     $.get(url, {"term": busca}, function(data) {
         dataOutput = data;
     }, "json")
             .fail(function() { //on failure
-                alert("Falha ao enviar a solicitação ao servlet " + url);
+                alert("Request failed." + url);
             });
     return dataOutput;
 }

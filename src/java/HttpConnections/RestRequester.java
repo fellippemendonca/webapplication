@@ -7,6 +7,7 @@ package HttpConnections;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Date;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -37,75 +38,40 @@ public class RestRequester {
         return this.uri.getFinalURI().toString();
     }
 
-    public ResponseContents Request(String method) throws IOException, URISyntaxException {
-        RestConnFactory connFactory = new RestConnFactory();
-        System.out.println("-------------------------");
-
-        switch (method.toUpperCase()) {
-            case "GET":
-                System.out.println("GET : " + this.uri.getHost() + this.uri.getPath() + this.uri.getTemplate());
-                this.httpget.setURI(this.uri.getFinalURI().build());
-                this.RC = connFactory.RestRequest(this.httpget);
-                this.RC.setRequest("GET : " + this.uri.getScheme() + "://" + this.uri.getHost() + this.uri.getPath());
-                System.out.println("GET : " + this.RC.status);
-                break;
-
-            case "PUT":
-                System.out.println("PUT : " + this.uri.getHost() + this.uri.getPath() + this.uri.getTemplate());
-                this.httpput.setURI(this.uri.getFinalURI().build());
-                this.httpput.setEntity(uri.getEntity());
-                this.RC = connFactory.RestRequest(this.httpput);
-                this.RC.setRequest("PUT : " + this.uri.getScheme() + "://" + this.uri.getHost() + this.uri.getPath());
-                System.out.println("PUT : " + this.RC.status);
-                break;
-
-            case "POST":
-                System.out.println("POST : " + this.uri.getHost() + this.uri.getPath() + this.uri.getTemplate());
-                this.httppost.setURI(this.uri.getFinalURI().build());
-                this.httppost.setEntity(uri.getEntity());
-                this.RC = connFactory.RestRequest(this.httppost);
-                this.RC.setRequest("POST : " + this.uri.getScheme() + "://" + this.uri.getHost() + this.uri.getPath());
-                System.out.println("POST : " + this.RC.status);
-                break;
-        }
-
-        System.out.println("-------------------------");
-        return this.RC;
-    }
-
     public ResponseContents Request() throws IOException, URISyntaxException {
         RestConnFactory connFactory = new RestConnFactory();
-        System.out.println("-------------------------");
-
+        Date startDate = new Date();
         switch (this.method.toUpperCase()) {
             case "GET":
-                System.out.println("GET : " + this.uri.getHost() + this.uri.getPath() + this.uri.getTemplate());
                 this.httpget.setURI(this.uri.getFinalURI().build());
                 this.RC = connFactory.RestRequest(this.httpget);
+                this.RC.setEndDate();
                 this.RC.setRequest("GET : " + this.uri.getScheme() + "://" + this.uri.getHost() + this.uri.getPath());
-                System.out.println("GET : " + this.RC.status);
+                this.RC.getDiffMilliseconds(startDate);
                 break;
 
             case "PUT":
-                System.out.println("PUT : " + this.uri.getHost() + this.uri.getPath() + this.uri.getTemplate());
+
                 this.httpput.setURI(this.uri.getFinalURI().build());
                 this.httpput.setEntity(uri.getEntity());
                 this.RC = connFactory.RestRequest(this.httpput);
+                this.RC.setEndDate();
                 this.RC.setRequest("PUT : " + this.uri.getScheme() + "://" + this.uri.getHost() + this.uri.getPath());
-                System.out.println("PUT : " + this.RC.status);
+                this.RC.getDiffMilliseconds(startDate);
                 break;
 
             case "POST":
-                System.out.println("POST : " + this.uri.getHost() + this.uri.getPath() + this.uri.getTemplate());
+
                 this.httppost.setURI(this.uri.getFinalURI().build());
                 this.httppost.setEntity(uri.getEntity());
                 this.RC = connFactory.RestRequest(this.httppost);
+                this.RC.setEndDate();
                 this.RC.setRequest("POST : " + this.uri.getScheme() + "://" + this.uri.getHost() + this.uri.getPath());
-                System.out.println("POST : " + this.RC.status);
+                this.RC.getDiffMilliseconds(startDate);
                 break;
         }
 
-        System.out.println("-------------------------");
+
         return this.RC;
     }
 

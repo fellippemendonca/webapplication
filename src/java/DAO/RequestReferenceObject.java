@@ -1,5 +1,6 @@
 package DAO;
 
+import DAO.ValidationDAO.Schedule.ScheduledRequestObject;
 import Entities.Environment;
 import Entities.HostAddress;
 import Entities.Method;
@@ -10,7 +11,10 @@ import Entities.ReferenceEntities.ParameterReference;
 import Entities.ReferenceEntities.RequestReference;
 import Entities.ReferenceEntities.RequestTagReference;
 import Entities.ReferenceEntities.TemplateReference;
+import Entities.RequestName;
+import Entities.Scheduled.ScheduledRequest;
 import Entities.Scheme;
+import Entities.ValidationEntities.ValidationScenario;
 import HttpConnections.RestRequester;
 import JsonObjects.JHeader;
 import JsonObjects.JParameter;
@@ -31,6 +35,7 @@ import jpa.exceptions.RollbackFailureException;
 public class RequestReferenceObject {
 
     RequestReference requestReference;
+    RequestName requestName;
     Environment environment;
     Method method;
     Scheme scheme;
@@ -49,6 +54,7 @@ public class RequestReferenceObject {
     public RequestReferenceObject(DataAccessObject dao, String json) {
         this.dao = dao;
         this.jsonRequestObject = new Gson().fromJson(json, JsonRequestObject.class);
+        this.requestName = new RequestName(0, this.jsonRequestObject.getRequestName());
         this.environment = new Environment(0, this.jsonRequestObject.getEnvironment().toUpperCase());
         this.method = new Method(0, this.jsonRequestObject.getMethod().toUpperCase());
         this.scheme = new Scheme(0, this.jsonRequestObject.getScheme());
@@ -66,7 +72,7 @@ public class RequestReferenceObject {
             }
             i++;
         }
-        
+
         this.headerReferenceObjectList = new ArrayList();
         for (JHeader header : this.jsonRequestObject.getHeaders()) {
             if (header.getName().isEmpty() || header.getValue().isEmpty()) {
@@ -84,7 +90,7 @@ public class RequestReferenceObject {
                 this.parameterReferenceObjectList.add(new ParameterReferenceObject(this.dao, parameter.getName(), parameter.getValue(), 1));
             }
         }
-        
+
         this.tagReferenceObjectList = new ArrayList<>();
         for (JsonTag tag : this.jsonRequestObject.getJsonTags()) {
             if (tag.getName().isEmpty()) {
@@ -102,23 +108,34 @@ public class RequestReferenceObject {
         this.dao = dao;
 
         this.requestReference = requestReference;
-        this.jsonRequestObject.setRequestReference(this.requestReference.getIdRequestReference());
+        if (this.requestReference != null) {
+            this.jsonRequestObject.setRequestReference(this.requestReference.getIdRequestReference());
+        }
 
+        this.requestName = this.dao.getRequestNameJpaController().findRequestName(this.requestReference.getIdRequestName());
+        if (this.requestName != null) {
+            this.jsonRequestObject.setRequestName(this.requestName.getRequestName());
+        }
         this.environment = this.dao.getEnvironmentJpaController().findEnvironment(this.requestReference.getIdEnvironment());
-        this.jsonRequestObject.setEnvironment(this.environment.getEnvironmentName());
-
+        if (this.environment != null) {
+            this.jsonRequestObject.setEnvironment(this.environment.getEnvironmentName());
+        }
         this.method = this.dao.getMethodJpaController().findMethod(this.requestReference.getIdMethod());
-        this.jsonRequestObject.setMethod(this.method.getMethodValue());
-
+        if (this.method != null) {
+            this.jsonRequestObject.setMethod(this.method.getMethodValue());
+        }
         this.scheme = this.dao.getSchemeJpaController().findScheme(this.requestReference.getIdScheme());
-        this.jsonRequestObject.setScheme(this.scheme.getSchemeValue());
-
+        if (this.scheme != null) {
+            this.jsonRequestObject.setScheme(this.scheme.getSchemeValue());
+        }
         this.host = this.dao.getHostAddressJpaController().findHostAddress(this.requestReference.getIdHostAddress());
-        this.jsonRequestObject.setHost(this.host.getHostAddressValue());
-
+        if (this.host != null) {
+            this.jsonRequestObject.setHost(this.host.getHostAddressValue());
+        }
         this.path = this.dao.getPathJpaController().findPath(this.requestReference.getIdPath());
-        this.jsonRequestObject.setPath(this.path.getPathValue());
-
+        if (this.path != null) {
+            this.jsonRequestObject.setPath(this.path.getPathValue());
+        }
         this.payload = this.dao.getPayloadJpaController().findPayload(this.requestReference.getIdPayload());
         if (this.payload != null) {
             this.jsonRequestObject.setPayload(this.payload.getPayloadValue());
@@ -155,16 +172,31 @@ public class RequestReferenceObject {
             this.jsonRequestObject.getJsonTags().add(jsonTag);
         }
     }
-////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////
 
-//-----------------REMOVE AND PERSIST NEW REQUEST-------------------------------
+    //-----------------REMOVE AND PERSIST NEW REQUEST-------------------------------
     public boolean updateRequestReference() {
+        int oldRequestReferenceId = this.jsonRequestObject.getRequestReference();
         try {
             System.out.println("Updating request number: " + this.jsonRequestObject.getRequestReference());
             RequestReference rr = this.dao.getRequestReferenceJpaController().findRequestReference(this.jsonRequestObject.getRequestReference());
             if (rr != null && clearReferences(rr)) {
                 this.dao.getRequestReferenceJpaController().destroy(rr.getIdRequestReference());
                 persistRequestReference();
+
+                /*Busca na base ValidationScenarios que estejam relacionados ao antigo request q foi substituido*/
+                for (ValidationScenario validationScenario : this.dao.getValidationScenarioJpaController().findByIdRequestReference(oldRequestReferenceId)) {
+                    validationScenario.setIdRequestReference(this.requestReference.getIdRequestReference());
+                    this.dao.getValidationScenarioJpaController().edit(validationScenario);
+                }
+
+                /*Busca se request possuía agendamento e agenda sua nova execução*/
+                if (this.dao.getScheduledRequestJpaController().find(new ScheduledRequest(0, oldRequestReferenceId)) != null) {
+                    ScheduledRequest scheduledRequest = this.dao.getScheduledRequestJpaController().find(new ScheduledRequest(0, oldRequestReferenceId));
+                    scheduledRequest.setIdRequestReference(this.requestReference.getIdRequestReference());
+                    this.dao.getScheduledRequestJpaController().edit(scheduledRequest);
+                }
+
                 System.out.println("Success.");
                 return true;
             } else {
@@ -181,11 +213,24 @@ public class RequestReferenceObject {
 
 //--------------------------------REMOVE REQUEST--------------------------------
     public boolean deleteRequestReference() {
+        int oldRequestReferenceId = this.jsonRequestObject.getRequestReference();
         try {
             System.out.println("Removing request number: " + this.jsonRequestObject.getRequestReference());
             RequestReference rr = this.dao.getRequestReferenceJpaController().findRequestReference(this.jsonRequestObject.getRequestReference());
             if (rr != null && clearReferences(rr)) {
                 this.dao.getRequestReferenceJpaController().destroy(rr.getIdRequestReference());
+
+                /*Busca na base ValidationScenarios que estejam relacionados ao antigo request q foi removido*/
+                for (ValidationScenario validationScenario : this.dao.getValidationScenarioJpaController().findByIdRequestReference(oldRequestReferenceId)) {
+                    this.dao.getValidationScenarioJpaController().destroy(validationScenario.getIdValidationScenario());
+                }
+
+                /*Busca se request possuía agendamento e remove sua execução*/
+                if (this.dao.getScheduledRequestJpaController().find(new ScheduledRequest(0, oldRequestReferenceId)) != null) {
+                    ScheduledRequestObject scheduledRequestObject = new ScheduledRequestObject(this.dao, this.requestReference.getIdRequestReference());
+                    scheduledRequestObject.deleteSchedule();
+                }
+
                 System.out.println("Success.");
                 return true;
             } else {
@@ -224,14 +269,15 @@ public class RequestReferenceObject {
 
 //-------------------------PERSIST REQUEST--------------------------------------
     public boolean persistRequestReference() {
+        persistRequestName();
         persistEnvironment();
         persistMethod();
         persistScheme();
         persistHost();
         persistPath();
         persistPayload();
-        
-        RequestReference tmp = new RequestReference(0, this.environment.getIdEnvironment(), this.method.getIdMethod(), this.scheme.getIdScheme(), this.host.getIdHostAddress(), this.path.getIdPath(), this.payload.getIdPayload());
+
+        RequestReference tmp = new RequestReference(0, this.requestName.getIdRequestName(), this.environment.getIdEnvironment(), this.method.getIdMethod(), this.scheme.getIdScheme(), this.host.getIdHostAddress(), this.path.getIdPath(), this.payload.getIdPayload());
         try {
             this.requestReference = this.dao.getRequestReferenceJpaController().create(tmp);
 
@@ -301,6 +347,19 @@ public class RequestReferenceObject {
     }
 //------------------------------------------------------------------------------
 
+    public RequestName getRequestName() {
+        return this.requestName;
+    }
+
+    public void persistRequestName() {
+        try {
+            this.requestName = this.dao.getRequestNameJpaController().findOrAdd(this.requestName);
+        } catch (Exception ex) {
+            Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+//------------------------------------------------------------------------------
+
     public Environment getEnvironment() {
         return this.environment;
     }
@@ -364,7 +423,7 @@ public class RequestReferenceObject {
             Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     /*------------------------------------------------------------------------*/
     public Payload getPayload() {
         return this.payload;
@@ -377,14 +436,16 @@ public class RequestReferenceObject {
             Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     /*------------------------------------------------------------------------*/
     public List<TemplateReferenceObject> getTemplateReferenceObjectList() {
         return templateReferenceObjectList;
     }
+
     public void setTemplateReferenceObjectList(List<TemplateReferenceObject> templateReferenceObjectList) {
         this.templateReferenceObjectList = templateReferenceObjectList;
     }
+
     public void addTemplateReferenceObject(TemplateReferenceObject templateReferenceObject) {
         this.templateReferenceObjectList.add(templateReferenceObject);
     }
@@ -393,9 +454,11 @@ public class RequestReferenceObject {
     public List<ParameterReferenceObject> getParameterReferenceObjectList() {
         return parameterReferenceObjectList;
     }
+
     public void setParameterReferenceObjectList(List<ParameterReferenceObject> parameterReferenceObjectList) {
         this.parameterReferenceObjectList = parameterReferenceObjectList;
     }
+
     public void addParameterReferenceObject(ParameterReferenceObject parameterReferenceObject) {
         this.parameterReferenceObjectList.add(parameterReferenceObject);
     }
@@ -404,9 +467,11 @@ public class RequestReferenceObject {
     public List<HeaderReferenceObject> getHeaderReferenceObjectList() {
         return headerReferenceObjectList;
     }
+
     public void setHeaderReferenceObjectList(List<HeaderReferenceObject> headerReferenceObjectList) {
         this.headerReferenceObjectList = headerReferenceObjectList;
     }
+
     public void addHeaderReferenceObject(HeaderReferenceObject headerReferenceObject) {
         this.headerReferenceObjectList.add(headerReferenceObject);
     }

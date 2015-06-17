@@ -7,6 +7,7 @@
 package HttpConnections;
 
 import java.io.StringReader;
+import java.util.Date;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -21,17 +22,24 @@ public class ResponseContents {
     String request;
     String status;
     String contents;
+    Date endDate;
+    int execTime;
+    
 
     public ResponseContents() {
         this.request  = "";
         this.status   = "";
         this.contents = "";
+        this.endDate = null;
+        this.execTime = 0;
     }
     
     public ResponseContents(String request, String status, String contents) {
         this.request  = request;
         this.status   = status;
         this.contents = contents;
+        this.endDate = null;
+        this.execTime = 0;
     }
     
     public String getRequest() {
@@ -73,4 +81,34 @@ public class ResponseContents {
             return jObject;
         }
     }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate() {
+        this.endDate = new Date();
+    }
+
+    public int getExecTime() {
+        return execTime;
+    }
+
+    public void setExecTime(int execTime) {
+        this.execTime = execTime;
+    }
+    
+    
+    
+    public int getDiffMilliseconds(Date startDate) {
+        if(startDate==null || this.endDate==null){
+            setExecTime(9999);
+            return 9999;
+        }else{
+            setExecTime((int)(getEndDate().getTime()-startDate.getTime()));
+            return getExecTime();
+        }
+    }
+    
+    
 }

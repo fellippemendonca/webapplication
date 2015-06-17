@@ -29,11 +29,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "RequestReference.findAll", query = "SELECT r FROM RequestReference r"),
     @NamedQuery(name = "RequestReference.findByIdRequestReference", query = "SELECT r FROM RequestReference r WHERE r.idRequestReference = :idRequestReference"),
+    @NamedQuery(name = "RequestReference.findByIdRequestName", query = "SELECT r FROM RequestReference r WHERE r.idRequestName = :idRequestName"),
     @NamedQuery(name = "RequestReference.findByIdEnvironment", query = "SELECT r FROM RequestReference r WHERE r.idEnvironment = :idEnvironment"),
     @NamedQuery(name = "RequestReference.findByIdMethod", query = "SELECT r FROM RequestReference r WHERE r.idMethod = :idMethod"),
     @NamedQuery(name = "RequestReference.findByIdScheme", query = "SELECT r FROM RequestReference r WHERE r.idScheme = :idScheme"),
     @NamedQuery(name = "RequestReference.findByIdHostAddress", query = "SELECT r FROM RequestReference r WHERE r.idHostAddress = :idHostAddress"),
-    @NamedQuery(name = "RequestReference.findByIdPath", query = "SELECT r FROM RequestReference r WHERE r.idPath = :idPath")})
+    @NamedQuery(name = "RequestReference.findByIdPath", query = "SELECT r FROM RequestReference r WHERE r.idPath = :idPath"),
+    @NamedQuery(name = "RequestReference.findByIdPayload", query = "SELECT r FROM RequestReference r WHERE r.idPayload = :idPayload")})
 public class RequestReference implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -41,6 +43,10 @@ public class RequestReference implements Serializable {
     @Basic(optional = false)
     @Column(name = "id_request_reference")
     private Integer idRequestReference;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "id_request_name")
+    private int idRequestName;
     @Basic(optional = false)
     @NotNull
     @Column(name = "id_environment")
@@ -73,8 +79,9 @@ public class RequestReference implements Serializable {
         this.idRequestReference = idRequestReference;
     }
 
-    public RequestReference(Integer idRequestReference, int idEnvironment, int idMethod, int idScheme, int idHostAddress, int idPath, int idPayload) {
+    public RequestReference(Integer idRequestReference, int idRequestName, int idEnvironment, int idMethod, int idScheme, int idHostAddress, int idPath, int idPayload) {
         this.idRequestReference = idRequestReference;
+        this.idRequestName = idRequestName;
         this.idEnvironment = idEnvironment;
         this.idMethod = idMethod;
         this.idScheme = idScheme;
@@ -89,6 +96,14 @@ public class RequestReference implements Serializable {
 
     public void setIdRequestReference(Integer idRequestReference) {
         this.idRequestReference = idRequestReference;
+    }
+
+    public int getIdRequestName() {
+        return idRequestName;
+    }
+
+    public void setIdRequestName(int idRequestName) {
+        this.idRequestName = idRequestName;
     }
 
     public int getIdEnvironment() {
@@ -130,7 +145,7 @@ public class RequestReference implements Serializable {
     public void setIdPath(int idPath) {
         this.idPath = idPath;
     }
-    
+
     public int getIdPayload() {
         return idPayload;
     }
@@ -161,7 +176,7 @@ public class RequestReference implements Serializable {
 
     @Override
     public String toString() {
-        return "Entities.RequestReference[ idRequestReference=" + idRequestReference + " ]";
+        return "Entities.ReferenceEntities.RequestReference[ idRequestReference=" + idRequestReference + " ]";
     }
     
 }

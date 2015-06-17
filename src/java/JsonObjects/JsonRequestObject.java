@@ -16,6 +16,7 @@ import java.util.List;
  */
 public class JsonRequestObject {
     int dbId;
+    String requestName;
     String environment;
     String method;
     String scheme;
@@ -29,6 +30,7 @@ public class JsonRequestObject {
     
     public JsonRequestObject(){
         this.dbId = 0;
+        this.requestName = "";
         this.environment = "";
         this.method = "";
         this.scheme = "";
@@ -41,8 +43,9 @@ public class JsonRequestObject {
         this.jsonTags = new ArrayList();
     }
     
-    public JsonRequestObject(int dbId, String environment, String method, String scheme, String host, String path, String payload, List<String> templates, List<JHeader> headers, List<JParameter> parameters, List<JsonTag> jsonTags) {
+    public JsonRequestObject(int dbId, String requestName, String environment, String method, String scheme, String host, String path, String payload, List<String> templates, List<JHeader> headers, List<JParameter> parameters, List<JsonTag> jsonTags) {
         this.dbId = dbId;
+        this.requestName = requestName;
         this.environment = environment;
         this.method = method;
         this.scheme = scheme;
@@ -61,6 +64,14 @@ public class JsonRequestObject {
 
     public void setRequestReference(int dbId) {
         this.dbId = dbId;
+    }
+    
+    public String getRequestName() {
+        return this.requestName;
+    }
+
+    public void setRequestName(String requestName) {
+        this.requestName = requestName;
     }
     
     public String getEnvironment() {

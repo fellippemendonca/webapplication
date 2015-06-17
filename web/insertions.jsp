@@ -12,7 +12,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-        <title>Cadastro de APIs</title>
+        <title>API's Insertions</title>
 
         <!-- Load the scripts needed for the application.-->
         <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.3.min.js" language="Javascript"></script> 
@@ -33,13 +33,11 @@
         <script src="tagit/js/tag-it.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Load the scripts needed for page functions. -->
-        <script type="text/javascript" src="javascript-files/sendToServlet.js" language="Javascript" ></script>
-        <script type="text/javascript" src="javascript-files/requestTableList.js" language="Javascript" ></script>
-        <script type="text/javascript" src="javascript-files/addInput.js" language="Javascript" ></script>
-        <link rel="stylesheet" type="text/css" href="custom_css/customStyle.css">
-
+        <script type="text/javascript" src="javascript-files/insertionPage/sendToServlet.js" language="Javascript" ></script>
+        <script type="text/javascript" src="javascript-files/insertionPage/requestTableList.js" language="Javascript" ></script>
+        <script type="text/javascript" src="javascript-files/insertionPage/addInput.js" language="Javascript" ></script>
+        <link rel="stylesheet" type="text/css" href="custom_css/customStyleInsertions.css">
     </head>
-
     <body>
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -51,143 +49,178 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Repositório de APIs</a>
+                <a class="navbar-brand" href="#">API's Warehouse</a>
             </div>
             <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="http://10.116.45.34:8080/servlet-stateless/insertions.jsp">Cadastro</a></li>
-                    <li><a href="http://10.116.45.34:8080/servlet-stateless/validations.jsp">Validações</a></li>
-                    <li><a href="http://10.116.45.34:8080/servlet-stateless/About.html">Sobre</a></li>
-                    <li><a href="https://mktplace.atlassian.net/secure/Dashboard.jspa">Contato</a></li>
+                    <li class="active"><a href="http://10.116.45.34:8080/servlet-stateless/insertions.jsp">APIs</a></li>
+                    <li><a href="http://10.116.45.34:8080/servlet-stateless/validations.jsp">Validations</a></li>
+                    <li><a href="http://10.116.45.34:8080/servlet-stateless/monitor.jsp">Monitoring</a></li>
+                    <li><a href="http://10.116.45.34:8080/servlet-stateless/About.html">About</a></li>
+                    <li><a href="https://mktplace.atlassian.net/secure/Dashboard.jspa">Contact</a></li>
                 </ul>
-            </div><!--/.nav-collapse -->
+            </div>
         </div>
     </nav>
     <br><br><br>
 
+    <div class="container">
+        <div class="panel panel-info">
+            <div class="panel-heading">How does it works?</div>
+            <div class="panel-body">
+                Select a request from list below to automatically populate the required fields, then click on Execute on the end of the page to get the response.
+                <br><br>If the request that you want is not on the list remember that you can create a new one. Fill the required fields and click Execute, if it works then click Action and choose Create.
+                <br>(Do not forget to set some Labels on your request to find it easily later).
+            </div>
+        </div>
+    </div>
 
     <div class="container">
         <h4>Labels:</h4>
-        <input type="text" id="tag-array" class="form-control" placeholder="Rótulos..." size="5">
-        <input type="submit" class="btn btn-primary" id="submit-tag-filter" value="Filtrar" align="left"/>  
+        <input type="text" id="tag-array" class="form-control" placeholder="Listagem de rótulos..." size="5"><div id="filter-view-div"></div>
+        <input type="submit" class="btn btn-primary" id="submit-tag-filter" value="Filter" align="left"/>  
     </div>
     <br>
     <div class="container">
-        <div id="request-list"></div><br>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Request List</h3>
+            </div>
+            <div id="request-list"></div>
+        </div>
     </div>
     <br>
     <div id="section">
-        <table class="table">
-            <tbody>
-                <tr>
-                    <td>
+        <div class="container">
+            <h4>Request Data:</h4><br>
+            <div class="Table">
+                <div class="row">
+                    <div class="col-lg-2">
                         <fieldset disabled>
                             <div class="input-group">
                                 <span class="input-group-addon" id="basic-addon1">ID</span>
                                 <input type="text" id="request-id" class="form-control" size="1" placeholder="#" aria-describedby="basic-addon1" autocomplete="on">
                             </div>
                         </fieldset>
-                    </td>
-                    <td>
-                        <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon1">Method</span>
-                            <input type="text" id="method" class="form-control" size="5" placeholder="GET" aria-describedby="basic-addon1" maxlength="45" autocomplete="on">
-                        </div>
-                    </td>
-                    <td>
+                    </div>
+                    <div class="col-lg-2">
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1">Environment</span>
                             <input type="text" id="environment" class="form-control" size="5" placeholder="HLG" aria-describedby="basic-addon1" maxlength="45" autocomplete="on">
                         </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">Name</span>
+                            <input type="text" id="requestName" class="form-control" size="5" placeholder="Request Name..." aria-describedby="basic-addon1" maxlength="100" autocomplete="on">
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-lg-2">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">Method</span>
+                            <input type="text" id="method" class="form-control" size="5" placeholder="GET" aria-describedby="basic-addon1" maxlength="45" autocomplete="on">
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1">Scheme</span>
                             <input type="text" id="scheme" class="form-control" size="5" placeholder="http" aria-describedby="basic-addon1" maxlength="45" autocomplete="on">
                         </div>
-                    </td>
-                    <td>
+                    </div>
+                    <div class="col-lg-3">
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1">Host</span>
                             <input type="text" id="host" class="form-control" size="5" placeholder="api.extra.com.br" aria-describedby="basic-addon1" maxlength="45" autocomplete="on">
                         </div>
-                    </td>
-                    <td>
+                    </div>
+                    <div class="col-lg-5">
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1">Path</span>
                             <input type="text" id="path" class="form-control" size="5" placeholder="api/v1/sellerItems" aria-describedby="basic-addon1" maxlength="45" autocomplete="on">
                         </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <table class="table">
-            <tbody>
-                <tr>
-                    <td>
-                        <span class="input-group-addon" id="basic-addon1">Template:</span>
-                        <div id="Template" align="left">
-
-                        </div>
-                        <input type="button" class="btn btn-primary" value="+" onClick="addElement('Template', '');">
-                        <input type="button"  class="btn btn-danger" value="clear" onClick="removeLastElement('Template');">
-                    </td>
-                    <td>
-                        <span class="input-group-addon" id="basic-addon1">Header:</span>
-                        <div id="Header" align="left">
-
-                        </div>
-                        <input type="button" class="btn btn-primary" value="+" onClick="addElement2('Header', '', '');">
-                        <input type="button"  class="btn btn-danger" value="clear" onClick="removeLastElement('Header');">
-                    </td>
-                    <td>
-                        <span class="input-group-addon" id="basic-addon1">Parameter:</span>
-                        <div id="Parameter" align="left">
-
-                        </div>
-                        <input type="button"  class="btn btn-primary" value="+" onClick="addElement2('Parameter', '', '');">
-                        <input type="button"  class="btn btn-danger" value="clear" onClick="removeLastElement('Parameter');">
-                    </td>
-                </tr>  
-            </tbody>
-        </table>
-
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
         <div class="container">
-            <h4>Json:</h4>
-            <textarea id="Payload" rows="1" cols="10"></textarea>
-            <h4>Labels:</h4>
-            <ul id="request-tags">
-            </ul>
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Template</div>
+                        <div class="panel-body">
+                            <div id="Template"></div>
+                            <input type="button" class="btn btn-primary btn-xs" value="+" onClick="addElement('Template', '');">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Header</div>
+                        <div class="panel-body">
+                            <div id="Header"></div>
+                            <input type="button" class="btn btn-primary btn-xs" value="+" onClick="addElement2('Header', '', '');">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Parameter</div>
+                        <div class="panel-body">
+                            <div id="Parameter"></div>
+                            <input type="button"  class="btn btn-primary btn-xs" value="+" onClick="addElement2('Parameter', '', '');">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <br><br><br>
+        <br>
+        <div class="container">
+            <div class="col-md-9">
+                <h4>Json Object:</h4>
+                <textarea id="Payload" rows="1" cols="10"></textarea>
 
-        <div id="update-button-div">
-            <table class="table">
-                <tbody>
-                    <tr>
-                        <td>
-                            <input type="submit" class="btn btn-primary" id="submit-request-info" value="Executar" align="left">
-                        </td>
-                        <td>
-                            <input type="submit" class="btn btn-success" id="insert-request-info" value="Criar" align="center">
-                            <input type="submit" class="btn btn-warning" id="update-request-info" value="Atualizar" align="right">
-                            <input type="submit" class="btn btn-danger disabled" id="remove-request-info" value="Remover" align="right">
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            </div>
+            <br>
+            <div class="col-md-7">
+                <h4>Labels:</h4>
+                <ul id="request-tags"></ul>
+            </div>
         </div>
-        <!--input type="submit" class="btn btn-warning" id="update-request-info" value="Update"-->
+        <br><br>
+        <div id="response-view-div"></div>
+        <div class="container">
+            <div id="update-button-div">
+                <div class="row">
+                    <div class="col-md-2">
+                        <input type="submit" class="btn btn-primary btn-lg" id="submit-request-info" value="Execute" align="right">
+                    </div>
+                    <div class="col-md-1">
+                        <div id="schedule-validation" class="btn-group">
+                            <button id="schedule-button" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                Action <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a onClick="insertRequestOnDatabase()"><b>Create</b> populated fields as a <b>New Request</b></a></li>
+                                <li><a onClick="updateRequestFromDatabase()"><b>Save</b> any changed data on <b>Selected Request</b> </a></li>
+                                <li><a onClick="deleteRequestFromDatabase()"><b>Remove</b> the <b>Selected Request</b>  from database</a></li>
+                            </ul>
+                        </div>
+                    </div>
 
+                </div>
+            </div>
+        </div>
         <br><br>
         <div class="container">
             <div id="response-div"></div>
         </div>
     </div>
-    <br>   
+    <br>  
+    <!--input type="text" onclick="select()" value="click to select me"/-->
 </body>
 </html>
 

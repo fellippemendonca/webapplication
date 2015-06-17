@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package jpa;
 
 import Entities.HostAddress;
@@ -13,6 +12,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
@@ -27,29 +27,33 @@ import jpa.exceptions.RollbackFailureException;
  * @author fellippe.mendonca
  */
 public class HostAddressJpaController implements Serializable {
-    private EntityManagerFactory emf = null;
-    
-    @PersistenceContext(unitName="ServletStatelessPU")
-    private EntityManager entityManager; 
 
     public HostAddressJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
 
+    private EntityManagerFactory emf = null;
+
     public EntityManager getEntityManager() {
-        //return this.entityManager;
         return emf.createEntityManager();
     }
 
     public HostAddress create(HostAddress hostAddress) throws PreexistingEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
+        EntityTransaction etx = null;
         try {
-            System.out.println("Inserindo HostAddress no Banco de Dados...");
             em = getEntityManager();
+            etx = em.getTransaction();
+            etx.begin();
             em.persist(hostAddress);
             em.flush();
+            etx.commit();
         } catch (Exception ex) {
-            System.out.println("Ocorreu um Problema durante a inserção do HostAddress.");
+            try {
+                etx.rollback();
+            } catch (Exception re) {
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+            }
             throw ex;
         } finally {
             if (em != null) {
@@ -141,29 +145,27 @@ public class HostAddressJpaController implements Serializable {
             em.close();
         }
     }
-    
+
     public HostAddress find(HostAddress host) {
         EntityManager em = getEntityManager();
         Query query = em.createNamedQuery("HostAddress.findByHostAddressValue");
         query.setParameter("hostAddressValue", host.getHostAddressValue());
         List<HostAddress> hostList = (List<HostAddress>) query.getResultList();
-        try{
-        if(hostList.size()>0){
-            return hostList.get(0);
-        } else{
-            return null;
-        }
-        }
-        finally {
+        try {
+            if (hostList.size() > 0) {
+                return hostList.get(0);
+            } else {
+                return null;
+            }
+        } finally {
             em.close();
         }
     }
-    
-    public HostAddress findOrAdd(HostAddress host) throws RollbackFailureException, Exception{
-        if(find(host)!=null){
+
+    public HostAddress findOrAdd(HostAddress host) throws RollbackFailureException, Exception {
+        if (find(host) != null) {
             return find(host);
-        }else{
-            
+        } else {
             return create(host);//find(host);
         }
     }
@@ -180,13 +182,13 @@ public class HostAddressJpaController implements Serializable {
             em.close();
         }
     }
-    
+
     public List<String> listHostAddressEntities() {
         List<String> list = new ArrayList();
-        for(HostAddress m : findHostAddressEntities(true, -1, -1)){
+        for (HostAddress m : findHostAddressEntities(true, -1, -1)) {
             list.add(m.getHostAddressValue());
         }
         return list;
     }
-    
+
 }
