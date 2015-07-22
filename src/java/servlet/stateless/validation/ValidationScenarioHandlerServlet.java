@@ -35,47 +35,40 @@ public class ValidationScenarioHandlerServlet extends HttpServlet {
             throws ServletException, IOException, Exception {
         response.setContentType("text/html;charset=UTF-8");
         boolean status;
-        try {
-            switch (request.getParameter("operation")) {
-                case "insert":
-                    System.out.println("Validação enviada para ser criada:\n" + request.getParameter("jsonValidationObj") + "\n");
-                    status = sless.criaValidacao(request.getParameter("jsonValidationObj"));
-                    if(status == true){
-                        response.setStatus(200);
-                        response.getWriter().write("Status: Success.");
-                    }else{
-                        response.setStatus(500);
-                        response.getWriter().write("Status: Fail.");
-                    }
-                    break;
-                case "update":
-                    System.out.println("Validação enviada para ser alterada:\n" + request.getParameter("jsonValidationObj") + "\n");
-                    status = sless.atualizaValidacao(request.getParameter("jsonValidationObj"));
-                    if(status == true){
-                        response.setStatus(200);
-                        response.getWriter().write("Status: Success.");
-                    }else{
-                        response.setStatus(500);
-                        response.getWriter().write("Status: Fail.");
-                    }
-                    break;
-                case "remove":
-                    System.out.println("Validação enviada para ser removida:\n" + request.getParameter("jsonValidationObj") + "\n");
-                    status = sless.removeValidacao(request.getParameter("jsonValidationObj"));
-                    if(status == true){
-                        response.setStatus(200);
-                        response.getWriter().write("Status: Success.");
-                    }else{
-                        response.setStatus(500);
-                        response.getWriter().write("Status: Fail.");
-                    }
-                    break;
-            }
-
-        } catch (NamingException | URISyntaxException ex) {
-            Logger.getLogger(RequestHandlerServlet.class.getName()).log(Level.SEVERE, null, ex);
-            response.setStatus(500);
-            response.getWriter().write("Status: Fail.");
+        switch (request.getParameter("operation")) {
+            case "insert":
+                System.out.println("Validação enviada para ser criada:\n" + request.getParameter("jsonValidationObj") + "\n");
+                status = sless.criaValidacao(request.getParameter("jsonValidationObj"));
+                if(status == true){
+                    response.setStatus(200);
+                    response.getWriter().write("Status: Success.");
+                }else{
+                    response.setStatus(500);
+                    response.getWriter().write("Status: Fail.");
+                }
+                break;
+            case "update":
+                System.out.println("Validação enviada para ser alterada:\n" + request.getParameter("jsonValidationObj") + "\n");
+                status = sless.atualizaValidacao(request.getParameter("jsonValidationObj"));
+                if(status == true){
+                    response.setStatus(200);
+                    response.getWriter().write("Status: Success.");
+                }else{
+                    response.setStatus(500);
+                    response.getWriter().write("Status: Fail.");
+                }
+                break;
+            case "remove":
+                System.out.println("Validação enviada para ser removida:\n" + request.getParameter("jsonValidationObj") + "\n");
+                status = sless.removeValidacao(request.getParameter("jsonValidationObj"));
+                if(status == true){
+                    response.setStatus(200);
+                    response.getWriter().write("Status: Success.");
+                }else{
+                    response.setStatus(500);
+                    response.getWriter().write("Status: Fail.");
+                }
+                break;
         }
     }
 

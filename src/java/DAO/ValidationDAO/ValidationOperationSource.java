@@ -41,17 +41,21 @@ public class ValidationOperationSource {
     }
 
     public boolean compareBothJsonElements(String json1, String json2) {
-        JsonParser parser1 = new JsonParser();
-        JsonParser parser2 = new JsonParser();
+        JsonParser parser1; 
+        JsonParser parser2; 
         boolean success = false;
         try {
+            parser1 = new JsonParser();
+            parser2 = new JsonParser();
             JsonElement element1 = parser1.parse(json1);
             JsonElement element2 = parser2.parse(json2);
             success = jsonCompare(element1, element2);
         } catch (JsonSyntaxException name) {
             System.err.println("JsonSyntaxException: " + name);
         }
-        return success;
+        finally{
+            return success;
+        }
     }
 
     public boolean jsonCompare(JsonElement element1, JsonElement element2) {
@@ -95,15 +99,17 @@ public class ValidationOperationSource {
 
 //-------------------------FIND ELEMENTS ON JSON--------------------------------
     public boolean findInJsonElement(String json, String field) {
-        JsonParser parser2 = new JsonParser();
+        JsonParser parser2;
         boolean success = false;
         try {
+            parser2 = new JsonParser();
             JsonElement elementX = parser2.parse(json);
             success = findElement(elementX, field);
         } catch (JsonSyntaxException name) {
             System.err.println("JsonSyntaxException: " + name);
+        } finally{
+            return success;
         }
-        return success;
     }
 
     public boolean findElement(JsonElement element, String field) {

@@ -42,13 +42,8 @@ public class RequestFilter extends HttpServlet {
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            
-                try {
-                    //String param = request.getParameter("tag_array");
-                    out.write(new Gson().toJson(sless.getRequest()));
-                } catch (NamingException ex) {
-                    Logger.getLogger(RequestFilter.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            //out.write(new Gson().toJson(sless.getRequest()));
+            out.write(sless.getRequest());
         }
     }
 

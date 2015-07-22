@@ -32,16 +32,14 @@ public class RequestDailyExecution extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         try (PrintWriter out = response.getWriter()) {
             System.out.println("GET /ExecuteRequestValidation?requestId="+request.getParameter("requestId")+"&executionDate="+request.getParameter("executionDate"));
             try {
                 int requestId = Integer.parseInt(request.getParameter("requestId"));
                 String executionDate = request.getParameter("executionDate");
                     out.write(sless.getDailyRequestValidationLog(requestId, executionDate));
-                } catch (NamingException ex) {
-                    Logger.getLogger(RequestFilter.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (Exception ex) {
                 Logger.getLogger(RequestValidationFilter.class.getName()).log(Level.SEVERE, null, ex);
             }

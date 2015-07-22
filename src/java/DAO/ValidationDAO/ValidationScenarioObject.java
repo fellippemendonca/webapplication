@@ -11,6 +11,7 @@ import Entities.ValidationEntities.ValidationElement;
 import Entities.ValidationEntities.ValidationOperation;
 import Entities.ValidationEntities.ValidationScenario;
 import HttpConnections.ResponseContents;
+import HttpConnections.RestRequester;
 import JsonObjects.Validation.JsonValidationElement;
 import JsonObjects.Validation.JsonValidationOperation;
 import JsonObjects.Validation.JsonValidationScenario;
@@ -150,24 +151,43 @@ public class ValidationScenarioObject {
         boolean success;
         this.jsonValidationScenario.setSuccess(true);
         RequestReferenceObject requestRefObj = new RequestReferenceObject(this.dao, this.jsonValidationScenario.getRequestObject());
-        ResponseContents rc;
-        try {
-            rc = requestRefObj.generateRestRequester().Request();
+
+        RestRequester restRequester = requestRefObj.generateRestRequester();
+        if (restRequester == null) {
+            String errorMessage = "The query used to fill dynamic parameters returned no results and the request was not able to be generated and then executed.";
+            ResponseContents rc = new ResponseContents();
+            rc.setRequest("Not generated.");
+            rc.setStatus("Not retrieved.");
+            rc.setEndDate();
+            rc.setContents(errorMessage);
+            System.out.println(errorMessage);
             this.jsonValidationScenario.setResponseContents(rc);
-            for (JsonValidationElement element : this.jsonValidationScenario.getJsonValidationElementList()) {
-                ValidationOperationSource operation = new ValidationOperationSource();
-                String operationName = element.getJsonValidationOperation().getName();
-                String expected = element.getExpectedObject();
-                success = operation.validateElement(operationName, expected, rc);
-                element.setSuccess(success);
-                if (success == false) {
-                    this.jsonValidationScenario.setSuccess(success);
-                }
-            }
-        } catch (IOException | URISyntaxException ex) {
-            Logger.getLogger(ValidationScenarioObject.class.getName()).log(Level.SEVERE, null, ex);
             this.jsonValidationScenario.setSuccess(false);
+            return this.jsonValidationScenario;
+        } else {
+            ResponseContents rc;
+            System.out.println("\nExecuting Validation of RequestId:" + this.jsonValidationScenario.getIdRequestReference());
+            try {
+                rc = restRequester.Request();
+                this.jsonValidationScenario.setResponseContents(rc);
+                for (JsonValidationElement element : this.jsonValidationScenario.getJsonValidationElementList()) {
+
+                    ValidationOperationSource operation = new ValidationOperationSource();
+                    String operationName = element.getJsonValidationOperation().getName();
+                    String expected = element.getExpectedObject();
+                    success = operation.validateElement(operationName, expected, rc);
+                    element.setSuccess(success);
+                    if (success == false) {
+                        this.jsonValidationScenario.setSuccess(success);
+                    }
+                }
+                System.out.println("Status:" + this.jsonValidationScenario.isSuccess());
+                return this.jsonValidationScenario;
+            } catch (IOException | URISyntaxException ex) {
+                Logger.getLogger(ValidationScenarioObject.class.getName()).log(Level.SEVERE, null, ex);
+                this.jsonValidationScenario.setSuccess(false);
+            }
+            return null;
         }
-        return this.jsonValidationScenario;
     }
 }

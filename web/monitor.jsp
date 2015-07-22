@@ -12,12 +12,16 @@
         <title>Monitoring</title>
 
         <!-- Load the scripts needed for the application.-->
-        <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.3.min.js" language="Javascript"></script> 
-        <script type="text/javascript" src="http://code.jquery.com/ui/1.11.4/jquery-ui.js" language="Javascript"></script>
-
+        <!--script type="text/javascript" src="http://code.jquery.com/jquery-2.1.3.min.js" language="Javascript"></script--> 
+        <!--script type="text/javascript" src="http://code.jquery.com/ui/1.11.4/jquery-ui.js" language="Javascript"></script-->
+        <script type="text/javascript" src="Jquery/jquery-2.1.3.min.js" language="Javascript"></script> 
+        <script type="text/javascript" src="Jquery/jquery-ui.min.js" language="Javascript"></script>
+        
         <!-- Load the scripts needed for the autocomplete function. -->
-        <link rel="stylesheet" href="http://cdn.datatables.net/1.10.5/css/jquery.dataTables.css"/>
-        <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
+        <!--link rel="stylesheet" href="http://cdn.datatables.net/1.10.5/css/jquery.dataTables.css"/-->
+        <!--link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/-->
+        <link rel="stylesheet" href="Jquery/jquery.dataTables.min.css">
+        <link rel="stylesheet" href="Jquery/jquery-ui.css">
 
         <!-- Bootstrap -->
         <script type="text/javascript" src="bootstrap-3.3.4-dist/js/bootstrap.min.js" language="Javascript"></script>
@@ -76,7 +80,7 @@
 
         <div class="container">
             <div class="panel panel-info">
-                <div class="panel-heading">How does it works?</div>
+                <div class="panel-heading">How does it work?</div>
                 <div class="panel-body">
                     Select a request from list below to view the execution log from pre-selected date.
                 </div>
@@ -87,9 +91,11 @@
         <div class="container">
             <h4>Labels:</h4>
             <input type="text" id="tag-array" class="form-control" placeholder="Rótulos..." size="5">
-            <input type="submit" class="btn btn-primary" id="submit-tag-filter" value="Filter" align="left"/>  
+            <div id="monitor-view-div"></div>
+            <input type="submit" class="btn btn-primary" id="submit-tag-filter" value="Filter" align="left"/>
         </div>
         <br>
+        
         <div class="container">
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -98,7 +104,7 @@
                 <div id="request-list"></div>
             </div>
         </div>
-
+        
         <div id="section">
             <div class="container">
                 <!--div id="createNewValidation"></div-->
@@ -209,10 +215,35 @@
                                 </div>
 
                                 <div class="container">
-                                    <h4>Json Object:</h4>
-                                    <textarea id="Payload" rows="1" cols="10"></textarea>
-                                    <h4>Labels:</h4>
-                                    <div class="col-md-5"><ul id="request-tags"></ul></div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h4>Json Object:</h4>
+                                            <textarea id="Payload" rows="1" cols="30"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h4>Labels:</h4>
+                                            <ul id="request-tags"></ul>
+                                        </div>
+                                    </div>  
+                                    <div class="row">
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#demo">Dynamic Data</button>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <div id="demo" class="collapse">
+                                                <select id="databank-selector">
+                                                    <option>ADHLG</option>
+                                                    <option>SLHLG</option>
+                                                    <option>ADPRD</option>
+                                                    <option>SLPRD</option>
+                                                    <option>EXPRD</option>
+                                                </select>
+                                                <textarea id="dynamic-data-query" rows="5" cols="10"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <br>
                                 <br>
@@ -223,7 +254,7 @@
                                     <form>
                                         <div class="input-group">
                                             <span class="input-group-addon" id="basic-addon1">Description</span>
-                                            <input type="text" id="scenario-description" class="form-control" size="5" placeholder="Descrição do cenário..." aria-describedby="basic-addon1" maxlength="200" autocomplete="on">
+                                            <input type="text" id="scenario-description" class="form-control" size="5" placeholder="Scenario Description..." aria-describedby="basic-addon1" maxlength="200" autocomplete="on">
                                         </div>
                                         <br><br>
                                         <div id="Validation"></div>

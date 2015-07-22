@@ -34,18 +34,13 @@ public class ValidationScenarioExecutorServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
-        try {
-            System.out.println("Request:\n" + request.getParameter("jsonValidationObj") + "\n");
-            JsonValidationScenario jvsc = sless.executaNovaValidacao(request.getParameter("jsonValidationObj"));
-            
-            Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-            String responseContents = gson.toJson(jvsc);
-            System.out.println("Response:\n"+responseContents);
-            response.setStatus(200);
-            response.getWriter().write(responseContents);
-        } catch (NamingException | URISyntaxException ex) {
-            Logger.getLogger(RestExecutorServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        System.out.println("Request:\n" + request.getParameter("jsonValidationObj") + "\n");
+        JsonValidationScenario jvsc = sless.executaNovaValidacao(request.getParameter("jsonValidationObj"));
+        Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+        String responseContents = gson.toJson(jvsc);
+        System.out.println("Response:\n"+responseContents);
+        response.setStatus(200);
+        response.getWriter().write(responseContents);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

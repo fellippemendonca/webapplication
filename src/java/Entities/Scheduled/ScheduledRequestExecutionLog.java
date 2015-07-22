@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "ScheduledRequestExecutionLog.findByIdScheduledRequestExecutionLog", query = "SELECT s FROM ScheduledRequestExecutionLog s WHERE s.idScheduledRequestExecutionLog = :idScheduledRequestExecutionLog"),
     @NamedQuery(name = "ScheduledRequestExecutionLog.findByIdRequestReference", query = "SELECT s FROM ScheduledRequestExecutionLog s WHERE s.idRequestReference = :idRequestReference"),
     @NamedQuery(name = "ScheduledRequestExecutionLog.findByExecutionDate", query = "SELECT s FROM ScheduledRequestExecutionLog s WHERE s.executionDate = :executionDate"),
-    @NamedQuery(name = "ScheduledRequestExecutionLog.findByExecutionDateAndId", query = "SELECT s FROM ScheduledRequestExecutionLog s WHERE s.executionDate >= :executionDate and s.executionDate < :dayAfter and s.idRequestReference = :idRequestReference"),
+    @NamedQuery(name = "ScheduledRequestExecutionLog.findByExecutionDateAndId", query = "SELECT s FROM ScheduledRequestExecutionLog s WHERE s.executionDate >= :executionDate and s.executionDate < :dayAfter and s.idRequestReference = :idRequestReference order by s.executionDate desc"),
     @NamedQuery(name = "ScheduledRequestExecutionLog.findBySuccess", query = "SELECT s FROM ScheduledRequestExecutionLog s WHERE s.success = :success")})
 public class ScheduledRequestExecutionLog implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -57,7 +57,7 @@ public class ScheduledRequestExecutionLog implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Lob
-    @Size(min = 1, max = 65535)
+    @Size(min = 1, max = 16777215)
     @Column(name = "json_request_validation")
     private String jsonRequestValidation;
     @Basic(optional = false)

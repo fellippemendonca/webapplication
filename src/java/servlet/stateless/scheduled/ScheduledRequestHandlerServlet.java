@@ -35,36 +35,29 @@ public class ScheduledRequestHandlerServlet extends HttpServlet {
             throws ServletException, IOException, Exception {
         response.setContentType("text/html;charset=UTF-8");
         boolean status;
-        try {
-            switch (request.getParameter("operation")) {
-                case "insert":
-                    System.out.println("Schedule enviado para ser criado:\n" + request.getParameter("idRequestReference") + "\n");
-                    status = sless.createScheduledRequest(Integer.parseInt(request.getParameter("idRequestReference")));
-                    if(status == true){
-                        response.setStatus(200);
-                        response.getWriter().write("Status: Success.");
-                    }else{
-                        response.setStatus(500);
-                        response.getWriter().write("Status: Fail.");
-                    }
-                    break;
-                case "remove":
-                    System.out.println("Schedule enviado para ser removido:\n" + request.getParameter("idRequestReference") + "\n");
-                    status = sless.removeScheduledRequest(Integer.parseInt(request.getParameter("idRequestReference")));
-                    if(status == true){
-                        response.setStatus(200);
-                        response.getWriter().write("Status: Success.");
-                    }else{
-                        response.setStatus(500);
-                        response.getWriter().write("Status: Fail.");
-                    }
-                    break;
-            }
-
-        } catch (NamingException | URISyntaxException ex) {
-            Logger.getLogger(RequestHandlerServlet.class.getName()).log(Level.SEVERE, null, ex);
-            response.setStatus(500);
-            response.getWriter().write("Status: Fail.");
+        switch (request.getParameter("operation")) {
+            case "insert":
+                System.out.println("Schedule enviado para ser criado:\n" + request.getParameter("idRequestReference") + "\n");
+                status = sless.createScheduledRequest(Integer.parseInt(request.getParameter("idRequestReference")));
+                if(status == true){
+                    response.setStatus(200);
+                    response.getWriter().write("Status: Success.");
+                }else{
+                    response.setStatus(500);
+                    response.getWriter().write("Status: Fail.");
+                }
+                break;
+            case "remove":
+                System.out.println("Schedule enviado para ser removido:\n" + request.getParameter("idRequestReference") + "\n");
+                status = sless.removeScheduledRequest(Integer.parseInt(request.getParameter("idRequestReference")));
+                if(status == true){
+                    response.setStatus(200);
+                    response.getWriter().write("Status: Success.");
+                }else{
+                    response.setStatus(500);
+                    response.getWriter().write("Status: Fail.");
+                }
+                break;
         }
     }
 

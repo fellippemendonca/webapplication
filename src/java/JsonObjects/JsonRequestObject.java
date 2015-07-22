@@ -6,6 +6,7 @@
 
 package JsonObjects;
 
+import JsonObjects.DynamicData.JsonDynamicData;
 import JsonObjects.Tags.JsonTag;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ public class JsonRequestObject {
     String host;
     String path;
     String payload;
+    JsonDynamicData jsonDynamicData;
     List<String> templates;
     List<JHeader> headers;
     List<JParameter> parameters;
@@ -37,13 +39,14 @@ public class JsonRequestObject {
         this.host = "";
         this.path = "";
         this.payload = "";
+        this.jsonDynamicData = null;
         this.templates = new ArrayList();
         this.headers = new ArrayList();
         this.parameters = new ArrayList();
         this.jsonTags = new ArrayList();
     }
-    
-    public JsonRequestObject(int dbId, String requestName, String environment, String method, String scheme, String host, String path, String payload, List<String> templates, List<JHeader> headers, List<JParameter> parameters, List<JsonTag> jsonTags) {
+
+    public JsonRequestObject(int dbId, String requestName, String environment, String method, String scheme, String host, String path, String payload, JsonDynamicData jsonDynamicData, List<String> templates, List<JHeader> headers, List<JParameter> parameters, List<JsonTag> jsonTags) {
         this.dbId = dbId;
         this.requestName = requestName;
         this.environment = environment;
@@ -52,6 +55,7 @@ public class JsonRequestObject {
         this.host = host;
         this.path = path;
         this.payload = payload;
+        this.jsonDynamicData = jsonDynamicData;
         this.templates = templates;
         this.headers = headers;
         this.parameters = parameters;
@@ -121,6 +125,16 @@ public class JsonRequestObject {
     public void setPayload(String payload) {
         this.payload = payload;
     }
+
+    public JsonDynamicData getJsonDynamicData() {
+        return jsonDynamicData;
+    }
+
+    public void setJsonDynamicData(JsonDynamicData jsonDynamicData) {
+        this.jsonDynamicData = jsonDynamicData;
+    }
+    
+    
 
     public List<String> getTemplates() {
         return this.templates;

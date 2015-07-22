@@ -61,7 +61,7 @@ function RequestTableData(tagElementId) {
 
     $.get('ScheduledRequests', {"tag_array": filter},
     function(resp) {
-        var requestList = JSON.parse(resp).requestList;
+        var requestList = resp;
         var tableshow = "<table id='requestTable' class='table table-bordered' cellspacing='0' width='100%'>";
         tableshow += "<thead><tr><th>id</th><th>Env</th><th>Name</th><th>Path</th></tr></thead><tbody>";
 
@@ -206,7 +206,7 @@ function pospulateRequestLogByDate(json) {
                 newdiv1.appendChild(cell2);
 
                 document.getElementById('daily-execution-log').appendChild(newdiv1);
-                
+
                 var divideRow = document.createElement('hr');
                 divideRow.setAttribute("width", "75%");
                 divideRow.setAttribute("align", "left");
@@ -220,6 +220,7 @@ function pospulateRequestLogByDate(json) {
             document.getElementById('daily-execution-log').appendChild(newdiv1);
         }
     }
+    document.getElementById("monitor-view-div").scrollIntoView();
 }
 
 /*Função que preenche os cenarios de validaçao com base no json fornecido*/
@@ -265,6 +266,19 @@ function populateValidationFields(scenario) {
     el('host').value = requestObj.host;
     el('path').value = requestObj.path;
     el('Payload').value = requestObj.payload;
+
+    /*------------------------DYNAMIC DATA--------------------------------*/
+    if (requestObj.hasOwnProperty('jsonDynamicData')) {
+        if(requestObj.jsonDynamicData!==null){
+            el('databank-selector').value = JSON.parse(requestObj.jsonDynamicData.jsonRequest).databaseName;
+            el('dynamic-data-query').value = JSON.parse(requestObj.jsonDynamicData.jsonRequest).request;
+        } else {
+            el('databank-selector').value = null;
+            el('dynamic-data-query').value = null;
+        } 
+    }
+    /*--------------------------------------------------------------------*/
+
 
     var templateList = requestObj.templates;
     $.each(templateList, function(i, template) {

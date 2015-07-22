@@ -5,7 +5,7 @@
 
 $(document).ready(function() {
     RequestTableData('tag-array');
-   
+
     $("#submit-tag-filter").click(function() {
         $("#request-list").empty();
         elementClear();
@@ -22,7 +22,7 @@ function RequestTableData(tagElementId) {
 
     $.get('requestfilter', {"tag_array": filter},
     function(resp) {
-        var requestList = JSON.parse(resp).requestList;
+        var requestList = resp;
         var tableshow = "<table id='requestTable' class='table table-bordered' cellspacing='0' width='100%'>";
         tableshow += "<thead><tr><th>id</th><th>Env</th><th>Name</th><th>Path</th></tr></thead><tbody>";
 
@@ -80,6 +80,18 @@ function Synthesizer(list) {
         el('host').value = requestList[row.cells[0].innerHTML].host;
         el('path').value = requestList[row.cells[0].innerHTML].path;
         el('Payload').value = requestList[row.cells[0].innerHTML].payload;
+
+        /*------------------------DYNAMIC DATA--------------------------------*/
+        if(requestList[row.cells[0].innerHTML].hasOwnProperty('jsonDynamicData')){
+            if(requestList[row.cells[0].innerHTML].jsonDynamicData!==null){
+                el('databank-selector').value = JSON.parse(requestList[row.cells[0].innerHTML].jsonDynamicData.jsonRequest).databaseName;
+                el('dynamic-data-query').value = JSON.parse(requestList[row.cells[0].innerHTML].jsonDynamicData.jsonRequest).request;
+            } else{
+                el('databank-selector').value = null;
+                el('dynamic-data-query').value = null;
+            }
+        }
+        /*--------------------------------------------------------------------*/
 
         var templateList = requestList[row.cells[0].innerHTML].templates;
         $.each(templateList, function(i, template) {
@@ -147,4 +159,14 @@ function simpleRequest(url, busca) {
                 alert("Request failed." + url);
             });
     return dataOutput;
+}
+
+//Verifica se a string pode ser parseada como um Json válido.
+function isJson(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
 }

@@ -8,14 +8,14 @@
 
 
 var ElementCounter = 0;
-var ElementLimit = 10;
+var ElementLimit = 40;
 //Adiciona dinamicamente 1 campo para preencher valores.
 function addElement(divName, fieldValue) {
     if (ElementCounter === ElementLimit) {
         alert("You have reached the limit of adding " + ElementCounter + " " + divName);
     } else {
         var tableRow = document.createElement('div');
-        tableRow.id = "RowElement" + ElementCounter;
+        tableRow.id = "RowElement" + divName + ElementCounter;
         tableRow.className = "row";
 
         var cell1 = document.createElement('div');
@@ -57,7 +57,7 @@ function addElement(divName, fieldValue) {
 
 
 var ElementCounter2 = 0;
-var ElementLimit2 = 10;
+var ElementLimit2 = 40;
 //Adiciona dinamicamente 2 campos para preencher valores.
 function addElement2(divName, fieldValue1, fieldValue2) {
     if (ElementCounter2 === ElementLimit2) {
@@ -65,7 +65,7 @@ function addElement2(divName, fieldValue1, fieldValue2) {
     } else {
         
         var tableRow = document.createElement('div');
-        tableRow.id = "RowElement" + ElementCounter2;
+        tableRow.id = "RowElement" + divName + ElementCounter2;
         tableRow.className = "row";
 
         var cell1 = document.createElement('div');
@@ -125,6 +125,13 @@ function removeLastElement(divName) {
     document.getElementById(divName).innerHTML = "";
 }
 
+function removeInnerElement(divName) {
+    document.getElementById(divName).innerHTML = "";
+}
+function removeElementValue(divName) {
+    document.getElementById(divName).value = "";
+}
+
 function removeDivElement(divName) {
     $("#" + divName).remove();
     $("#" + divName + "remove").remove();
@@ -145,17 +152,21 @@ function elementClear() {
     ElementCounter2 = 0;
     document.getElementById("response-div").innerHTML = "";
     $('#request-tags').tagit('removeAll');
-    document.getElementById('requestName').value = "";
-    document.getElementById('request-id').value = "";
-    document.getElementById('method').value = "";
-    document.getElementById('environment').value = "";
-    document.getElementById('scheme').value = "";
-    document.getElementById('host').value = "";
-    document.getElementById('path').value = "";
-    document.getElementById('Payload').value = "";
-    document.getElementById('Template').innerHTML = "";
-    document.getElementById('Header').innerHTML = "";
-    document.getElementById('Parameter').innerHTML = "";
+    removeElementValue('requestName');
+    removeElementValue('request-id');
+    removeElementValue('method');
+    removeElementValue('environment');
+    removeElementValue('scheme');
+    removeElementValue('host');
+    removeElementValue('path');
+    removeElementValue('Payload');
+    /*Dynamic data*/
+    removeElementValue('databank-selector');
+    removeElementValue('dynamic-data-query');
+    /*------------*/
+    removeInnerElement('Template');
+    removeInnerElement('Header');
+    removeInnerElement('Parameter');
 }
 
 //Função que busca valores no servlet com base no nome do campo.

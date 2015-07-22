@@ -40,7 +40,7 @@ function RequestTableData(tagElementId) {
 
     $.get('requestfilter', {"tag_array": filter},
     function(resp) {
-        var requestList = JSON.parse(resp).requestList;
+        var requestList = resp;
         var tableshow = "<table id='requestTable' class='table table-bordered' cellspacing='0' width='100%'>";
         tableshow += "<thead><tr><th>id</th><th>Env</th><th>Name</th><th>Path</th></tr></thead><tbody>";
 
@@ -104,6 +104,18 @@ function Synthesizer(list) {
         el('path').value = requestList[row.cells[0].innerHTML].path;
         el('Payload').value = requestList[row.cells[0].innerHTML].payload;
 
+        /*------------------------DYNAMIC DATA--------------------------------*/
+        if(requestList[row.cells[0].innerHTML].hasOwnProperty('jsonDynamicData')){
+            if(requestList[row.cells[0].innerHTML].jsonDynamicData!==null){
+                el('databank-selector').value = JSON.parse(requestList[row.cells[0].innerHTML].jsonDynamicData.jsonRequest).databaseName;
+                el('dynamic-data-query').value = JSON.parse(requestList[row.cells[0].innerHTML].jsonDynamicData.jsonRequest).request;
+            } else{
+                el('databank-selector').value = null;
+                el('dynamic-data-query').value = null;
+            }
+        }
+        /*--------------------------------------------------------------------*/
+
         var templateList = requestList[row.cells[0].innerHTML].templates;
         $.each(templateList, function(i, template) {
             addElement('Template', template);
@@ -123,7 +135,7 @@ function Synthesizer(list) {
         $.each(tagList, function(i, tag) {
             $('#request-tags').tagit('createTag', tag.name);
         });
-        
+        document.getElementById("validation-view-div").scrollIntoView();
         document.getElementById('create-new-validation-button').className = 'btn btn-primary btn-lg';
         document.getElementById('execute-massive-validation-button').className = 'btn btn-primary';
         getValidationScenarioList('RequestValidationFilter', requestList[row.cells[0].innerHTML].dbId);
@@ -203,6 +215,8 @@ function validationCreate() {
     document.getElementById('update-validation-button').className = 'btn btn-warning disabled';
     document.getElementById('delete-validation-button').className = 'btn btn-danger disabled';
     $('#myModal').modal('show');
+    //document.getElementById("validation-view-div").scrollIntoView();
+
 }
 
 function validationEdit(row) {
@@ -210,6 +224,7 @@ function validationEdit(row) {
     document.getElementById('update-validation-button').className = 'btn btn-warning';
     document.getElementById('delete-validation-button').className = 'btn btn-danger';
     $('#myModal').modal('show');
+    //document.getElementById("validation-view-div").scrollIntoView();
 }
 
 function el(id) {
@@ -228,6 +243,18 @@ function populateValidationFields(row) {
     el('host').value = requestObj.host;
     el('path').value = requestObj.path;
     el('Payload').value = requestObj.payload;
+
+    /*------------------------DYNAMIC DATA--------------------------------*/
+    if (requestObj.hasOwnProperty('jsonDynamicData')) {
+        if(requestObj.jsonDynamicData!==null){
+            el('databank-selector').value = JSON.parse(requestObj.jsonDynamicData.jsonRequest).databaseName;
+            el('dynamic-data-query').value = JSON.parse(requestObj.jsonDynamicData.jsonRequest).request;
+        } else {
+            el('databank-selector').value = null;
+            el('dynamic-data-query').value = null;
+        } 
+    }
+    /*--------------------------------------------------------------------*/
 
     var templateList = requestObj.templates;
     $.each(templateList, function(i, template) {
@@ -293,7 +320,8 @@ function getIdList(request) {
 function isScheduled(requestId) {
     $.get("ScheduledRequests", {"requestId": "busca"}, function(data) {
         var isItScheduled = false;
-        var requestList = JSON.parse(data).requestList;
+        //var requestList = JSON.parse(data).requestList;
+        var requestList = data;
         $.each(requestList, function(i, request) {
             if (request.dbId == requestId) {
                 isItScheduled = true;
@@ -315,27 +343,27 @@ function isScheduled(requestId) {
 
 function insertSchedule() {
     //alert (getJsonRequestValidation().idRequestReference);
-        $.post('ScheduledRequestHandlerServlet', {"idRequestReference": getJsonRequestValidation().idRequestReference, "operation": "insert"},
-        function(resp) { // on success
-            alert(resp);
-            //elementClear();
-            getValidationScenarioList('RequestValidationFilter', getJsonRequestValidation().idRequestReference);
-        })
-                .fail(function() { //on failure
-                    alert("Failed during scenario schedule!");
-                });
-    
+    $.post('ScheduledRequestHandlerServlet', {"idRequestReference": getJsonRequestValidation().idRequestReference, "operation": "insert"},
+    function(resp) { // on success
+        alert(resp);
+        //elementClear();
+        getValidationScenarioList('RequestValidationFilter', getJsonRequestValidation().idRequestReference);
+    })
+            .fail(function() { //on failure
+                alert("Failed during scenario schedule!");
+            });
+
 }
 
 function removeSchedule() {
     //alert (getJsonRequestValidation().idRequestReference);
-        $.post('ScheduledRequestHandlerServlet', {"idRequestReference": getJsonRequestValidation().idRequestReference, "operation": "remove"},
-        function(resp) { // on success
-            alert(resp);
-            //elementClear();
-            getValidationScenarioList('RequestValidationFilter', getJsonRequestValidation().idRequestReference);
-        })
-                .fail(function() { //on failure
-                    alert("Failed during scenario unschedule!");
-                });
+    $.post('ScheduledRequestHandlerServlet', {"idRequestReference": getJsonRequestValidation().idRequestReference, "operation": "remove"},
+    function(resp) { // on success
+        alert(resp);
+        //elementClear();
+        getValidationScenarioList('RequestValidationFilter', getJsonRequestValidation().idRequestReference);
+    })
+            .fail(function() { //on failure
+                alert("Failed during scenario unschedule!");
+            });
 }

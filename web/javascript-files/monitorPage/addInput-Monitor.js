@@ -8,14 +8,14 @@
 
 
 var ElementCounter = 0;
-var ElementLimit = 10;
+var ElementLimit = 40;
 //Adiciona dinamicamente 1 campo para preencher valores.
 function addElement(divName, fieldValue) {
     if (ElementCounter === ElementLimit) {
         alert("You have reached the limit of adding " + ElementCounter + " " + divName);
     } else {
         var tableRow = document.createElement('div');
-        tableRow.id = "RowElement" + ElementCounter;
+        tableRow.id = "RowElement" + divName + ElementCounter;
         tableRow.className = "row";
 
         var cell1 = document.createElement('div');
@@ -58,7 +58,7 @@ function addElement(divName, fieldValue) {
 
 
 var ElementCounter2 = 0;
-var ElementLimit2 = 10;
+var ElementLimit2 = 40;
 //Adiciona dinamicamente 2 campos para preencher valores.
 function addElement2(divName, fieldValue1, fieldValue2) {
     if (ElementCounter2 === ElementLimit2) {
@@ -66,7 +66,7 @@ function addElement2(divName, fieldValue1, fieldValue2) {
     } else {
         
         var tableRow = document.createElement('div');
-        tableRow.id = "RowElement" + ElementCounter2;
+        tableRow.id = "RowElement" + divName + ElementCounter2;
         tableRow.className = "row";
 
         var cell1 = document.createElement('div');
@@ -130,12 +130,12 @@ function addValidationElement(divName, optionValue, fieldValue, optionName, ledC
     } else {
 
         var validationElementLabel = document.createElement("Label");
-        validationElementLabel.id = "Label" + ElementCounter3;
+        validationElementLabel.id = "Label" + divName + ElementCounter3;
         validationElementLabel.setAttribute("for", "recipient-name");
         validationElementLabel.innerHTML = optionName;
 
         var tableRow = document.createElement('div');
-        tableRow.id = "RowElement" + ElementCounter3;
+        tableRow.id = "RowElement" + divName + ElementCounter3;
         tableRow.className = "row";
 
         var cell1 = document.createElement('div');
@@ -202,7 +202,7 @@ function addValidationElement(divName, optionValue, fieldValue, optionName, ledC
 
 //Inclui Cenário do request.
 var RequestValidationCounter = 0;
-var RequestValidationCounterLimit = 10;
+var RequestValidationCounterLimit = 40;
 function addValidationScenario(divName, idValidationScenario, validationScenarioDescription, success, logId) {
     if (RequestValidationCounter == RequestValidationCounterLimit) {
         alert("You have reached the limit of adding " + RequestValidationCounter + " " + divName);
@@ -259,6 +259,7 @@ function elementClear() {
     ElementCounter = 0;
     ElementCounter2 = 0;
     ElementCounter3 = 0;
+    RequestValidationCounter = 0;
     $('#request-tags').tagit('removeAll');
     removeElementValue('request-name-indicator');
     removeElementValue('request-env-indicator');
@@ -269,6 +270,10 @@ function elementClear() {
     removeElementValue('host');
     removeElementValue('path');
     removeElementValue('Payload');
+    /*Dynamic data*/
+    removeElementValue('databank-selector');
+    removeElementValue('dynamic-data-query');
+    /*------------*/
     removeInnerElement('response-scenario-div');
     removeInnerElement('Template');
     removeInnerElement('Header');
@@ -281,6 +286,7 @@ function requestClear() {
     ElementCounter = 0;
     ElementCounter2 = 0;
     ElementCounter3 = 0;
+    RequestValidationCounter = 0;
     //document.getElementById('create-new-validation-button').className = 'btn btn-primary btn-lg disabled';
     //document.getElementById('execute-massive-validation-button').className = 'btn btn-primary disabled';
     //removeElement("scheduleButton");
@@ -294,6 +300,10 @@ function requestClear() {
     removeElementValue('host');
     removeElementValue('path');
     removeElementValue('Payload');
+    /*Dynamic data*/
+    removeElementValue('databank-selector');
+    removeElementValue('dynamic-data-query');
+    /*------------*/
     removeInnerElement('response-scenario-div');
     removeInnerElement('Template');
     removeInnerElement('Header');

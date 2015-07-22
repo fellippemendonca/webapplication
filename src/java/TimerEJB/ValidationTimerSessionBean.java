@@ -26,13 +26,6 @@ public class ValidationTimerSessionBean {
 
     public void myTimer() {
         System.out.println("Timer event: " + new Date());
-        /*int requestId = 179;
-        if (executeScenario(requestId)) {
-            System.out.println("Concluiu com Sucesso");
-        } else {
-            System.out.println("Fracassou com Sucesso");
-        }*/
-        
         
         if (executeAllScenarios()) {
             System.out.println("Concluiu com Sucesso");
@@ -41,34 +34,14 @@ public class ValidationTimerSessionBean {
         }
     }
 
-    // Add business logic below. (Right-click in editor and choose
-    // "Insert Code > Add Business Method")
-    public boolean executeScenario(int id) {
-        boolean success = false;
-        try {
-            /*----------------------------------------------------------------*/
-
-            autoScenario = new AutoScenario();
-            autoScenario.getRequestValidationExecuted(id);
-            System.out.println("Request ID executado: " + id);
-            success = true;
-
-            /*----------------------------------------------------------------*/
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(ValidationTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception ex) {
-            Logger.getLogger(ValidationTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return success;
-    }
-
     public boolean executeAllScenarios() {
         boolean success = false;
         try {
             /*----------------------------------------------------------------*/
-            autoScenario = new AutoScenario();
+            this.autoScenario = new AutoScenario();
             System.out.println("Todas as validações estão sendo executadas...");
             success = autoScenario.executeScheduledValidations();
+            
             /*----------------------------------------------------------------*/
         } catch (URISyntaxException ex) {
             Logger.getLogger(ValidationTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -76,6 +49,7 @@ public class ValidationTimerSessionBean {
             Logger.getLogger(ValidationTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
         }finally{
             System.out.println("Feito!");
+            this.autoScenario = null;
             return success;
         }
     }

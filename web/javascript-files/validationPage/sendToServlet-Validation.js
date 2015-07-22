@@ -19,7 +19,7 @@ $(document).ready(function() {
                     .fail(function() { //on failure
                         //Destrava cursor após preencher o response
                         $("body").toggleClass("wait");
-                        alert("Falha ao executar validação!");
+                        alert("Failed during validation.");
                     });
         }
     });
@@ -105,6 +105,20 @@ function fillRequestObject() {
     } else {
         Payload = $("#Payload").val();
     }
+    
+    /*----------------------------DYNAMIC REQUEST FILLER----------------------*/
+    var DynamicData;
+    if ($("#dynamic-data-query").val() == "") {
+        DynamicData = null;
+    } else {
+        DynamicData = {
+            idDynamicInputData: 0,
+            idRequestReference: id,
+            requestType: "SQL",
+            jsonRequest: JSON.stringify({databaseName: $("#databank-selector").val(),request: $("#dynamic-data-query").val()}, undefined, 2)
+        };
+    }
+    /*------------------------------------------------------------------------*/
 
     //-----Arrays
     var Headers = new Array();
@@ -132,6 +146,7 @@ function fillRequestObject() {
             , host: Host
             , path: Path
             , payload: Payload
+            , jsonDynamicData: DynamicData
             , templates: Templates
             , headers: Headers
             , parameters: Parameters

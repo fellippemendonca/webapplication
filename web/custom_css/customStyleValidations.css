@@ -53,6 +53,17 @@
     height: 20em;
 }
 
+#dynamic-data-query{
+    height: 6em;
+    width: 45%;
+    padding: 3px;
+    transition: all 0.5s ease;
+}
+
+#dynamic-data-query:focus{
+    height: 20em;
+}
+
 #message-text{
     height: 7em;
     width: 100%;

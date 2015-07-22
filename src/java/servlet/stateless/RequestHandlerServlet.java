@@ -33,45 +33,40 @@ public class RequestHandlerServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html");
         boolean status;
-        try {
-            switch (request.getParameter("operation")) {
-                case "insert":
-                    status = sless.criaNovoCenario(request.getParameter("jsonRequestObj"));
-                    System.out.println("Request enviado para ser criado:\n" + request.getParameter("jsonRequestObj") + "\n");
-                    if(status == true){
-                        response.setStatus(200);
-                        response.getWriter().write("Status: Success.");
-                    }else{
-                        response.setStatus(500);
-                        response.getWriter().write("Status: Fail.");
-                    }
-                    break;
-                case "update":
-                    status = sless.editaNovoCenario(request.getParameter("jsonRequestObj"));
-                    System.out.println("Request enviado para ser editado:\n" + request.getParameter("jsonRequestObj") + "\n");
-                    if(status == true){
-                        response.setStatus(200);
-                        response.getWriter().write("Status: Success.");
-                    }else{
-                        response.setStatus(500);
-                        response.getWriter().write("Status: Fail.");
-                    }
-                    break;
-                case "remove":
-                    System.out.println("Request enviado para ser removido:\n" + request.getParameter("jsonRequestObj") + "\n");
-                    status = sless.removeNovoCenario(request.getParameter("jsonRequestObj"));
-                    if(status == true){
-                        response.setStatus(200);
-                        response.getWriter().write("Status: Success.");
-                    }else{
-                        response.setStatus(500);
-                        response.getWriter().write("Status: Fail.");
-                    }
-                    break;
-            }
-
-        } catch (NamingException | URISyntaxException ex) {
-            Logger.getLogger(RequestHandlerServlet.class.getName()).log(Level.SEVERE, null, ex);
+        switch (request.getParameter("operation")) {
+            case "insert":
+                status = sless.criaNovoCenario(request.getParameter("jsonRequestObj"));
+                System.out.println("Request enviado para ser criado:\n" + request.getParameter("jsonRequestObj") + "\n");
+                if(status == true){
+                    response.setStatus(200);
+                    response.getWriter().write("Status: Success.");
+                }else{
+                    response.setStatus(500);
+                    response.getWriter().write("Status: Fail.");
+                }
+                break;
+            case "update":
+                status = sless.editaNovoCenario(request.getParameter("jsonRequestObj"));
+                System.out.println("Request enviado para ser editado:\n" + request.getParameter("jsonRequestObj") + "\n");
+                if(status == true){
+                    response.setStatus(200);
+                    response.getWriter().write("Status: Success.");
+                }else{
+                    response.setStatus(500);
+                    response.getWriter().write("Status: Fail.");
+                }
+                break;
+            case "remove":
+                System.out.println("Request enviado para ser removido:\n" + request.getParameter("jsonRequestObj") + "\n");
+                status = sless.removeNovoCenario(request.getParameter("jsonRequestObj"));
+                if(status == true){
+                    response.setStatus(200);
+                    response.getWriter().write("Status: Success.");
+                }else{
+                    response.setStatus(500);
+                    response.getWriter().write("Status: Fail.");
+                }
+                break;
         }
     }
 

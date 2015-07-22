@@ -12,7 +12,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 
 /**
@@ -26,12 +30,17 @@ public class RestConnFactory {
     ResponseContents responseObj;
 
     public RestConnFactory() {
-        this.httpclient = HttpClients.createDefault();
+        this.httpclient = null;
         this.httpResponse = null;
         this.responseObj = new ResponseContents("","","");
     }
     public ResponseContents RestRequest(HttpRequestBase httprequest) throws IOException {
         try {
+            //this.httpclient = HttpClients.createDefault();
+            HttpParams httpParams = new BasicHttpParams(); /*NEW*/
+            HttpConnectionParams.setConnectionTimeout(httpParams, 10000); /*NEW*/
+            this.httpclient = new DefaultHttpClient(httpParams); /*NEW*/
+            
             this.httpResponse = this.httpclient.execute(httprequest);
             this.responseObj.setStatus(this.httpResponse.getStatusLine().toString());
             

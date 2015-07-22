@@ -3,29 +3,26 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package servlet.stateless.scheduled;
 
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
-import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import servlet.stateless.RequestFilter;
 import servlet.stateless.StatelessSessionBean;
 
 /**
  *
  * @author fellippe.mendonca
  */
-@WebServlet(name = "ScheduledRequests", urlPatterns = {"/ScheduledRequests"})
-public class ScheduledRequests extends HttpServlet {
+@WebServlet(name = "ScheduledRequestsExecutor", urlPatterns = {"/ScheduledRequestsExecutor"})
+public class ScheduledRequestsExecutor extends HttpServlet {
 
     @EJB
     private StatelessSessionBean sless;
@@ -34,10 +31,11 @@ public class ScheduledRequests extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        boolean success = false;
         try (PrintWriter out = response.getWriter()) {
-            //out.write(new Gson().toJson(sless.getScheduledRequest()));
-            out.write(sless.getScheduledRequest());
-        }
+            success = sless.executeScheduledValidations();
+            out.write(new Gson().toJson("{AllExecutions:"+success+"}"));
+        } 
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

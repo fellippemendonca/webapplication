@@ -52,20 +52,17 @@ public class RequestObjectList {
         for (RequestReferenceObject rro : getObjectRequestList()) {
             requestList.add(rro.getRequestObject());
         }
-        return "{\"requestList\":" + (new Gson().toJson(requestList)) + "}";
+        //return "{\"requestList\":" + (new Gson().toJson(requestList)) + "}";
+        return new Gson().toJson(requestList);
     }
 
     public List<RequestReferenceObject> getObjectRequestList() throws NamingException {
         List<RequestReferenceObject> requestObjectListDB = new ArrayList<>();
         for (RequestReference rr : this.dao.getRequestReferenceJpaController().findRequestReferenceEntities()) {
-            RequestReferenceObject requestReferenceObject = null;
-            try {
-                requestReferenceObject = new RequestReferenceObject(this.dao, rr);
-            } catch (NamingException name) {
-                System.out.println("Houve um problema ao adquirir dados em um dos requests cadastrados. RequestID:" + rr.getIdRequestReference() + " , " + name);
-            }
+            RequestReferenceObject requestReferenceObject;
+            requestReferenceObject = new RequestReferenceObject(this.dao, rr.getIdRequestReference());
             if (requestReferenceObject != null) {
-                requestObjectListDB.add(new RequestReferenceObject(this.dao, rr));
+                requestObjectListDB.add(new RequestReferenceObject(this.dao, rr.getIdRequestReference()));
             }
         }
         return requestObjectListDB;
@@ -77,13 +74,14 @@ public class RequestObjectList {
         for (RequestReferenceObject rro : getScheduledObjectRequestList()) {
             requestList.add(rro.getRequestObject());
         }
-        return "{\"requestList\":" + (new Gson().toJson(requestList)) + "}";
+        //return "{\"requestList\":" + (new Gson().toJson(requestList)) + "}";
+        return new Gson().toJson(requestList);
     }
 
     public List<RequestReferenceObject> getScheduledObjectRequestList() throws NamingException {
         List<RequestReferenceObject> requestObjectListDB = new ArrayList<>();
         for (ScheduledRequest rr : this.dao.getScheduledRequestJpaController().findScheduledRequestEntities()) {
-            requestObjectListDB.add(new RequestReferenceObject(this.dao, this.dao.getRequestReferenceJpaController().findRequestReference(rr.getIdRequestReference())));
+            requestObjectListDB.add(new RequestReferenceObject(this.dao, rr.getIdRequestReference()));
         }
         return requestObjectListDB;
     }

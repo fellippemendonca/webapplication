@@ -52,26 +52,24 @@ public class ScheduledRequestExecutionLogObject {
         }
         return logSuccess;
     }
-    
+
     public JsonDailyExecutionRequest getDailyRequestValidationLog(int idRequestReference, String executionDate) throws ParseException {
         List<JsonScheduledRequestExecutionLog> jsonScheduledRequestExecutionLogList = new ArrayList();
-        if(this.dao.getScheduledRequestExecutionLogJpaController().findByIdAndDate(idRequestReference, executionDate) == null){
+        if (this.dao.getScheduledRequestExecutionLogJpaController().findByIdAndDate(idRequestReference, executionDate) == null) {
             return null;
         } else {
-        
-        for(ScheduledRequestExecutionLog log : this.dao.getScheduledRequestExecutionLogJpaController().findByIdAndDate(idRequestReference, executionDate)){
-            JsonRequestValidation jsonRequestValidation = new Gson().fromJson(log.getJsonRequestValidation(), JsonRequestValidation.class);
-            boolean success = (log.getSuccess()==1);
-            JsonScheduledRequestExecutionLog jsonLog = new JsonScheduledRequestExecutionLog(log.getIdScheduledRequestExecutionLog(), log.getIdRequestReference(), log.getExecutionDate(), jsonRequestValidation, success);
-            jsonScheduledRequestExecutionLogList.add(jsonLog);
-        }
-        JsonDailyExecutionRequest jsonDailyExecutionRequest = new JsonDailyExecutionRequest(idRequestReference, executionDate, jsonScheduledRequestExecutionLogList);
-        
-    return jsonDailyExecutionRequest;
-    }
-    }
-    
-    
-    //public 
 
+            for (ScheduledRequestExecutionLog log : this.dao.getScheduledRequestExecutionLogJpaController().findByIdAndDate(idRequestReference, executionDate)) {
+                JsonRequestValidation jsonRequestValidation = new Gson().fromJson(log.getJsonRequestValidation(), JsonRequestValidation.class);
+                boolean success = (log.getSuccess() == 1);
+                JsonScheduledRequestExecutionLog jsonLog = new JsonScheduledRequestExecutionLog(log.getIdScheduledRequestExecutionLog(), log.getIdRequestReference(), log.getExecutionDate(), jsonRequestValidation, success);
+                jsonScheduledRequestExecutionLogList.add(jsonLog);
+            }
+            JsonDailyExecutionRequest jsonDailyExecutionRequest = new JsonDailyExecutionRequest(idRequestReference, executionDate, jsonScheduledRequestExecutionLogList);
+
+            return jsonDailyExecutionRequest;
+        }
+    }
+
+    //public 
 }

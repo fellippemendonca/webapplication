@@ -100,6 +100,20 @@ function fillRequestObject() {
         Payload = $("#Payload").val();
     }
 
+    /*----------------------------DYNAMIC REQUEST FILLER----------------------*/
+    var DynamicData;
+    if ($("#dynamic-data-query").val() == "") {
+        DynamicData = null;
+    } else {
+        DynamicData = {
+            idDynamicInputData: 0,
+            idRequestReference: id,
+            requestType: "SQL",
+            jsonRequest: JSON.stringify({databaseName: $("#databank-selector").val(),request: $("#dynamic-data-query").val()}, undefined, 2)
+        };
+    }
+    /*------------------------------------------------------------------------*/
+
     //-----Arrays
     var Headers = new Array();
     populateDualArray(Headers, "HeaderName", "HeaderValue");
@@ -126,6 +140,7 @@ function fillRequestObject() {
             , host: Host
             , path: Path
             , payload: Payload
+            , jsonDynamicData: DynamicData
             , templates: Templates
             , headers: Headers
             , parameters: Parameters
@@ -200,12 +215,12 @@ function printResponse(json) {
     responseContentsDiv.innerHTML = syntaxHighlight(responseContents);
 
     var responseContentsPanel = generatePanel("Response Contents", responseContentsDiv);
-    
+
     var selectAll = document.createElement('button');
-        selectAll.id = "selectAll";
-        selectAll.className = 'btn btn-primary btn';
-        selectAll.innerHTML = "selectAll";
-        //selectAll.setAttribute("onClick", "selectOnClick("+responseContentsDiv.id+");");
+    selectAll.id = "selectAll";
+    selectAll.className = 'btn btn-primary btn';
+    selectAll.innerHTML = "selectAll";
+    //selectAll.setAttribute("onClick", "selectOnClick("+responseContentsDiv.id+");");
 
     $("#response-div").empty();
     $("#response-div").append(responseTable);
@@ -250,27 +265,27 @@ function syntaxHighlight(json) {
     });
 }
 
-function generatePanel(title, childNode){
-    
+function generatePanel(title, childNode) {
+
     var defaultPanel = document.createElement('div');
     defaultPanel.className = "panel panel-default";
-    
+
     var panelHeader = document.createElement('div');
     panelHeader.className = "panel-heading";
     panelHeader.innerHTML = title;
-    
+
     var panelBody = document.createElement('div');
-    panelBody.id ="responseContentsDiv001";
-    panelBody.className = "panel-body"; 
+    panelBody.id = "responseContentsDiv001";
+    panelBody.className = "panel-body";
     panelBody.appendChild(childNode);
-    
+
     defaultPanel.appendChild(panelHeader);
     defaultPanel.appendChild(panelBody);
-    
+
     return defaultPanel;
 }
 
-function selectOnClick(divId){
+function selectOnClick(divId) {
     document.getElementById(divId).select();
 }
 //"document.getElementById('responseContents-div').select();"

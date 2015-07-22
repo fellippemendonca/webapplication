@@ -12,12 +12,16 @@
         <title>Validations</title>
 
         <!-- Load the scripts needed for the application.-->
-        <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.3.min.js" language="Javascript"></script> 
-        <script type="text/javascript" src="http://code.jquery.com/ui/1.11.4/jquery-ui.js" language="Javascript"></script>
-
+        <!--script type="text/javascript" src="http://code.jquery.com/jquery-2.1.3.min.js" language="Javascript"></script--> 
+        <!--script type="text/javascript" src="http://code.jquery.com/ui/1.11.4/jquery-ui.js" language="Javascript"></script-->
+        <script type="text/javascript" src="Jquery/jquery-2.1.3.min.js" language="Javascript"></script> 
+        <script type="text/javascript" src="Jquery/jquery-ui.min.js" language="Javascript"></script>
+        
         <!-- Load the scripts needed for the autocomplete function. -->
-        <link rel="stylesheet" href="http://cdn.datatables.net/1.10.5/css/jquery.dataTables.css"/>
-        <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
+        <!--link rel="stylesheet" href="http://cdn.datatables.net/1.10.5/css/jquery.dataTables.css"/-->
+        <!--link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/-->
+        <link rel="stylesheet" href="Jquery/jquery.dataTables.min.css">
+        <link rel="stylesheet" href="Jquery/jquery-ui.css">
 
         <!-- Bootstrap -->
         <script type="text/javascript" src="bootstrap-3.3.4-dist/js/bootstrap.min.js" language="Javascript"></script>
@@ -68,7 +72,7 @@
 
         <div class="container">
             <div class="panel panel-info">
-                <div class="panel-heading">How does it works?</div>
+                <div class="panel-heading">How does it work?</div>
                 <div class="panel-body">
                     Select a request from list below and then click on Create Scenario.
                     <br>If there already exists some scenarios remember that is possible to edit or include new ones.
@@ -79,9 +83,11 @@
         <div class="container">
             <h4>Labels:</h4>
             <input type="text" id="tag-array" class="form-control" placeholder="Rótulos..." size="5">
+            <div id="validation-view-div"></div>
             <input type="submit" class="btn btn-primary" id="submit-tag-filter" value="Filter" align="left"/>  
         </div>
         <br>
+
         <div class="container">
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -144,7 +150,7 @@
                                         <div class="col-lg-12">
                                             <div class="input-group">
                                                 <span class="input-group-addon" id="basic-addon1">Name</span>
-                                                <input type="text" id="requestName" class="form-control" size="5" placeholder="Nome do Request..." aria-describedby="basic-addon1" maxlength="100" autocomplete="on">
+                                                <input type="text" id="requestName" class="form-control" size="5" placeholder="Request name..." aria-describedby="basic-addon1" maxlength="100" autocomplete="on">
                                             </div>
                                         </div>
                                     </div>
@@ -231,67 +237,99 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
 
 
-                        <div class="container">
-                            <h4>Json Object:</h4>
-                            <textarea id="Payload" rows="1" cols="10"></textarea>
-                            <h4>Labels:</h4>
-                            <div class="col-md-5"><ul id="request-tags"></ul></div>
-                        </div>
-                        <br>
-                        <br>
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-md-5"><span class="input-group-addon" id="basic-addon1">Validations:</span></div>
-                            </div>
-                            <form>
-                                <div class="input-group">
-                                    <span class="input-group-addon" id="basic-addon1">Description</span>
-                                    <input type="text" id="scenario-description" class="form-control" size="5" placeholder="Descrição do cenário..." aria-describedby="basic-addon1" maxlength="200" autocomplete="on">
+
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h4>Json Object:</h4>
+                                            <textarea id="Payload" rows="1" cols="30"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h4>Labels:</h4>
+                                            <ul id="request-tags"></ul>
+                                        </div>
+                                    </div>  
+                                    <div class="row">
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#demo">Dynamic Data</button>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <div id="demo" class="collapse">
+                                                <select id="databank-selector">
+                                                    <option>ADHLG</option>
+                                                    <option>SLHLG</option>
+                                                    <option>ADPRD</option>
+                                                    <option>SLPRD</option>
+                                                    <option>EXPRD</option>
+                                                </select>
+                                                <textarea id="dynamic-data-query" rows="5" cols="10"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <br><br>
-                                <div id="Validation"></div>
-                            </form>
-                            <br>
-                            <div class="btn-group">
-                                <button type="button" data-toggle="dropdown" class="btn btn-primary dropdown-toggle">Insert<span class="caret"></span></button>
-                                <ul class="dropdown-menu">
-                                    <li><a onClick="addValidationElement('Validation', 'Find Http Status', '', 'Http Status', 'red');">Http Status</a></li>
-                                    <li><a onClick="addValidationElement('Validation', 'Response Time', '', 'Response Time(ms)', 'red');">Response Time(ms)</a></li>
-                                    <li><a onClick="addValidationElement('Validation', 'Find String', '', 'Find String', 'red');">Find String</a></li>
-                                    <li><a onClick="addValidationElement('Validation', 'Find Json Element', '', 'Find Json Element', 'red');">Find Json Element</a></li>
-                                    <li><a onClick="addValidationElement('Validation', 'Compare Json Structure', '', 'Compare Json Structure', 'red');">Compare Json Structure</a></li>
-                                </ul>
-                            </div>
-                            <br><br><br><br>
-                            <div id="response-scenario-div"></div>
-                        </div>
-                        <div class="modal-footer">
-                            <div class="row">
-                                <div class="col-lg-2"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div>
-                                <div class="col-lg-2"><button type="button" id="insert-validation-button" class="btn btn-success" data-dismiss="modal">Create</button></div>
-                                <div class="col-lg-2"><button type="button" id="delete-validation-button" class="btn btn-danger disabled" data-dismiss="modal">Delete</button></div>
-                                <div class="col-lg-2"><button type="button" id="update-validation-button" class="btn btn-warning disabled" data-dismiss="modal">Save</button></div>
-                                <div class="col-lg-2"><button type="button" id="execute-validation-button" class="btn btn-primary btn-lg">Execute</button></div>
+
+                                <br>
+                                <br>
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <span class="input-group-addon" id="basic-addon1">Validations:</span>
+                                        </div>
+                                    </div>
+                                    <form>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon" id="basic-addon1">Description</span>
+                                                    <input type="text" id="scenario-description" class="form-control" size="15" placeholder="Scenario description..." aria-describedby="basic-addon1" maxlength="200" autocomplete="on">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br><br>
+                                        <div id="Validation"></div>
+                                    </form>
+                                    <br>
+                                    <div class="btn-group">
+                                        <button type="button" data-toggle="dropdown" class="btn btn-primary dropdown-toggle">Insert<span class="caret"></span></button>
+                                        <ul class="dropdown-menu">
+                                            <li><a onClick="addValidationElement('Validation', 'Find Http Status', '', 'Http Status', 'red');">Http Status</a></li>
+                                            <li><a onClick="addValidationElement('Validation', 'Response Time', '', 'Response Time(ms)', 'red');">Response Time(ms)</a></li>
+                                            <li><a onClick="addValidationElement('Validation', 'Find String', '', 'Find String', 'red');">Find String</a></li>
+                                            <li><a onClick="addValidationElement('Validation', 'Find Json Element', '', 'Find Json Element', 'red');">Find Json Element</a></li>
+                                            <li><a onClick="addValidationElement('Validation', 'Compare Json Structure', '', 'Compare Json Structure', 'red');">Compare Json Structure</a></li>
+                                        </ul>
+                                    </div>
+                                    <br><br><br><br>
+                                    <div id="response-scenario-div"></div>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="row">
+                                        <div class="col-lg-2"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div>
+                                        <div class="col-lg-2"><button type="button" id="insert-validation-button" class="btn btn-success" data-dismiss="modal">Create</button></div>
+                                        <div class="col-lg-2"><button type="button" id="delete-validation-button" class="btn btn-danger disabled" data-dismiss="modal">Delete</button></div>
+                                        <div class="col-lg-2"><button type="button" id="update-validation-button" class="btn btn-warning disabled" data-dismiss="modal">Save</button></div>
+                                        <div class="col-lg-2"><button type="button" id="execute-validation-button" class="btn btn-primary btn-lg">Execute</button></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <br>
-        <div class="container">
-            <div id="validation-list-div" class="Table">
+            <br>
+            <div class="container">
+                <div id="validation-list-div" class="Table">
+
+                </div>
+                <br><br><br>
+                <button type="button" id="execute-massive-validation-button" class="btn btn-primary disabled">Execute List</button>
 
             </div>
-            <br><br><br>
-            <button type="button" id="execute-massive-validation-button" class="btn btn-primary disabled">Execute List</button>
 
-        </div>
-    </div>
-    <br>        
-</body>
-</html>
+            <br>        
+            </body>
+            </html>

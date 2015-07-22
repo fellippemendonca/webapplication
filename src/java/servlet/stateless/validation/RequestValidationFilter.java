@@ -41,15 +41,14 @@ public class RequestValidationFilter extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         try (PrintWriter out = response.getWriter()) {
             System.out.println("GET /RequestValidationFilter?requestId="+request.getParameter("requestId"));
             try {
                 
                 int requestId = Integer.parseInt(request.getParameter("requestId"));
                     out.write(sless.getRequestValidation(requestId));
-                } catch (NamingException ex) {
-                    Logger.getLogger(RequestFilter.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (Exception ex) {
                 Logger.getLogger(RequestValidationFilter.class.getName()).log(Level.SEVERE, null, ex);
             }

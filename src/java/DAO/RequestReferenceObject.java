@@ -1,6 +1,7 @@
 package DAO;
 
 import DAO.ValidationDAO.Schedule.ScheduledRequestObject;
+import Entities.DynamicInputData;
 import Entities.Environment;
 import Entities.HostAddress;
 import Entities.Method;
@@ -16,11 +17,13 @@ import Entities.Scheduled.ScheduledRequest;
 import Entities.Scheme;
 import Entities.ValidationEntities.ValidationScenario;
 import HttpConnections.RestRequester;
+import JsonObjects.DynamicData.JsonDynamicData;
 import JsonObjects.JHeader;
 import JsonObjects.JParameter;
 import JsonObjects.JsonRequestObject;
 import JsonObjects.Tags.JsonTag;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -34,6 +37,7 @@ import jpa.exceptions.RollbackFailureException;
  */
 public class RequestReferenceObject {
 
+    DataAccessObject dao;
     RequestReference requestReference;
     RequestName requestName;
     Environment environment;
@@ -42,29 +46,139 @@ public class RequestReferenceObject {
     HostAddress host;
     Path path;
     Payload payload;
-    DataAccessObject dao;
+    DynamicInputData dynamicInputData;
     List<TemplateReferenceObject> templateReferenceObjectList;
     List<ParameterReferenceObject> parameterReferenceObjectList;
     List<HeaderReferenceObject> headerReferenceObjectList;
     JsonRequestObject jsonRequestObject;
-
     List<TagReferenceObject> tagReferenceObjectList;
+
+    public RequestReferenceObject(DataAccessObject dao) {
+        this.dao = dao;
+    }
 
 //-----------------------JSON CONSTRUCTOR---------------------------------------
     public RequestReferenceObject(DataAccessObject dao, String json) {
         this.dao = dao;
-        this.jsonRequestObject = new Gson().fromJson(json, JsonRequestObject.class);
-        this.requestName = new RequestName(0, this.jsonRequestObject.getRequestName());
-        this.environment = new Environment(0, this.jsonRequestObject.getEnvironment().toUpperCase());
-        this.method = new Method(0, this.jsonRequestObject.getMethod().toUpperCase());
-        this.scheme = new Scheme(0, this.jsonRequestObject.getScheme());
-        this.host = new HostAddress(0, this.jsonRequestObject.getHost());
-        this.path = new Path(0, this.jsonRequestObject.getPath());
-        this.payload = new Payload(0, this.jsonRequestObject.getPayload());
+        setAllEntitiesFromJsonString(json);
+    }
+
+    private boolean setAllEntitiesFromJsonString(String json) {
+        boolean success;
+        JsonRequestObject jro;
+        jro = setJsonRequestObjectFromString(json);
+        success = setEntitiesFromJsonRequestObject(jro);
+        return success;
+    }
+
+    public JsonRequestObject setJsonRequestObjectFromString(String json) {
+        JsonRequestObject jsonObj = null;
+        try {
+            jsonObj = new Gson().fromJson(json, JsonRequestObject.class);
+        } catch (JsonSyntaxException ex) {
+            System.out.println(ex);
+        }
+        return jsonObj;
+    }
+////////////////////////////////////////////////////////////////////////////////
+
+//-----------------------REFERENCE CONSTRUCTOR--------------------------------//
+    public RequestReferenceObject(DataAccessObject dao, int id) {
+        this.dao = dao;
+        setAllEntitiesFromRequestID(id);
+    }
+
+    private boolean setAllEntitiesFromRequestID(int id) {
+        boolean success;
+        JsonRequestObject jro;
+        jro = setJsonRequestObjectFromDataBank(this.dao, id);
+        success = setEntitiesFromJsonRequestObject(jro);
+        return success;
+    }
+
+    public JsonRequestObject setJsonRequestObjectFromDataBank(DataAccessObject dao, int id) {
+        JsonRequestObject jReqObj = new JsonRequestObject();
+        RequestReference reqRef = null;
+        try {
+            reqRef = dao.getRequestReferenceJpaController().findRequestReference(id);
+        } catch (Exception ex) {
+            System.out.println("failed to retrieve request id from DataBank, " + ex);
+        }
+
+        if (reqRef != null) {
+            jReqObj.setRequestReference(reqRef.getIdRequestReference());
+            jReqObj.setRequestName(dao.getRequestNameJpaController().findRequestName(reqRef.getIdRequestName()).getRequestName());
+            jReqObj.setEnvironment(dao.getEnvironmentJpaController().findEnvironment(reqRef.getIdEnvironment()).getEnvironmentName());
+            jReqObj.setMethod(dao.getMethodJpaController().findMethod(reqRef.getIdMethod()).getMethodValue());
+            jReqObj.setScheme(dao.getSchemeJpaController().findScheme(reqRef.getIdScheme()).getSchemeValue());
+            jReqObj.setHost(dao.getHostAddressJpaController().findHostAddress(reqRef.getIdHostAddress()).getHostAddressValue());
+            jReqObj.setPath(dao.getPathJpaController().findPath(reqRef.getIdPath()).getPathValue());
+            jReqObj.setPayload(dao.getPayloadJpaController().findPayload(reqRef.getIdPayload()).getPayloadValue());
+
+            /*---------------Dynamic generated fields Feature-----------------*/
+            DynamicInputData dynaData = dao.getDynamicInputDataJpaController().findByIdRequestReference(reqRef.getIdRequestReference());
+            if (dynaData != null) {
+                JsonDynamicData jsonDynamicData = new JsonDynamicData(dynaData.getIdDynamicInputData(), dynaData.getIdRequestReference(), dynaData.getRequestType(), dynaData.getJsonRequest());
+                jReqObj.setJsonDynamicData(jsonDynamicData);
+            } else {
+                jReqObj.setJsonDynamicData(null);
+            }
+            /*----------------------------------------------------------------*/
+
+            for (TemplateReference tr : dao.getTemplateReferece(reqRef)) {
+                TemplateReferenceObject templateObject = new TemplateReferenceObject(tr, dao);
+                jReqObj.getTemplates().add(templateObject.getTemplate().getTemplateValue());
+            }
+
+            for (HeaderReference hr : dao.getHeaderReference(reqRef)) {
+                HeaderReferenceObject headerObject = new HeaderReferenceObject(hr, dao);
+                JHeader jheader = new JHeader(headerObject.getHeader().getHeaderName(), headerObject.getHeader().getHeaderValue());
+                jReqObj.getHeaders().add(jheader);
+            }
+
+            for (ParameterReference pr : dao.getParameterReference(reqRef)) {
+                ParameterReferenceObject parameterObject;
+                JParameter jparameter = null;
+                try {
+                    parameterObject = new ParameterReferenceObject(pr, dao);
+                    jparameter = new JParameter(parameterObject.getParameter().getParameterName(), parameterObject.getParameter().getParameterValue());
+                } catch (NamingException ex) {
+                    System.out.println("Exception occured while setting parameterObject" + ex);
+                    Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                jReqObj.getParameters().add(jparameter);
+            }
+
+            for (RequestTagReference tg : dao.getRequestTagReference(reqRef)) {
+                TagReferenceObject tagObject = new TagReferenceObject(tg, dao);
+                JsonTag jsonTag = new JsonTag(tagObject.getRequestTag().getIdRequestTag(), tagObject.getRequestTag().getTagValue());
+                jReqObj.getJsonTags().add(jsonTag);
+            }
+        }
+        return jReqObj;
+    }
+
+////////////////////////////////////////////////////////////////////////////////
+//-----------------------REQUEST FILLER--------------------------------//
+    public boolean setEntitiesFromJsonRequestObject(JsonRequestObject jsonObj) {
+        this.jsonRequestObject = jsonObj;
+        this.requestName = new RequestName(0, jsonObj.getRequestName());
+        this.environment = new Environment(0, jsonObj.getEnvironment().toUpperCase());
+        this.method = new Method(0, jsonObj.getMethod().toUpperCase());
+        this.scheme = new Scheme(0, jsonObj.getScheme());
+        this.host = new HostAddress(0, jsonObj.getHost());
+        this.path = new Path(0, jsonObj.getPath());
+        this.payload = new Payload(0, jsonObj.getPayload());
+
+        /*---------------Dynamic generated fields Feature-----------------*/
+        if (jsonObj.getJsonDynamicData() != null) {
+            JsonDynamicData jdd = jsonObj.getJsonDynamicData();
+            this.dynamicInputData = new DynamicInputData(0, jdd.getIdRequestReference(), jdd.getRequestType(), jdd.getJsonRequest());
+        }
 
         this.templateReferenceObjectList = new ArrayList();
         int i = 1;
-        for (String template : this.jsonRequestObject.getTemplates()) {
+        for (String template : jsonObj.getTemplates()) {
             if (template.isEmpty() || template.isEmpty()) {
                 System.out.println("Empty template value not inserted.");
             } else {
@@ -74,7 +188,7 @@ public class RequestReferenceObject {
         }
 
         this.headerReferenceObjectList = new ArrayList();
-        for (JHeader header : this.jsonRequestObject.getHeaders()) {
+        for (JHeader header : jsonObj.getHeaders()) {
             if (header.getName().isEmpty() || header.getValue().isEmpty()) {
                 System.out.println("Empty header value not inserted.");
             } else {
@@ -83,7 +197,7 @@ public class RequestReferenceObject {
         }
 
         this.parameterReferenceObjectList = new ArrayList();
-        for (JParameter parameter : this.jsonRequestObject.getParameters()) {
+        for (JParameter parameter : jsonObj.getParameters()) {
             if (parameter.getName().isEmpty() || parameter.getValue().isEmpty()) {
                 System.out.println("Empty parameter value not inserted.");
             } else {
@@ -92,89 +206,18 @@ public class RequestReferenceObject {
         }
 
         this.tagReferenceObjectList = new ArrayList<>();
-        for (JsonTag tag : this.jsonRequestObject.getJsonTags()) {
+        for (JsonTag tag : jsonObj.getJsonTags()) {
             if (tag.getName().isEmpty()) {
                 System.out.println("Empty tag value not inserted.");
             } else {
                 this.tagReferenceObjectList.add(new TagReferenceObject(this.dao, tag.getName().toUpperCase()));
             }
         }
+        return true;
     }
 ////////////////////////////////////////////////////////////////////////////////
 
-//-----------------------REFERENCE CONSTRUCTOR----------------------------------
-    public RequestReferenceObject(DataAccessObject dao, RequestReference requestReference) throws NamingException {
-        this.jsonRequestObject = new JsonRequestObject();
-        this.dao = dao;
-
-        this.requestReference = requestReference;
-        if (this.requestReference != null) {
-            this.jsonRequestObject.setRequestReference(this.requestReference.getIdRequestReference());
-        }
-
-        this.requestName = this.dao.getRequestNameJpaController().findRequestName(this.requestReference.getIdRequestName());
-        if (this.requestName != null) {
-            this.jsonRequestObject.setRequestName(this.requestName.getRequestName());
-        }
-        this.environment = this.dao.getEnvironmentJpaController().findEnvironment(this.requestReference.getIdEnvironment());
-        if (this.environment != null) {
-            this.jsonRequestObject.setEnvironment(this.environment.getEnvironmentName());
-        }
-        this.method = this.dao.getMethodJpaController().findMethod(this.requestReference.getIdMethod());
-        if (this.method != null) {
-            this.jsonRequestObject.setMethod(this.method.getMethodValue());
-        }
-        this.scheme = this.dao.getSchemeJpaController().findScheme(this.requestReference.getIdScheme());
-        if (this.scheme != null) {
-            this.jsonRequestObject.setScheme(this.scheme.getSchemeValue());
-        }
-        this.host = this.dao.getHostAddressJpaController().findHostAddress(this.requestReference.getIdHostAddress());
-        if (this.host != null) {
-            this.jsonRequestObject.setHost(this.host.getHostAddressValue());
-        }
-        this.path = this.dao.getPathJpaController().findPath(this.requestReference.getIdPath());
-        if (this.path != null) {
-            this.jsonRequestObject.setPath(this.path.getPathValue());
-        }
-        this.payload = this.dao.getPayloadJpaController().findPayload(this.requestReference.getIdPayload());
-        if (this.payload != null) {
-            this.jsonRequestObject.setPayload(this.payload.getPayloadValue());
-        }
-
-        this.templateReferenceObjectList = new ArrayList<>();
-        for (TemplateReference tr : this.dao.getTemplateReferece(requestReference)) {
-            TemplateReferenceObject templateObject = new TemplateReferenceObject(tr, dao);
-            this.templateReferenceObjectList.add(templateObject);
-            this.jsonRequestObject.getTemplates().add(templateObject.getTemplate().getTemplateValue());
-        }
-
-        this.headerReferenceObjectList = new ArrayList<>();
-        for (HeaderReference hr : this.dao.getHeaderReference(requestReference)) {
-            HeaderReferenceObject headerObject = new HeaderReferenceObject(hr, dao);
-            this.headerReferenceObjectList.add(headerObject);
-            JHeader jheader = new JHeader(headerObject.getHeader().getHeaderName(), headerObject.getHeader().getHeaderValue());
-            this.jsonRequestObject.getHeaders().add(jheader);
-        }
-
-        this.parameterReferenceObjectList = new ArrayList<>();
-        for (ParameterReference pr : this.dao.getParameterReference(requestReference)) {
-            ParameterReferenceObject parameterObject = new ParameterReferenceObject(pr, dao);
-            this.parameterReferenceObjectList.add(parameterObject);
-            JParameter jparameter = new JParameter(parameterObject.getParameter().getParameterName(), parameterObject.getParameter().getParameterValue());
-            this.jsonRequestObject.getParameters().add(jparameter);
-        }
-
-        this.tagReferenceObjectList = new ArrayList<>();
-        for (RequestTagReference tg : this.dao.getRequestTagReference(requestReference)) {
-            TagReferenceObject tagObject = new TagReferenceObject(tg, dao);
-            this.tagReferenceObjectList.add(tagObject);
-            JsonTag jsonTag = new JsonTag(tagObject.getRequestTag().getIdRequestTag(), tagObject.getRequestTag().getTagValue());
-            this.jsonRequestObject.getJsonTags().add(jsonTag);
-        }
-    }
-        ////////////////////////////////////////////////////////////////////////////////
-
-    //-----------------REMOVE AND PERSIST NEW REQUEST-------------------------------
+//-----------------REMOVE AND PERSIST NEW REQUEST-------------------------------
     public boolean updateRequestReference() {
         int oldRequestReferenceId = this.jsonRequestObject.getRequestReference();
         try {
@@ -227,7 +270,7 @@ public class RequestReferenceObject {
 
                 /*Busca se request possuía agendamento e remove sua execução*/
                 if (this.dao.getScheduledRequestJpaController().find(new ScheduledRequest(0, oldRequestReferenceId)) != null) {
-                    ScheduledRequestObject scheduledRequestObject = new ScheduledRequestObject(this.dao, this.requestReference.getIdRequestReference());
+                    ScheduledRequestObject scheduledRequestObject = new ScheduledRequestObject(this.dao, oldRequestReferenceId);
                     scheduledRequestObject.deleteSchedule();
                 }
 
@@ -245,7 +288,7 @@ public class RequestReferenceObject {
         return false;
     }
 
-    public boolean clearReferences(RequestReference requestReference) throws NamingException {
+    public boolean clearReferences(RequestReference requestReference) {
         if (requestReference != null) {
             for (TemplateReference tr : this.dao.getTemplateReferece(requestReference)) {
                 new TemplateReferenceObject(tr, this.dao).deleteTemplateReference();
@@ -254,16 +297,29 @@ public class RequestReferenceObject {
                 new HeaderReferenceObject(hr, this.dao).deleteHeaderReference();
             }
             for (ParameterReference pr : this.dao.getParameterReference(requestReference)) {
-                new ParameterReferenceObject(pr, this.dao).deleteParameterReference();
+                try {
+                    new ParameterReferenceObject(pr, this.dao).deleteParameterReference();
+                } catch (NamingException ex) {
+                    Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             for (RequestTagReference tg : this.dao.getRequestTagReference(requestReference)) {
                 new TagReferenceObject(tg, this.dao).deleteRequestTagReference();
+            }
+            if (this.dao.getDynamicInputDataJpaController().findByIdRequestReference(requestReference.getIdRequestReference()) != null) {
+                int idDynamic = this.dao.getDynamicInputDataJpaController().findByIdRequestReference(requestReference.getIdRequestReference()).getIdDynamicInputData();
+                try {
+                    this.dao.getDynamicInputDataJpaController().destroy(idDynamic);
+                } catch (RollbackFailureException ex) {
+                    Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
+                    Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             return true;
         } else {
             return false;
         }
-
     }
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -301,6 +357,12 @@ public class RequestReferenceObject {
                     t.persistTagReference(this.requestReference);
                 }
             }
+            
+            /*NEW DYNAMIC INPUT DATA*/
+            if(this.dynamicInputData!=null){
+                persistDynamicInputData(this.requestReference.getIdRequestReference());
+            }
+
             return true;
         } catch (NamingException ex) {
             Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
@@ -315,30 +377,40 @@ public class RequestReferenceObject {
 
 //-------------------------GERADOR DO REQUESTER---------------------------------
     public RestRequester generateRestRequester() {
-        RestRequester restRequester = new RestRequester();
-        restRequester.setMethod(getMethod().getMethodValue());
-        restRequester.setScheme(getScheme().getSchemeValue());
-        restRequester.setHost(getHost().getHostAddressValue());
-        restRequester.setPath(getPath().getPathValue());
-        if (getPayload().getPayloadValue().equals("") == false) {
-            restRequester.setEntity(getPayload().getPayloadValue());
+        JsonRequestObject jro = this.jsonRequestObject;
+
+        if (jro.getJsonDynamicData() != null) {
+            DynamicDataObject ddo = new DynamicDataObject(jro);
+            jro = ddo.setDynamicallyGeneratedValues();
         }
-        if (getHeaderReferenceObjectList().isEmpty() == false) {
-            for (HeaderReferenceObject hro : getHeaderReferenceObjectList()) {
-                restRequester.addHeader(hro.getHeader().getHeaderName(), hro.getHeader().getHeaderValue());
+        if (jro == null) {
+            return null;
+        } else {
+            RestRequester restRequester = new RestRequester();
+            restRequester.setMethod(jro.getMethod());
+            restRequester.setScheme(jro.getScheme());
+            restRequester.setHost(jro.getHost());
+            restRequester.setPath(jro.getPath());
+            if (jro.getPayload().equals("") == false) {
+                restRequester.setEntity(jro.getPayload());
             }
-        }
-        if (getTemplateReferenceObjectList().isEmpty() == false) {
-            for (TemplateReferenceObject tro : getTemplateReferenceObjectList()) {
-                restRequester.addTemplate(tro.getTemplate().getTemplateValue());
+            if (jro.getHeaders().isEmpty() == false) {
+                for (JHeader jh : jro.getHeaders()) {
+                    restRequester.addHeader(jh.getName(), jh.getValue());
+                }
             }
-        }
-        if (getParameterReferenceObjectList().isEmpty() == false) {
-            for (ParameterReferenceObject pro : getParameterReferenceObjectList()) {
-                restRequester.addParameter(pro.getParameter().getParameterName(), pro.getParameter().getParameterValue());
+            if (jro.getTemplates().isEmpty() == false) {
+                for (String tm : jro.getTemplates()) {
+                    restRequester.addTemplate(tm);
+                }
             }
+            if (jro.getParameters().isEmpty() == false) {
+                for (JParameter jp : jro.getParameters()) {
+                    restRequester.addParameter(jp.getName(), jp.getValue());
+                }
+            }
+            return restRequester;
         }
-        return restRequester;
     }
 
 //----------------------------GETTERS SETTERS-----------------------------------
@@ -346,10 +418,6 @@ public class RequestReferenceObject {
         return this.requestReference;
     }
 //------------------------------------------------------------------------------
-
-    public RequestName getRequestName() {
-        return this.requestName;
-    }
 
     public void persistRequestName() {
         try {
@@ -360,10 +428,6 @@ public class RequestReferenceObject {
     }
 //------------------------------------------------------------------------------
 
-    public Environment getEnvironment() {
-        return this.environment;
-    }
-
     public void persistEnvironment() {
         try {
             this.environment = this.dao.getEnvironmentJpaController().findOrAdd(this.environment);
@@ -372,10 +436,6 @@ public class RequestReferenceObject {
         }
     }
 //------------------------------------------------------------------------------
-
-    public Method getMethod() {
-        return this.method;
-    }
 
     public void persistMethod() {
         try {
@@ -386,10 +446,6 @@ public class RequestReferenceObject {
     }
 //------------------------------------------------------------------------------
 
-    public Scheme getScheme() {
-        return this.scheme;
-    }
-
     public void persistScheme() {
         try {
             this.scheme = this.dao.getSchemeJpaController().findOrAdd(this.scheme);
@@ -398,10 +454,6 @@ public class RequestReferenceObject {
         }
     }
 //------------------------------------------------------------------------------
-
-    public HostAddress getHost() {
-        return this.host;
-    }
 
     public void persistHost() {
         try {
@@ -412,10 +464,6 @@ public class RequestReferenceObject {
     }
 //------------------------------------------------------------------------------
 
-    public Path getPath() {
-        return this.path;
-    }
-
     public void persistPath() {
         try {
             this.path = this.dao.getPathJpaController().findOrAdd(this.path);
@@ -423,11 +471,7 @@ public class RequestReferenceObject {
             Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
     /*------------------------------------------------------------------------*/
-    public Payload getPayload() {
-        return this.payload;
-    }
 
     public void persistPayload() {
         try {
@@ -436,51 +480,17 @@ public class RequestReferenceObject {
             Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
     /*------------------------------------------------------------------------*/
-    public List<TemplateReferenceObject> getTemplateReferenceObjectList() {
-        return templateReferenceObjectList;
-    }
 
-    public void setTemplateReferenceObjectList(List<TemplateReferenceObject> templateReferenceObjectList) {
-        this.templateReferenceObjectList = templateReferenceObjectList;
+    public void persistDynamicInputData(int idRequestReference) {
+        try {
+            this.dynamicInputData.setIdRequestReference(idRequestReference);
+            this.dynamicInputData = this.dao.getDynamicInputDataJpaController().create(this.dynamicInputData);
+        } catch (Exception ex) {
+            Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-
-    public void addTemplateReferenceObject(TemplateReferenceObject templateReferenceObject) {
-        this.templateReferenceObjectList.add(templateReferenceObject);
-    }
-
     /*------------------------------------------------------------------------*/
-    public List<ParameterReferenceObject> getParameterReferenceObjectList() {
-        return parameterReferenceObjectList;
-    }
-
-    public void setParameterReferenceObjectList(List<ParameterReferenceObject> parameterReferenceObjectList) {
-        this.parameterReferenceObjectList = parameterReferenceObjectList;
-    }
-
-    public void addParameterReferenceObject(ParameterReferenceObject parameterReferenceObject) {
-        this.parameterReferenceObjectList.add(parameterReferenceObject);
-    }
-
-    /*------------------------------------------------------------------------*/
-    public List<HeaderReferenceObject> getHeaderReferenceObjectList() {
-        return headerReferenceObjectList;
-    }
-
-    public void setHeaderReferenceObjectList(List<HeaderReferenceObject> headerReferenceObjectList) {
-        this.headerReferenceObjectList = headerReferenceObjectList;
-    }
-
-    public void addHeaderReferenceObject(HeaderReferenceObject headerReferenceObject) {
-        this.headerReferenceObjectList.add(headerReferenceObject);
-    }
-
-    /*------------------------------------------------------------------------*/
-    public String getRequestObjectJson() {
-        Gson gson = new Gson();
-        return gson.toJson(this.jsonRequestObject);
-    }
 
     public JsonRequestObject getRequestObject() {
         return this.jsonRequestObject;

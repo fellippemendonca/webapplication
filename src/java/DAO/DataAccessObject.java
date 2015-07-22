@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import jpa.DatabaseSelectJpaController;
+import jpa.DynamicInputDataJpaController;
 import jpa.EnvironmentJpaController;
 import jpa.HeaderJpaController;
 import jpa.HostAddressJpaController;
@@ -71,6 +72,8 @@ public class DataAccessObject implements Serializable{
     
     DatabaseSelectJpaController databaseSelectJpaController;
     
+    DynamicInputDataJpaController dynamicInputDataJpaController;
+    
     /*Tags Associadas aos requests*/
     RequestTagJpaController requestTagJpaController;
     RequestTagReferenceJpaController requestTagReferenceJpaController;
@@ -114,6 +117,10 @@ public class DataAccessObject implements Serializable{
         
         /*Selects utilizados para busca na base durante montagem do request*/
         this.databaseSelectJpaController = new DatabaseSelectJpaController(this.emf);
+        
+        /*Objeto que armazena requests dinamicos*/
+        this.dynamicInputDataJpaController = new DynamicInputDataJpaController(this.emf);
+        
         
         /*Tags Associadas aos requests*/
         this.requestTagJpaController = new RequestTagJpaController(this.emf);
@@ -214,6 +221,10 @@ public class DataAccessObject implements Serializable{
     public DatabaseSelectJpaController getDatabaseSelectJpaController() {
         return this.databaseSelectJpaController;
     }
+    
+    public DynamicInputDataJpaController getDynamicInputDataJpaController() {
+        return this.dynamicInputDataJpaController;
+    }
 
     public RequestTagJpaController getRequestTagJpaController() {
         return this.requestTagJpaController;
@@ -242,5 +253,7 @@ public class DataAccessObject implements Serializable{
     public ScheduledRequestExecutionLogJpaController getScheduledRequestExecutionLogJpaController() {
         return this.scheduledRequestExecutionLogJpaController;
     }
+    
+    
     
 }

@@ -3,23 +3,14 @@ $(document).ready(function() {
 
     /*---------EXECUTA SCENARIO DE VALIDAÇÃO -------------------------------------*/
     $("#execute-validation-button").click(function() {
-        //Trava cursor após preencher o response
-        //$("body").toggleClass("wait");
         var jsonValidationObj = fillValidationScenarioObject();
-        //alert(jsonValidationObj);
         if (jsonValidationObj === null) {
-            //Destrava cursor após preencher o response
-            //$("body").toggleClass("wait");
         } else {
             $.post('ValidationScenarioExecutorServlet', {"jsonValidationObj": jsonValidationObj},
             function(resp) { // on success
-                //alert(resp);
                 printValidationResponse(resp);
-                //$("body").toggleClass("wait");
             })
                     .fail(function() { //on failure
-                        //Destrava cursor após preencher o response
-                        //$("body").toggleClass("wait");
                         alert("Falha ao executar validação!");
                     });
         }
@@ -52,6 +43,20 @@ function fillRequestObject() {
     } else {
         Payload = $("#Payload").val();
     }
+    
+    /*----------------------------DYNAMIC REQUEST FILLER----------------------*/
+    var DynamicData;
+    if ($("#dynamic-data-query").val() == "") {
+        DynamicData = null;
+    } else {
+        DynamicData = {
+            idDynamicInputData: 0,
+            idRequestReference: id,
+            requestType: "SQL",
+            jsonRequest: JSON.stringify({databaseName: $("#databank-selector").val(),request: $("#dynamic-data-query").val()}, undefined, 2)
+        };
+    }
+    /*------------------------------------------------------------------------*/
 
     //-----Arrays
     var Headers = new Array();
@@ -79,6 +84,7 @@ function fillRequestObject() {
             , host: Host
             , path: Path
             , payload: Payload
+            , jsonDynamicData: DynamicData
             , templates: Templates
             , headers: Headers
             , parameters: Parameters
@@ -215,17 +221,6 @@ function printValidationResponse(json) {
     $("#response-scenario-div").empty();
     $("#response-scenario-div").append(responseTable);
     $("#response-scenario-div").append(responseContentsPanel);
-    //$("#response-div").append(selectAll);
-
-
-    /*responseTable += "<br><h4>Response Contents:</h4><br>";
-     responseTable += "<div id='responseContents-div'>" + syntaxHighlight(responseContents) + "</div>";
-     
-     $("#response-scenario-div").empty();
-     $("#response-scenario-div").append(responseTable);
-     */
-    //Destrava cursor após preencher o response
-    //$("body").toggleClass("wait");
 }
 
 function generatePanel(title, childNode) {
@@ -239,7 +234,6 @@ function generatePanel(title, childNode) {
     panelHeader.innerHTML = title;
 
     var panelBody = document.createElement('div');
-    //panelBody.id = "responseContentsDiv001";
     panelBody.className = "panel-body";
     panelBody.appendChild(childNode);
 

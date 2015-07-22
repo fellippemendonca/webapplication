@@ -28,22 +28,17 @@ public class JsonRequestServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-
-            String buttonID = request.getParameter("button-id");
-            switch (buttonID) {
-                case "execute-requests":
-                    response.getWriter().write(new Gson().toJson(sless.getRequest()));
-                    break;
-
-                case "bands-albums":
-                    response.getWriter().write(new Gson().toJson(sless.getRequest()));
-                    break;
-            }
-        } catch (NamingException ex) {
-            Logger.getLogger(JsonRequestServlet.class.getName()).log(Level.SEVERE, null, ex);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        String buttonID = request.getParameter("button-id");
+        switch (buttonID) {
+            case "execute-requests":
+                response.getWriter().write(new Gson().toJson(sless.getRequest()));
+                break;
+                
+            case "bands-albums":
+                response.getWriter().write(new Gson().toJson(sless.getRequest()));
+                break;
         }
     }
 

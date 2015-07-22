@@ -39,7 +39,19 @@ public class AutoScenario implements Serializable {
     
     public ResponseContents execRequest(String json) throws NamingException, IOException, URISyntaxException {
         RequestObjectList rob = new RequestObjectList();
-        return rob.setRequest(json).generateRestRequester().Request();
+        RestRequester restRequester = rob.setRequest(json).generateRestRequester();
+        if(restRequester == null){
+            String errorMessage = "The query used to fill dynamic parameters returned no results and the request was not able to be generated and then executed.";
+            ResponseContents rc = new ResponseContents();
+            rc.setRequest("Not generated.");
+            rc.setStatus("Not retrieved.");
+            rc.setEndDate();
+            rc.setContents(errorMessage);
+            System.out.println(errorMessage);
+            return rc;
+        } else {
+            return restRequester.Request();
+        }
     }
     
     public JsonValidationScenario execValidation(String json) throws NamingException, IOException, URISyntaxException {

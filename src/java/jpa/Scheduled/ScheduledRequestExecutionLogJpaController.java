@@ -13,6 +13,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
@@ -20,7 +22,6 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.transaction.UserTransaction;
 import jpa.Scheduled.exceptions.NonexistentEntityException;
 import jpa.Scheduled.exceptions.RollbackFailureException;
 
@@ -170,7 +171,7 @@ public class ScheduledRequestExecutionLogJpaController implements Serializable {
         query.setParameter("idRequestReference", idRequestReference);
         query.setParameter("executionDate", convertedDate);
         query.setParameter("dayAfter", dayAfter);
-        
+
         List<ScheduledRequestExecutionLog> scheduledRequestExecutionLogList = (List<ScheduledRequestExecutionLog>) query.getResultList();
         try {
             if (scheduledRequestExecutionLogList.size() > 0) {
@@ -181,6 +182,15 @@ public class ScheduledRequestExecutionLogJpaController implements Serializable {
         } finally {
             em.close();
         }
+    }
+    
+    public ScheduledRequestExecutionLog findLastExecutionByIdAndDate(int idRequestReference, String executionDate){
+        try {
+            return findByIdAndDate(idRequestReference, executionDate).get(0);
+        } catch (ParseException ex) {
+            Logger.getLogger(ScheduledRequestExecutionLogJpaController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     public int getScheduledRequestExecutionLogCount() {

@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jpa.ReferenceJpaControllers;
+package jpa;
 
-import Entities.ReferenceEntities.RequestReference;
+import Entities.DynamicInputData;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -15,16 +15,17 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.EntityTransaction;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import jpa.ReferenceJpaControllers.exceptions.NonexistentEntityException;
-import jpa.ReferenceJpaControllers.exceptions.RollbackFailureException;
+import javax.transaction.UserTransaction;
+import jpa.exceptions.NonexistentEntityException;
+import jpa.exceptions.RollbackFailureException;
 
 /**
  *
  * @author fellippe.mendonca
  */
-public class RequestReferenceJpaController implements Serializable {
+public class DynamicInputDataJpaController implements Serializable {
 
-    public RequestReferenceJpaController(EntityManagerFactory emf) {
+    public DynamicInputDataJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;
@@ -33,21 +34,21 @@ public class RequestReferenceJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public RequestReference create(RequestReference requestReference) throws RollbackFailureException, Exception {
+    public DynamicInputData create(DynamicInputData dynamicInputData) throws RollbackFailureException, Exception {
         EntityManager em = null;
         EntityTransaction etx = null;
         try {
             em = getEntityManager();
             etx = em.getTransaction();
             etx.begin();
-            em.persist(requestReference);
+            em.persist(dynamicInputData);
             em.flush();
             etx.commit();
         } catch (Exception ex) {
             try {
                 etx.rollback();
             } catch (Exception re) {
-                throw new jpa.exceptions.RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
+                throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
             throw ex;
         } finally {
@@ -55,16 +56,19 @@ public class RequestReferenceJpaController implements Serializable {
                 em.close();
             }
         }
-        return requestReference;
+        return dynamicInputData;
     }
 
-    public void edit(RequestReference requestReference) throws NonexistentEntityException, RollbackFailureException, Exception {
+    public void edit(DynamicInputData dynamicInputData) throws NonexistentEntityException, RollbackFailureException, Exception {
         EntityManager em = null;
         EntityTransaction etx = null;
         try {
             em = getEntityManager();
             etx = em.getTransaction();
-            requestReference = em.merge(requestReference);
+            etx.begin();
+            em = getEntityManager();
+            dynamicInputData = em.merge(dynamicInputData);
+            em.flush();
             etx.commit();
         } catch (Exception ex) {
             try {
@@ -74,9 +78,9 @@ public class RequestReferenceJpaController implements Serializable {
             }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = requestReference.getIdRequestReference();
-                if (findRequestReference(id) == null) {
-                    throw new NonexistentEntityException("The requestReference with id " + id + " no longer exists.");
+                Integer id = dynamicInputData.getIdDynamicInputData();
+                if (findDynamicInputData(id) == null) {
+                    throw new NonexistentEntityException("The dynamicInputData with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -94,16 +98,18 @@ public class RequestReferenceJpaController implements Serializable {
             em = getEntityManager();
             etx = em.getTransaction();
             etx.begin();
-            RequestReference requestReference;
+            em = getEntityManager();
+            DynamicInputData dynamicInputData;
             try {
-                requestReference = em.getReference(RequestReference.class, id);
-                requestReference.getIdRequestReference();
+                dynamicInputData = em.getReference(DynamicInputData.class, id);
+                dynamicInputData.getIdDynamicInputData();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The requestReference with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The dynamicInputData with id " + id + " no longer exists.", enfe);
             }
-            em.remove(requestReference);
+            em.remove(dynamicInputData);
+            //em.flush();
             etx.commit();
-        } catch (Exception ex) {
+        } catch (NonexistentEntityException ex) {
             try {
                 etx.rollback();
             } catch (Exception re) {
@@ -117,19 +123,19 @@ public class RequestReferenceJpaController implements Serializable {
         }
     }
 
-    public List<RequestReference> findRequestReferenceEntities() {
-        return findRequestReferenceEntities(true, -1, -1);
+    public List<DynamicInputData> findDynamicInputDataEntities() {
+        return findDynamicInputDataEntities(true, -1, -1);
     }
 
-    public List<RequestReference> findRequestReferenceEntities(int maxResults, int firstResult) {
-        return findRequestReferenceEntities(false, maxResults, firstResult);
+    public List<DynamicInputData> findDynamicInputDataEntities(int maxResults, int firstResult) {
+        return findDynamicInputDataEntities(false, maxResults, firstResult);
     }
 
-    private List<RequestReference> findRequestReferenceEntities(boolean all, int maxResults, int firstResult) {
+    private List<DynamicInputData> findDynamicInputDataEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(RequestReference.class));
+            cq.select(cq.from(DynamicInputData.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -141,20 +147,20 @@ public class RequestReferenceJpaController implements Serializable {
         }
     }
 
-    public RequestReference findRequestReference(Integer id) {
+    public DynamicInputData findDynamicInputData(Integer id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(RequestReference.class, id);
+            return em.find(DynamicInputData.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int getRequestReferenceCount() {
+    public int getDynamicInputDataCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<RequestReference> rt = cq.from(RequestReference.class);
+            Root<DynamicInputData> rt = cq.from(DynamicInputData.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
@@ -163,4 +169,19 @@ public class RequestReferenceJpaController implements Serializable {
         }
     }
 
+    public DynamicInputData findByIdRequestReference(int id) {
+        EntityManager em = getEntityManager();
+        Query query = em.createNamedQuery("DynamicInputData.findByIdRequestReference");
+        query.setParameter("idRequestReference", id);
+        List<DynamicInputData> dynamicInputDataList = (List<DynamicInputData>) query.getResultList();
+        try {
+            if (dynamicInputDataList.size() > 0) {
+                return dynamicInputDataList.get(0);
+            } else {
+                return null;
+            }
+        } finally {
+            em.close();
+        }
+    }
 }
