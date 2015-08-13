@@ -11,6 +11,8 @@ import java.util.Date;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.protocol.HTTP;
 
 /**
  *
@@ -51,9 +53,10 @@ public class RestRequester {
                 break;
 
             case "PUT":
-
                 this.httpput.setURI(this.uri.getFinalURI().build());
                 this.httpput.setEntity(uri.getEntity());
+                //System.out.println("Entity Encoding: "+this.httpput.getEntity().getContentEncoding());
+                //System.out.println("Entity Contents: "+this.httpput.getEntity().getContentType());
                 this.RC = connFactory.RestRequest(this.httpput);
                 this.RC.setEndDate();
                 this.RC.setRequest("PUT : " + this.uri.getScheme() + "://" + this.uri.getHost() + this.uri.getPath());
@@ -61,17 +64,16 @@ public class RestRequester {
                 break;
 
             case "POST":
-
                 this.httppost.setURI(this.uri.getFinalURI().build());
                 this.httppost.setEntity(uri.getEntity());
+                //System.out.println("Entity Encoding: "+this.httppost.getEntity().getContentEncoding());
+                //System.out.println("Entity Contents: "+this.httppost.getEntity().getContentType());
                 this.RC = connFactory.RestRequest(this.httppost);
                 this.RC.setEndDate();
                 this.RC.setRequest("POST : " + this.uri.getScheme() + "://" + this.uri.getHost() + this.uri.getPath());
                 this.RC.getDiffMilliseconds(startDate);
                 break;
         }
-
-
         return this.RC;
     }
 

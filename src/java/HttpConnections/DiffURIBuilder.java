@@ -7,11 +7,13 @@
 package HttpConnections;
 
 import java.io.UnsupportedEncodingException;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.protocol.HTTP;
 
 /**
  *
@@ -37,16 +39,13 @@ public class DiffURIBuilder extends URIBuilder{
         this.template = this.template+"/"+template;
         return true;
     }
+    
     public String getTemplate(){
         return this.template;
     }
     
     public boolean setEntity(String ent) {
-        try {
-            this.entity = new StringEntity(ent);
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(DiffURIBuilder.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        this.entity = new StringEntity(ent, "UTF-8"); //NEW 
             return true;
     }
     

@@ -32,30 +32,37 @@ public class RestConnFactory {
     public RestConnFactory() {
         this.httpclient = null;
         this.httpResponse = null;
-        this.responseObj = new ResponseContents("","","");
+        this.responseObj = new ResponseContents("", "", "");
     }
+
     public ResponseContents RestRequest(HttpRequestBase httprequest) throws IOException {
+        HttpResponse httpResponseTemp = null;
+        //this.httpclient = HttpClients.createDefault();
+        HttpParams httpParams = new BasicHttpParams(); /*NEW*/
+        HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
+        HttpConnectionParams.setSoTimeout(httpParams, 30000);
+        this.httpclient = new DefaultHttpClient(httpParams); /*NEW*/
+
         try {
-            //this.httpclient = HttpClients.createDefault();
-            HttpParams httpParams = new BasicHttpParams(); /*NEW*/
-            HttpConnectionParams.setConnectionTimeout(httpParams, 10000); /*NEW*/
-            this.httpclient = new DefaultHttpClient(httpParams); /*NEW*/
-            
-            this.httpResponse = this.httpclient.execute(httprequest);
+            httpResponseTemp = this.httpclient.execute(httprequest);
+        } catch (IOException ex) {
+            Logger.getLogger(RestConnFactory.class.getName()).log(Level.SEVERE, null, ex);
+            this.responseObj.setContents(ex.toString());
+        } //finally {
+        if (httpResponseTemp == null) {
+            this.httpclient.close();
+            return this.responseObj;
+        } else {
+            this.httpResponse = httpResponseTemp;
             this.responseObj.setStatus(this.httpResponse.getStatusLine().toString());
-            
             if (this.httpResponse.getEntity() == null || this.httpResponse.getStatusLine().toString().contains("500")) {
                 this.responseObj.setContents("No Content");
             } else {
                 this.responseObj.setContents(EntityUtils.toString(this.httpResponse.getEntity()));
             }
-        } catch (IOException ex) {
-            Logger.getLogger(RestConnFactory.class.getName()).log(Level.SEVERE, null, ex);
-            this.responseObj.setContents(ex.toString());
-        } finally {
             this.httpclient.close();
             return this.responseObj;
         }
-        
+        //}
     }
 }
