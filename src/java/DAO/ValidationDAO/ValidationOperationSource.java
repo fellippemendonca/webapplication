@@ -34,10 +34,36 @@ public class ValidationOperationSource {
                 success = responseContents.getStatus().contains(expected);
                 break;
             case "Response Time":
-                success = responseContents.getExecTime() <= Integer.parseInt(expected);
+                success = responseContents.getExecTime() <= convertToNumber(expected);
+                break;
+            case "Numerically Bigger":
+                success = convertToNumber(responseContents.getContents()) >= convertToNumber(expected);
+                break;
+            case "Numerically Smaller":
+                success = convertToNumber(responseContents.getContents()) <= convertToNumber(expected);
+                break;
+            case "Numerically Equal":
+                success = convertToNumber(responseContents.getContents()) == convertToNumber(expected);
                 break;
         }
         return success;
+    }
+    
+    public boolean detectNumber(String contents){
+        boolean isNumber = false;
+        try{
+            Integer.parseInt(contents);
+            isNumber = true;
+        } catch(NumberFormatException e) {System.out.println(e); isNumber = false;}
+        return isNumber;
+    }
+    
+    public int convertToNumber(String contents){
+        if(detectNumber(contents)){
+            return Integer.parseInt(contents);
+        } else {
+            return -99;
+        }
     }
 
     public boolean compareBothJsonElements(String json1, String json2) {

@@ -31,13 +31,13 @@ public class ConnectionParameter {
                 this.conndata.setUrl("jdbc:oracle:thin:@cnv01-scan.dc.nova:1521/ADPRD");
                 this.conndata.setType("ORACLE");
                 this.conndata.setUser("fellippe_mendonca");
-                this.conndata.setPassword("BF685b83");
+                this.conndata.setPassword("Convergys123");
                 break;
             case "SLPRD":
                 this.conndata.setUrl("jdbc:oracle:thin:@cnv01-scan.dc.nova:1521/SLPRD");
                 this.conndata.setType("ORACLE");
                 this.conndata.setUser("fellippe_mendonca");
-                this.conndata.setPassword("BF685b83");
+                this.conndata.setPassword("Convergys123");
                 break;
             case "ADHLG":
                 this.conndata.setUrl("jdbc:oracle:thin:@10.128.135.13:1521/ADHLG");

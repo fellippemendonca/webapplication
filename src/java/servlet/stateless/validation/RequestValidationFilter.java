@@ -46,8 +46,7 @@ public class RequestValidationFilter extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             System.out.println("GET /RequestValidationFilter?requestId="+request.getParameter("requestId"));
             try {
-                
-                int requestId = Integer.parseInt(request.getParameter("requestId"));
+                    int requestId = Integer.parseInt(request.getParameter("requestId"));
                     out.write(sless.getRequestValidation(requestId));
                 } catch (Exception ex) {
                 Logger.getLogger(RequestValidationFilter.class.getName()).log(Level.SEVERE, null, ex);

@@ -52,9 +52,11 @@ public class RequestReferenceObject {
     List<HeaderReferenceObject> headerReferenceObjectList;
     JsonRequestObject jsonRequestObject;
     List<TagReferenceObject> tagReferenceObjectList;
-
+    int threadNumber;
+    
     public RequestReferenceObject(DataAccessObject dao) {
         this.dao = dao;
+        this.threadNumber = 0;
     }
 
 //-----------------------JSON CONSTRUCTOR---------------------------------------
@@ -201,7 +203,15 @@ public class RequestReferenceObject {
             if (parameter.getName().isEmpty() || parameter.getValue().isEmpty()) {
                 System.out.println("Empty parameter value not inserted.");
             } else {
-                this.parameterReferenceObjectList.add(new ParameterReferenceObject(this.dao, parameter.getName(), parameter.getValue(), 1));
+                /* THREADED EXECUTION */
+                if (parameter.getName().equals("threadNumber")) {
+                    if(Integer.parseInt(parameter.getValue())>0){
+                        this.threadNumber = Integer.parseInt(parameter.getValue());
+                    }
+                } else {
+                    this.parameterReferenceObjectList.add(new ParameterReferenceObject(this.dao, parameter.getName(), parameter.getValue(), 1));
+                }
+                /* THREADED EXECUTION */
             }
         }
 
@@ -357,9 +367,9 @@ public class RequestReferenceObject {
                     t.persistTagReference(this.requestReference);
                 }
             }
-            
+
             /*NEW DYNAMIC INPUT DATA*/
-            if(this.dynamicInputData!=null){
+            if (this.dynamicInputData != null) {
                 persistDynamicInputData(this.requestReference.getIdRequestReference());
             }
 
@@ -406,7 +416,13 @@ public class RequestReferenceObject {
             }
             if (jro.getParameters().isEmpty() == false) {
                 for (JParameter jp : jro.getParameters()) {
-                    restRequester.addParameter(jp.getName(), jp.getValue());
+                    /*threadNumber*/
+                    if (jp.getName().equals("threadNumber")) {
+                        
+                    } else {
+                        restRequester.addParameter(jp.getName(), jp.getValue());
+                    }
+                    /*threadNumber*/
                 }
             }
             return restRequester;
@@ -495,4 +511,14 @@ public class RequestReferenceObject {
     public JsonRequestObject getRequestObject() {
         return this.jsonRequestObject;
     }
+
+    public int getThreadNumber() {
+        return threadNumber;
+    }
+
+    public void setThreadNumber(int threadNumber) {
+        this.threadNumber = threadNumber;
+    }
+    
+    
 }

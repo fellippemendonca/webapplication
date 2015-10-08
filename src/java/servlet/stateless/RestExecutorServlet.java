@@ -36,14 +36,14 @@ public class RestExecutorServlet extends HttpServlet {
          for (String name : Collections.<String>list(request.getParameterNames())) {
          String value = request.getParameter(name); 
          System.out.println(name+" : "+value);
-         }     
+         }
          */
         response.setContentType("application/json;charset=UTF-8");
         System.out.println("Request:\n" + request.getParameter("jsonRequestObj") + "\n");
         ResponseContents RC2 = sless.executaNovoCenario(request.getParameter("jsonRequestObj"));
         Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
         String responseContents = gson.toJson(RC2);
-        System.out.println("Response:\n"+responseContents);
+        System.out.println("Response Status: "+RC2.getStatus());
         response.setStatus(200);
         response.getWriter().write(responseContents);
     }

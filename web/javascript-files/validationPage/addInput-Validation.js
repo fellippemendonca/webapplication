@@ -185,6 +185,15 @@ function addValidationElement(divName, optionValue, fieldValue, optionName, ledC
             case "Compare Json Structure":
                 newdiv.innerHTML += "<textarea class='form-control' id='" + divName + "Value" + ElementCounter3 + "' name='" + divName + "Value'>" + fieldValue + "</textarea>";
                 break;
+            case "Numerically Bigger":
+                newdiv.innerHTML += "<input type='text' class='form-control' id='" + divName + "Value" + ElementCounter3 + "' name='" + divName + "Value' value ='" + fieldValue + "'></input>";
+                break;
+            case "Numerically Smaller":
+                newdiv.innerHTML += "<input type='text' class='form-control' id='" + divName + "Value" + ElementCounter3 + "' name='" + divName + "Value' value ='" + fieldValue + "'></input>";
+                break;
+            case "Numerically Equal":
+                newdiv.innerHTML += "<input type='text' class='form-control' id='" + divName + "Value" + ElementCounter3 + "' name='" + divName + "Value' value ='" + fieldValue + "'></input>";
+                break;
             default:
         }
 

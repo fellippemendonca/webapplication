@@ -6,14 +6,10 @@
 package HttpConnections;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
@@ -35,6 +31,7 @@ public class RestConnFactory {
         this.responseObj = new ResponseContents("", "", "");
     }
 
+    /*Simple Rest Request*/
     public ResponseContents RestRequest(HttpRequestBase httprequest) throws IOException {
         HttpResponse httpResponseTemp = null;
         //this.httpclient = HttpClients.createDefault();
@@ -46,9 +43,9 @@ public class RestConnFactory {
         try {
             httpResponseTemp = this.httpclient.execute(httprequest);
         } catch (IOException ex) {
-            Logger.getLogger(RestConnFactory.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("An error occured while executing the request. Message: " + ex);
             this.responseObj.setContents(ex.toString());
-        } //finally {
+        }
         if (httpResponseTemp == null) {
             this.httpclient.close();
             return this.responseObj;
@@ -63,6 +60,5 @@ public class RestConnFactory {
             this.httpclient.close();
             return this.responseObj;
         }
-        //}
     }
 }

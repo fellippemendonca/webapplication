@@ -54,19 +54,20 @@ public class ScheduledRequestExecutionLogObject {
     }
 
     public JsonDailyExecutionRequest getDailyRequestValidationLog(int idRequestReference, String executionDate) throws ParseException {
+        //Initialize Log Array
         List<JsonScheduledRequestExecutionLog> jsonScheduledRequestExecutionLogList = new ArrayList();
         if (this.dao.getScheduledRequestExecutionLogJpaController().findByIdAndDate(idRequestReference, executionDate) == null) {
             return null;
         } else {
-
+            //Retrieve List of Entities by idRequestReference and executionDate
             for (ScheduledRequestExecutionLog log : this.dao.getScheduledRequestExecutionLogJpaController().findByIdAndDate(idRequestReference, executionDate)) {
+                //Transform String object from database in RequestValidationObject. 
                 JsonRequestValidation jsonRequestValidation = new Gson().fromJson(log.getJsonRequestValidation(), JsonRequestValidation.class);
                 boolean success = (log.getSuccess() == 1);
                 JsonScheduledRequestExecutionLog jsonLog = new JsonScheduledRequestExecutionLog(log.getIdScheduledRequestExecutionLog(), log.getIdRequestReference(), log.getExecutionDate(), jsonRequestValidation, success);
                 jsonScheduledRequestExecutionLogList.add(jsonLog);
             }
             JsonDailyExecutionRequest jsonDailyExecutionRequest = new JsonDailyExecutionRequest(idRequestReference, executionDate, jsonScheduledRequestExecutionLogList);
-
             return jsonDailyExecutionRequest;
         }
     }

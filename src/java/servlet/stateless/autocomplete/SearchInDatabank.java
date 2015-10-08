@@ -24,6 +24,7 @@ public class SearchInDatabank {
         this.rob = new RequestObjectList();
     }
 
+    //OLD FUNCTION
     public List<String> selectStringArrayFrom(String param) {
         List<String> search = new ArrayList();
         switch (param.toLowerCase()) {
@@ -66,6 +67,47 @@ public class SearchInDatabank {
     
     public List<JsonTag> selectTagArrayFrom() {
         return this.rob.listJsonTagValuesFromDB();
+    }
+    
+    
+    public List<String> selectConditionalStringArrayFrom(String param, String condition) {
+        List<String> search = new ArrayList();
+        switch (param.toLowerCase()) {
+            case "method":
+                search = this.rob.listMethodsFromDB();
+                break;
+            case "environment":
+                search = this.rob.listEnvironmentsFromDB();
+                break;
+            case "scheme":
+                search = this.rob.listSchemesFromDB();
+                break;
+            case "host":
+                search = this.rob.listHostsFromDB();
+                break;
+            case "path":
+                search = this.rob.listPathsFromDB();
+                break;
+            case "templatename":
+                search = this.rob.listTemplatesFromDB();
+                break;
+            case "parametername":
+                search = this.rob.listParameterNamesFromDB();
+                break;
+            case "parametervalue":
+                search = this.rob.listParameterValuesFromDB();
+                break;
+            case "headername":
+                search = this.rob.listHeaderNamesFromDB();
+                break;
+            case "headervalue":
+                search = this.rob.listHeaderValuesFromDB();
+                break;
+            case "tag":
+                search = this.rob.listTagValuesFromDB();
+                break;
+        }
+        return search;
     }
     
 }

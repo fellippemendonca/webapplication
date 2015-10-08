@@ -190,5 +190,17 @@ public class HostAddressJpaController implements Serializable {
         }
         return list;
     }
+    
+    public List<String> listHostAddressEntitiesBasedOnEnvironment(String environment) {
+        
+        
+        /*select * from host_address where id_host_address in (select distinct id_host_address from request_reference where id_environment = (select id_environment from environment where environment_name = 'HLG'));*/
+
+        List<String> list = new ArrayList();
+        for (HostAddress m : findHostAddressEntities(true, -1, -1)) {
+            list.add(m.getHostAddressValue());
+        }
+        return list;
+    }
 
 }

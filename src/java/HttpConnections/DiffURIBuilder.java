@@ -6,14 +6,11 @@
 
 package HttpConnections;
 
-import java.io.UnsupportedEncodingException;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.protocol.HTTP;
+
 
 /**
  *

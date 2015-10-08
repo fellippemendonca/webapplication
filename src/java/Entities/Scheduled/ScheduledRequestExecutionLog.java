@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "ScheduledRequestExecutionLog.findByIdRequestReference", query = "SELECT s FROM ScheduledRequestExecutionLog s WHERE s.idRequestReference = :idRequestReference"),
     @NamedQuery(name = "ScheduledRequestExecutionLog.findByExecutionDate", query = "SELECT s FROM ScheduledRequestExecutionLog s WHERE s.executionDate = :executionDate"),
     @NamedQuery(name = "ScheduledRequestExecutionLog.findByExecutionDateAndId", query = "SELECT s FROM ScheduledRequestExecutionLog s WHERE s.executionDate >= :executionDate and s.executionDate < :dayAfter and s.idRequestReference = :idRequestReference order by s.executionDate desc"),
+ // @NamedQuery(name = "ScheduledRequestExecutionLog.findByExecutionDateAndId", query = "SELECT s FROM ScheduledRequestExecutionLog s WHERE s.executionDate >= :executionDate and s.executionDate < :dayAfter and s.idRequestReference = :idRequestReference order by s.executionDate desc"),
     @NamedQuery(name = "ScheduledRequestExecutionLog.findBySuccess", query = "SELECT s FROM ScheduledRequestExecutionLog s WHERE s.success = :success")})
 public class ScheduledRequestExecutionLog implements Serializable {
     private static final long serialVersionUID = 1L;

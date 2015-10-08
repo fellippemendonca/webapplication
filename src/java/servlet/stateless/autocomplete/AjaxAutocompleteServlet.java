@@ -36,7 +36,6 @@ public class AjaxAutocompleteServlet extends HttpServlet {
         Collections.sort(suggestions);
         String param = request.getParameter("term");
         List<AutoCompleteData> result = new ArrayList<>();
-
         if (param.equals("")) {
             for (String suggestion : suggestions) {
                 result.add(new AutoCompleteData(suggestion, suggestion));

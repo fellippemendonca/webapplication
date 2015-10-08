@@ -268,6 +268,9 @@
                                             <li><a onClick="addValidationElement('Validation', 'Find String', '', 'Find String', 'red');">Find String</a></li>
                                             <li><a onClick="addValidationElement('Validation', 'Find Json Element', '', 'Find Json Element', 'red');">Find Json Element</a></li>
                                             <li><a onClick="addValidationElement('Validation', 'Compare Json Structure', '', 'Match Json Structure', 'red');">Match Json Structure</a></li>
+                                            <li><a onClick="addValidationElement('Validation', 'Numerically Bigger', '', 'Numerically Bigger', 'red');">Numerically Bigger</a></li>
+                                            <li><a onClick="addValidationElement('Validation', 'Numerically Smaller', '', 'Numerically Smaller', 'red');">Numerically Smaller</a></li>
+                                            <li><a onClick="addValidationElement('Validation', 'Numerically Equal', '', 'Numerically Equal', 'red');">Numerically Equal</a></li>
                                         </ul>
                                     </div>
                                     <br><br><br><br>

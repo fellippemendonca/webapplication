@@ -7,12 +7,15 @@ package HttpConnections;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.protocol.HTTP;
 
 /**
  *
@@ -48,29 +51,127 @@ public class RestRequester {
                 this.httpget.setURI(this.uri.getFinalURI().build());
                 this.RC = connFactory.RestRequest(this.httpget);
                 this.RC.setEndDate();
-                this.RC.setRequest("GET : " + this.uri.getScheme() + "://" + this.uri.getHost() + this.uri.getPath());
+                this.RC.setRequest(RequestStringBuilder("GET"));
                 this.RC.getDiffMilliseconds(startDate);
                 break;
 
             case "PUT":
                 this.httpput.setURI(this.uri.getFinalURI().build());
                 this.httpput.setEntity(uri.getEntity());
-                //System.out.println("Entity Encoding: "+this.httpput.getEntity().getContentEncoding());
-                //System.out.println("Entity Contents: "+this.httpput.getEntity().getContentType());
                 this.RC = connFactory.RestRequest(this.httpput);
                 this.RC.setEndDate();
-                this.RC.setRequest("PUT : " + this.uri.getScheme() + "://" + this.uri.getHost() + this.uri.getPath());
+                this.RC.setRequest(RequestStringBuilder("PUT"));
                 this.RC.getDiffMilliseconds(startDate);
                 break;
 
             case "POST":
                 this.httppost.setURI(this.uri.getFinalURI().build());
                 this.httppost.setEntity(uri.getEntity());
-                //System.out.println("Entity Encoding: "+this.httppost.getEntity().getContentEncoding());
-                //System.out.println("Entity Contents: "+this.httppost.getEntity().getContentType());
                 this.RC = connFactory.RestRequest(this.httppost);
                 this.RC.setEndDate();
-                this.RC.setRequest("POST : " + this.uri.getScheme() + "://" + this.uri.getHost() + this.uri.getPath());
+                this.RC.setRequest(RequestStringBuilder("POST"));
+                this.RC.getDiffMilliseconds(startDate);
+                break;
+        }
+        return this.RC;
+    }
+
+    public ResponseContents ThreadedRequest(int threadNumber) throws IOException, URISyntaxException {
+        String threadResults = "The threadNumber Parameter was detected. This request was executed in Parallel mode.";
+        int threadCounter=0;
+        List<ThreadedRestConnFactory> connFactoryList = new ArrayList();
+        Date startDate = new Date();
+
+        switch (this.method.toUpperCase()) {
+            case "GET":
+                this.httpget.setURI(this.uri.getFinalURI().build());
+                /*------------------------THREADS NODE------------------------*/
+                for (int i = 0; i < threadNumber; i++) {
+                    connFactoryList.add(new ThreadedRestConnFactory(this.httpget));
+                }
+
+                for (ThreadedRestConnFactory thread : connFactoryList) {
+                    thread.start();
+                }
+
+                for (ThreadedRestConnFactory thread : connFactoryList) {
+                    try {
+                        thread.join();
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(RestRequester.class.getName()).log(Level.SEVERE, null, ex);
+                        threadResults = "O problem occurred while joining the Threads: "+ex;
+                    }
+                    threadResults += "\nThread Number:" + threadCounter
+                                + ", Response Status:" + thread.getResponseObj().getStatus()
+                                + ", Elapsed Time:" + thread.getResponseObj().getExecTime();
+                    threadCounter++;
+                }
+                this.RC.setContents(threadResults);
+                /*------------------------------------------------------------*/
+                this.RC.setEndDate();
+                this.RC.setRequest(RequestStringBuilder("GET"));
+                this.RC.getDiffMilliseconds(startDate);
+                break;
+
+            case "PUT":
+                this.httpput.setURI(this.uri.getFinalURI().build());
+                this.httpput.setEntity(uri.getEntity());
+                /*------------------------THREADS NODE------------------------*/
+                for (int i = 0; i < threadNumber; i++) {
+                    connFactoryList.add(new ThreadedRestConnFactory(this.httpput));
+                }
+
+                for (ThreadedRestConnFactory thread : connFactoryList) {
+                    thread.start();
+                }
+
+                for (ThreadedRestConnFactory thread : connFactoryList) {
+                    try {
+                        thread.join();
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(RestRequester.class.getName()).log(Level.SEVERE, null, ex);
+                        threadResults = "O problem occurred while joining the Threads: "+ex;
+                    }
+                    threadResults += "\nThread Number:" + threadCounter
+                                + ", Response Status:" + thread.getResponseObj().getStatus()
+                                + ", Elapsed Time:" + thread.getResponseObj().getExecTime();
+                    threadCounter++;
+                }
+                this.RC.setContents(threadResults);
+                /*------------------------------------------------------------*/
+                this.RC.setEndDate();
+                this.RC.setRequest(RequestStringBuilder("PUT"));
+                this.RC.getDiffMilliseconds(startDate);
+                break;
+
+            case "POST":
+                this.httppost.setURI(this.uri.getFinalURI().build());
+                this.httppost.setEntity(uri.getEntity());
+                /*------------------------THREADS NODE------------------------*/
+                for (int i = 0; i < threadNumber; i++) {
+                    connFactoryList.add(new ThreadedRestConnFactory(this.httppost));
+                }
+
+                for (ThreadedRestConnFactory thread : connFactoryList) {
+                    thread.start();
+                }
+
+                for (ThreadedRestConnFactory thread : connFactoryList) {
+                    try {
+                        thread.join();
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(RestRequester.class.getName()).log(Level.SEVERE, null, ex);
+                        threadResults = "O problem occurred while joining the Threads: "+ex;
+                    }
+                    threadResults += "\nThread Number:" + threadCounter
+                                + ", Response Status:" + thread.getResponseObj().getStatus()
+                                + ", Elapsed Time:" + thread.getResponseObj().getExecTime();
+                    threadCounter++;
+                }
+                this.RC.setContents(threadResults);
+                /*------------------------------------------------------------*/
+                this.RC.setEndDate();
+                this.RC.setRequest(RequestStringBuilder("POST"));
                 this.RC.getDiffMilliseconds(startDate);
                 break;
         }
@@ -128,6 +229,21 @@ public class RestRequester {
 
     public void setMethod(String method) {
         this.method = method;
+    }
+
+    public String RequestStringBuilder(String operation) {
+        String requestString = (operation + " : " + this.uri.getScheme() + "://" + this.uri.getHost() + this.uri.getPath());
+        int i = 0;
+        for (NameValuePair param : this.uri.getQueryParams()) {
+            if (i == 0) {
+                requestString += "?";
+            } else {
+                requestString += "&";
+            }
+            requestString += param.getName() + "=" + param.getValue();
+            i++;
+        }
+        return requestString;
     }
 
 }

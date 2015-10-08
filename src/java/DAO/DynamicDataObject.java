@@ -5,10 +5,8 @@
  */
 package DAO;
 
-import DAO.DataAccessObject;
 import Databank_Engines.DatabankConnector;
 import Databank_Engines.Matrix.DynamicMatrix;
-import Entities.DynamicInputData;
 import JsonObjects.DynamicData.JsonDynamicData;
 import JsonObjects.DynamicData.JsonDynamicDatabaseSelect;
 import JsonObjects.DynamicData.JsonFieldAndData;

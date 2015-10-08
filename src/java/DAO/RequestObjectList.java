@@ -9,6 +9,7 @@ import DAO.ValidationDAO.RequestValidationObject;
 import DAO.ValidationDAO.Schedule.ScheduledRequestExecutionLogObject;
 import DAO.ValidationDAO.Schedule.ScheduledRequestObject;
 import DAO.ValidationDAO.ValidationScenarioObject;
+import Entities.Environment;
 import Entities.ReferenceEntities.RequestReference;
 import Entities.Scheduled.ScheduledRequest;
 import JsonObjects.JsonRequestObject;
@@ -192,9 +193,9 @@ public class RequestObjectList {
     }
 
     //Payloads
-    public List<String> listPayloadsFromDB() {
+    /*public List<String> listPayloadsFromDB() {
         return this.dao.getPayloadJpaController().listPayloadEntities();
-    }
+    }*/
 
     //Templates
     public List<String> listTemplatesFromDB() {
@@ -227,5 +228,56 @@ public class RequestObjectList {
     public List<String> listTagValuesFromDB() {
         return this.dao.getRequestTagJpaController().listRequestTagEntities();
     }
-    /*------------------------------------------------------------------------*/
+    
+    
+    /*-----------------------------NEW-Version--------------------------------*/
+    
+    //Hosts
+    public List<String> listHostsBasedOnEnvironment(String env) {
+        Environment environment = null;
+        try{
+            environment = this.dao.getEnvironmentJpaController().find(new Environment(0,env));
+        } catch(Exception e){
+            System.out.println("Problem while retrieving environment "+env+" from database. Message: "+e);
+        }
+        //environment.getIdEnvironment()
+        //this.dao.getRequestReferenceJpaController().
+        return this.dao.getHostAddressJpaController().listHostAddressEntities();
+    }
+    
+    //Paths
+    public List<String> listPathsBasedOnHost(String host) {
+        return this.dao.getPathJpaController().listPathEntities();
+    }
+
+    //Templates
+    public List<String> listTemplatesBasedOnPath(String path) {
+        return this.dao.getTemplateJpaController().listTemplateEntities();
+    }
+    
+    //Headers
+    public List<String> listHeaderNamesBasedOnHost(String host) {
+        return this.dao.getHeaderJpaController().listHeaderNameEntities();
+    }
+
+    public List<String> listHeaderValuesBasedOnHeaderName(String headerName) {
+        return this.dao.getHeaderJpaController().listHeaderValueEntities();
+    }
+
+    //Parameters
+    public List<String> listParameterNamesBasedOnHost(String host) {
+        return this.dao.getParameterJpaController().listParameterNameEntities();
+    }
+
+    public List<String> listParameterValuesBasedOnParameterName(String parameterName) {
+        return this.dao.getParameterJpaController().listParameterValueEntities();
+    }
+
+    /* GET RequestReferenceObject */
+    public RequestReferenceObject getRequestRefObj() {
+        return requestRefObj;
+    }
+
+    
+    
 }

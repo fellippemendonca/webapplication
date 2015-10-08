@@ -45,12 +45,19 @@ public class AutoScenario implements Serializable {
             ResponseContents rc = new ResponseContents();
             rc.setRequest("Not generated.");
             rc.setStatus("Not retrieved.");
+            rc.setExecTime(0);
             rc.setEndDate();
             rc.setContents(errorMessage);
             System.out.println(errorMessage);
             return rc;
         } else {
-            return restRequester.Request();
+            /* THREADED EXECUTION */
+            if(rob.getRequestRefObj().getThreadNumber()>0){
+                return restRequester.ThreadedRequest(rob.getRequestRefObj().getThreadNumber());
+            } else {
+                return restRequester.Request();
+            }
+            /* THREADED EXECUTION */
         }
     }
     
