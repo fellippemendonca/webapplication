@@ -8,7 +8,7 @@ package DAO;
 
 import Entities.ReferenceEntities.RequestReference;
 import Entities.ReferenceEntities.RequestTagReference;
-import Entities.RequestTag;
+import Entities.ValueEntities.RequestTag;
 import JsonObjects.Tags.JsonTag;
 import com.google.gson.Gson;
 import java.util.logging.Level;

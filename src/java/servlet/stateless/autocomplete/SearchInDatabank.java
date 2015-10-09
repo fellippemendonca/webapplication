@@ -6,7 +6,7 @@
 package servlet.stateless.autocomplete;
 
 import DAO.RequestObjectList;
-import Entities.RequestTag;
+import Entities.ValueEntities.RequestTag;
 import JsonObjects.Tags.JsonTag;
 import java.util.ArrayList;
 import java.util.List;

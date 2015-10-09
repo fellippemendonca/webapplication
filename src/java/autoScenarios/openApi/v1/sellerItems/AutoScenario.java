@@ -5,7 +5,6 @@
  */
 package autoScenarios.openApi.v1.sellerItems;
 import DAO.RequestObjectList;
-import DAO.RequestReferenceObject;
 import HttpConnections.ResponseContents;
 import HttpConnections.RestRequester;
 import JsonObjects.Validation.JsonValidationScenario;
@@ -13,30 +12,24 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 import javax.naming.NamingException;
 /**
  *
  * @author fellippe.mendonca
  */
 public class AutoScenario implements Serializable {
-
-    List<RestRequester> restRequesterList;
-
-    public AutoScenario() {
-        this.restRequesterList = new ArrayList<>();
-    }
-
-    public List<RestRequester> getScenarioList() {
-        return this.restRequesterList;
-    }
     
+    /*-----VVVVVVVVVV Funções CREATE-RETRIEVE-UPDATE-DELETE VVVVVVVVVV--------*/
+    
+    /*-------------------------CRUD SIMPLE REQUESTS---------------------------*/
+    
+    /*Retorna a lista de requests existentes no banco de dados*/
     public String getRequest() throws NamingException {
         RequestObjectList rob = new RequestObjectList();
         return rob.getJsonRequestList();
     }
     
+    /*Função responsável por Instanciar Popular e Executar o request fornecido pelo site*/
     public ResponseContents execRequest(String json) throws NamingException, IOException, URISyntaxException {
         RequestObjectList rob = new RequestObjectList();
         RestRequester restRequester = rob.setRequest(json).generateRestRequester();
@@ -61,12 +54,6 @@ public class AutoScenario implements Serializable {
         }
     }
     
-    public JsonValidationScenario execValidation(String json) throws NamingException, IOException, URISyntaxException {
-        RequestObjectList rob = new RequestObjectList();
-        return rob.setRequestValidation(json).executeScenarioValidation();
-    }
-    
-//--------------------------------CRUD REQUESTS---------------------------------
     public boolean createRequest(String json) throws NamingException, IOException, URISyntaxException {
         RequestObjectList rob = new RequestObjectList();
         return rob.createRequest(json);
@@ -84,6 +71,13 @@ public class AutoScenario implements Serializable {
     
     
     /*-------------------------CRUD VALIDATION SCENARIOS----------------------*/
+    
+    /*Função responsável por Instanciar Popular e Executar o request fornecido pelo site juntamente com sua validação*/
+    public JsonValidationScenario execValidation(String json) throws NamingException, IOException, URISyntaxException {
+        RequestObjectList rob = new RequestObjectList();
+        return rob.setRequestValidation(json).executeScenarioValidation();
+    }
+    
     public String getRequestValidation(int requestID) throws NamingException, IOException, URISyntaxException, Exception {
         RequestObjectList rob = new RequestObjectList();
         return rob.getJsonRequestValidations(requestID);

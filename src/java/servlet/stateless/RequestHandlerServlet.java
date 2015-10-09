@@ -5,14 +5,8 @@
  */
 package servlet.stateless;
 
-import HttpConnections.ResponseContents;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
-import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;

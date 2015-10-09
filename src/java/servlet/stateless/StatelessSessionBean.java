@@ -18,6 +18,7 @@ import javax.naming.NamingException;
 public class StatelessSessionBean implements Serializable{
     AutoScenario autoScenario;
     
+    /*Retorna a lista de requests existentes no banco de dados*/
     public String getRequest(){
         this.autoScenario = new AutoScenario();
         try {
@@ -30,6 +31,7 @@ public class StatelessSessionBean implements Serializable{
         return null;
     } 
      
+    /*Função responsável por Instanciar Popular e Executar o request fornecido pelo site*/
     public ResponseContents executaNovoCenario(String json){
         this.autoScenario  = new AutoScenario();
         try {
@@ -42,6 +44,7 @@ public class StatelessSessionBean implements Serializable{
         return null;
     }
     
+    /*Função responsável por Instanciar Popular e Executar o request fornecido pelo site juntamente com sua validação*/
     public JsonValidationScenario executaNovaValidacao(String json) {
         this.autoScenario = new AutoScenario();
         try {
@@ -54,6 +57,8 @@ public class StatelessSessionBean implements Serializable{
         return null;
     }
     
+    
+    /* VVVVVV Funções para manutenção de dados na base VVVVVV */
     
     /*-------------------------CRUD REQUEST REFERENCES------------------------*/
     public boolean criaNovoCenario(String json){

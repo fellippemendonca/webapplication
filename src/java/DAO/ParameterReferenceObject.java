@@ -6,8 +6,8 @@
 
 package DAO;
 
-import Entities.DatabaseSelect;
-import Entities.Parameter;
+import Entities.ValueEntities.DatabaseSelect;
+import Entities.ValueEntities.Parameter;
 import Entities.ReferenceEntities.ParameterReference;
 import Entities.ReferenceEntities.RequestReference;
 import java.util.logging.Level;

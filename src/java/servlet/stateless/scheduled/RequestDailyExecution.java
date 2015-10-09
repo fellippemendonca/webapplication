@@ -40,7 +40,7 @@ public class RequestDailyExecution extends HttpServlet {
                 int requestId = Integer.parseInt(request.getParameter("requestId"));
                 String executionDate = request.getParameter("executionDate");
                     out.write(sless.getDailyRequestValidationLog(requestId, executionDate));
-                } catch (Exception ex) {
+                } catch (NumberFormatException ex) {
                 Logger.getLogger(RequestValidationFilter.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

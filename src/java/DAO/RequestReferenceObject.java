@@ -1,20 +1,20 @@
 package DAO;
 
 import DAO.ValidationDAO.Schedule.ScheduledRequestObject;
-import Entities.DynamicInputData;
-import Entities.Environment;
-import Entities.HostAddress;
-import Entities.Method;
-import Entities.Path;
-import Entities.Payload;
+import Entities.ValueEntities.DynamicInputData;
+import Entities.ValueEntities.Environment;
+import Entities.ValueEntities.HostAddress;
+import Entities.ValueEntities.Method;
+import Entities.ValueEntities.Path;
+import Entities.ValueEntities.Payload;
 import Entities.ReferenceEntities.HeaderReference;
 import Entities.ReferenceEntities.ParameterReference;
 import Entities.ReferenceEntities.RequestReference;
 import Entities.ReferenceEntities.RequestTagReference;
 import Entities.ReferenceEntities.TemplateReference;
-import Entities.RequestName;
+import Entities.ValueEntities.RequestName;
 import Entities.Scheduled.ScheduledRequest;
-import Entities.Scheme;
+import Entities.ValueEntities.Scheme;
 import Entities.ValidationEntities.ValidationScenario;
 import HttpConnections.RestRequester;
 import JsonObjects.DynamicData.JsonDynamicData;
@@ -60,6 +60,7 @@ public class RequestReferenceObject {
     }
 
 //-----------------------JSON CONSTRUCTOR---------------------------------------
+    /*Popula o objeto Request Reference Object com base no JsonRequestObject*/
     public RequestReferenceObject(DataAccessObject dao, String json) {
         this.dao = dao;
         setAllEntitiesFromJsonString(json);
@@ -85,6 +86,7 @@ public class RequestReferenceObject {
 ////////////////////////////////////////////////////////////////////////////////
 
 //-----------------------REFERENCE CONSTRUCTOR--------------------------------//
+    /*Popula o objeto Request Reference Object com base no id de um Request pre-existente no banco de dados.*/
     public RequestReferenceObject(DataAccessObject dao, int id) {
         this.dao = dao;
         setAllEntitiesFromRequestID(id);
@@ -418,7 +420,7 @@ public class RequestReferenceObject {
                 for (JParameter jp : jro.getParameters()) {
                     /*threadNumber*/
                     if (jp.getName().equals("threadNumber")) {
-                        
+                        //caso encontre a string "threadNumber" Não adiciona ao parametro do request original.
                     } else {
                         restRequester.addParameter(jp.getName(), jp.getValue());
                     }
@@ -433,7 +435,7 @@ public class RequestReferenceObject {
     public RequestReference getRequestReference() {
         return this.requestReference;
     }
-//------------------------------------------------------------------------------
+    /*------------------------------------------------------------------------*/
 
     public void persistRequestName() {
         try {
@@ -442,7 +444,7 @@ public class RequestReferenceObject {
             Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-//------------------------------------------------------------------------------
+    /*------------------------------------------------------------------------*/    
 
     public void persistEnvironment() {
         try {
@@ -451,7 +453,7 @@ public class RequestReferenceObject {
             Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-//------------------------------------------------------------------------------
+    /*------------------------------------------------------------------------*/
 
     public void persistMethod() {
         try {
@@ -460,7 +462,7 @@ public class RequestReferenceObject {
             Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-//------------------------------------------------------------------------------
+    /*------------------------------------------------------------------------*/
 
     public void persistScheme() {
         try {
@@ -469,7 +471,7 @@ public class RequestReferenceObject {
             Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-//------------------------------------------------------------------------------
+    /*------------------------------------------------------------------------*/
 
     public void persistHost() {
         try {
@@ -478,7 +480,7 @@ public class RequestReferenceObject {
             Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-//------------------------------------------------------------------------------
+    /*------------------------------------------------------------------------*/
 
     public void persistPath() {
         try {

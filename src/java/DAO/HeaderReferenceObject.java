@@ -6,7 +6,7 @@
 
 package DAO;
 
-import Entities.Header;
+import Entities.ValueEntities.Header;
 import Entities.ReferenceEntities.HeaderReference;
 import Entities.ReferenceEntities.RequestReference;
 import java.util.logging.Level;

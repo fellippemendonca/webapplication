@@ -35,7 +35,6 @@ public class ScheduledRequests extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            //out.write(new Gson().toJson(sless.getScheduledRequest()));
             out.write(sless.getScheduledRequest());
         }
     }
