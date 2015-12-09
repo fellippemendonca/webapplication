@@ -36,6 +36,7 @@ public class RestConnFactory {
         HttpResponse httpResponseTemp = null;
         //this.httpclient = HttpClients.createDefault();
         HttpParams httpParams = new BasicHttpParams(); /*NEW*/
+
         HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
         HttpConnectionParams.setSoTimeout(httpParams, 30000);
         this.httpclient = new DefaultHttpClient(httpParams); /*NEW*/
@@ -45,17 +46,15 @@ public class RestConnFactory {
         } catch (IOException ex) {
             System.out.println("An error occured while executing the request. Message: " + ex);
             this.responseObj.setContents(ex.toString());
-        }
-        if (httpResponseTemp == null) {
-            this.httpclient.close();
-            return this.responseObj;
-        } else {
-            this.httpResponse = httpResponseTemp;
-            this.responseObj.setStatus(this.httpResponse.getStatusLine().toString());
-            if (this.httpResponse.getEntity() == null || this.httpResponse.getStatusLine().toString().contains("500")) {
-                this.responseObj.setContents("No Content");
-            } else {
-                this.responseObj.setContents(EntityUtils.toString(this.httpResponse.getEntity()));
+        } finally {
+            if (httpResponseTemp != null) {
+                this.httpResponse = httpResponseTemp;
+                this.responseObj.setStatus(this.httpResponse.getStatusLine().toString());
+                if (this.httpResponse.getEntity() == null || this.httpResponse.getStatusLine().toString().contains("500")) {
+                    this.responseObj.setContents("No Content");
+                } else {
+                    this.responseObj.setContents(EntityUtils.toString(this.httpResponse.getEntity()));
+                }
             }
             this.httpclient.close();
             return this.responseObj;

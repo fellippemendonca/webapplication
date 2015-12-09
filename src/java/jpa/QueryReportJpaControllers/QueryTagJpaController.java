@@ -4,9 +4,10 @@
  * and open the template in the editor.
  */
 
-package jpa.RequestValueJpaControllers;
+package jpa.QueryReportJpaControllers;
 
-import Entities.ValueEntities.Template;
+import Entities.QueryReportEntities.QueryTag;
+import JsonObjects.Tags.JsonTag;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,16 +19,16 @@ import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.UserTransaction;
-import jpa.exceptions.NonexistentEntityException;
-import jpa.exceptions.RollbackFailureException;
+import jpa.QueryReportJpaControllers.exceptions.NonexistentEntityException;
+import jpa.QueryReportJpaControllers.exceptions.RollbackFailureException;
 
 /**
  *
  * @author fellippe.mendonca
  */
-public class TemplateJpaController implements Serializable {
+public class QueryTagJpaController implements Serializable {
 
-    public TemplateJpaController(EntityManagerFactory emf) {
+    public QueryTagJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;
@@ -36,14 +37,12 @@ public class TemplateJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public Template create(Template template) throws RollbackFailureException, Exception {
-        EntityManager em = null;
-        EntityTransaction etx = null;
+    public QueryTag create(QueryTag queryTag) throws RollbackFailureException, Exception {
+        EntityManager em = getEntityManager();
+        EntityTransaction etx = em.getTransaction();
         try {
-            em = getEntityManager();
-            etx = em.getTransaction();
             etx.begin();
-            em.persist(template);
+            em.persist(queryTag);
             em.flush();
             etx.commit();
         } catch (Exception ex) {
@@ -58,24 +57,28 @@ public class TemplateJpaController implements Serializable {
                 em.close();
             }
         }
-        return template;
+        return queryTag;
     }
 
-    public void edit(Template template) throws NonexistentEntityException, RollbackFailureException, Exception {
-        EntityManager em = null;
+    public QueryTag edit(QueryTag queryTag) throws NonexistentEntityException, RollbackFailureException, Exception {
+        EntityManager em = getEntityManager();
+        EntityTransaction etx = em.getTransaction();
         try {
-            em = getEntityManager();
-            template = em.merge(template);
+            etx.begin();
+            queryTag = em.merge(queryTag);
+            em.flush();
+            etx.commit();
         } catch (Exception ex) {
             try {
+                etx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = template.getIdTemplate();
-                if (findTemplate(id) == null) {
-                    throw new NonexistentEntityException("The template with id " + id + " no longer exists.");
+                Integer id = queryTag.getId();
+                if (findQueryTag(id) == null) {
+                    throw new NonexistentEntityException("The queryTag with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -84,22 +87,26 @@ public class TemplateJpaController implements Serializable {
                 em.close();
             }
         }
+        return queryTag;
     }
 
     public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
-        EntityManager em = null;
+        EntityManager em = getEntityManager();
+        EntityTransaction etx = em.getTransaction();
         try {
-            em = getEntityManager();
-            Template template;
+            etx.begin();
+            QueryTag queryTag;
             try {
-                template = em.getReference(Template.class, id);
-                template.getIdTemplate();
+                queryTag = em.getReference(QueryTag.class, id);
+                queryTag.getId();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The template with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The queryTag with id " + id + " no longer exists.", enfe);
             }
-            em.remove(template);
+            em.remove(queryTag);
+            etx.commit();
         } catch (Exception ex) {
             try {
+                etx.rollback();
             } catch (Exception re) {
                 throw new RollbackFailureException("An error occurred attempting to roll back the transaction.", re);
             }
@@ -111,19 +118,19 @@ public class TemplateJpaController implements Serializable {
         }
     }
 
-    public List<Template> findTemplateEntities() {
-        return findTemplateEntities(true, -1, -1);
+    public List<QueryTag> findQueryTagEntities() {
+        return findQueryTagEntities(true, -1, -1);
     }
 
-    public List<Template> findTemplateEntities(int maxResults, int firstResult) {
-        return findTemplateEntities(false, maxResults, firstResult);
+    public List<QueryTag> findQueryTagEntities(int maxResults, int firstResult) {
+        return findQueryTagEntities(false, maxResults, firstResult);
     }
 
-    private List<Template> findTemplateEntities(boolean all, int maxResults, int firstResult) {
+    private List<QueryTag> findQueryTagEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(Template.class));
+            cq.select(cq.from(QueryTag.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -135,20 +142,20 @@ public class TemplateJpaController implements Serializable {
         }
     }
 
-    public Template findTemplate(Integer id) {
+    public QueryTag findQueryTag(Integer id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(Template.class, id);
+            return em.find(QueryTag.class, id);
         } finally {
             em.close();
         }
     }
-
-    public int getTemplateCount() {
+    
+    public int getQueryTagCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<Template> rt = cq.from(Template.class);
+            Root<QueryTag> rt = cq.from(QueryTag.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
@@ -157,14 +164,14 @@ public class TemplateJpaController implements Serializable {
         }
     }
     
-    public Template find(Template template) {
+    public QueryTag find(QueryTag queryTag) {
         EntityManager em = getEntityManager();
-        Query query = em.createNamedQuery("Template.findByTemplateValue");
-        query.setParameter("templateValue", template.getTemplateValue());
-        List<Template> templateList = (List<Template>) query.getResultList();
+        Query query = em.createNamedQuery("QueryTag.findByName");
+        query.setParameter("name", queryTag.getName());
+        List<QueryTag> queryTagList = (List<QueryTag>) query.getResultList();
         try {
-            if (templateList.size() > 0) {
-                return templateList.get(0);
+            if (queryTagList.size() > 0) {
+                return queryTagList.get(0);
             } else {
                 return null;
             }
@@ -173,33 +180,39 @@ public class TemplateJpaController implements Serializable {
         }
     }
 
-    public Template findOrAdd(Template template) throws Exception {
-        if (find(template) != null) {
-            return find(template);
+    public QueryTag findOrAdd(QueryTag queryTag) throws Exception {
+        if (find(queryTag) != null) {
+            return find(queryTag);
         } else {
-            
-            return create(template);//find(template);
+            return create(queryTag);
         }
     }
-    
-    public List<String> listTemplateEntities() {
+
+    public List<String> listQueryTagEntities() {
         List<String> list = new ArrayList();
-        for(Template m : findTemplateEntities(true, -1, -1)){
-            if (list.contains(m.getTemplateValue()) == false) {
-                list.add(m.getTemplateValue());
+        for(QueryTag m : findQueryTagEntities(true, -1, -1)){
+            list.add(m.getName());
+        }
+        return list;
+    }
+    
+    public List<JsonTag> listJsonQueryTagEntities() {
+        List<JsonTag> list = new ArrayList();
+        for(QueryTag m : findQueryTagEntities(true, -1, -1)){
+            list.add(new JsonTag(m.getId(), m.getName()));
+        }
+        return list;
+    }
+    
+    public List<JsonTag> listFilteredJsonQueryTagEntities(List<String> nameList) {
+        List<JsonTag> list = new ArrayList();
+        for(String tagName: nameList){
+            QueryTag m = find(new QueryTag(0,tagName));
+            if(m != null){
+                list.add(new JsonTag(m.getId(), m.getName()));
             }
         }
         return list;
     }
     
-    public List<String> listEntitiesBasedOnCriteria(String criteria) {
-        EntityManager em = getEntityManager(); 
-        Query query = em.createQuery("select t from Template t where t.idTemplate in (select tr.idTemplate from TemplateReference tr where tr.idRequestReference in (select r.idRequestReference from RequestReference r where r.idPath in (select p.idPath from Path p where p.pathValue = '"+criteria+"')))",Template.class);
-        List<Template> objectList = (List<Template>) query.getResultList();  
-        List<String> list = new ArrayList();
-        for (Template m : objectList) {
-            list.add(m.getTemplateValue());
-        }
-        return list;
-    }
 }

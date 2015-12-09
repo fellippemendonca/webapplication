@@ -7,6 +7,10 @@
 package HttpConnections;
 
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
@@ -19,7 +23,7 @@ import org.apache.http.entity.StringEntity;
 public class DiffURIBuilder extends URIBuilder{
     
     String template;
-    HttpEntity entity;
+    String entity;
     
     public DiffURIBuilder() {
        super();
@@ -42,16 +46,31 @@ public class DiffURIBuilder extends URIBuilder{
     }
     
     public boolean setEntity(String ent) {
-        this.entity = new StringEntity(ent, "UTF-8"); //NEW 
+        this.entity = ent; //NEW 
             return true;
     }
     
     public HttpEntity getEntity(){
-        return this.entity;
+        return new StringEntity(this.entity, "UTF-8");
     }
 
     public URIBuilder getFinalURI(){
         return super.setPath(super.getPath()+this.template);
     }
+    
+    public String getStringEntity(){
+            return this.entity;
+    }
+
+    public String getFinalURIString(){
+        try {
+            return getFinalURI().build().toString();
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(DiffURIBuilder.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    
 
 }

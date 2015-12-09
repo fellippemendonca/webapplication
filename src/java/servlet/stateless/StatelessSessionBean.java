@@ -22,7 +22,7 @@ public class StatelessSessionBean implements Serializable{
     public String getRequest(){
         this.autoScenario = new AutoScenario();
         try {
-            return autoScenario.getRequest();
+            return this.autoScenario.getRequest();
         } catch (NamingException ex) {
             Logger.getLogger(StatelessSessionBean.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -35,7 +35,7 @@ public class StatelessSessionBean implements Serializable{
     public ResponseContents executaNovoCenario(String json){
         this.autoScenario  = new AutoScenario();
         try {
-            return autoScenario.execRequest(json);
+            return this.autoScenario.execRequest(json);
         } catch (NamingException | IOException | URISyntaxException ex) {
             Logger.getLogger(StatelessSessionBean.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -48,7 +48,7 @@ public class StatelessSessionBean implements Serializable{
     public JsonValidationScenario executaNovaValidacao(String json) {
         this.autoScenario = new AutoScenario();
         try {
-            return autoScenario.execValidation(json);
+            return this.autoScenario.execValidation(json);
         } catch (NamingException | IOException | URISyntaxException ex) {
             Logger.getLogger(StatelessSessionBean.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -64,7 +64,7 @@ public class StatelessSessionBean implements Serializable{
     public boolean criaNovoCenario(String json){
         this.autoScenario  = new AutoScenario();
         try {
-            return autoScenario.createRequest(json);
+            return this.autoScenario.createRequest(json);
         } catch (NamingException | IOException | URISyntaxException ex) {
             Logger.getLogger(StatelessSessionBean.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -76,12 +76,8 @@ public class StatelessSessionBean implements Serializable{
     public boolean editaNovoCenario(String json) {
         this.autoScenario  = new AutoScenario();
         try {
-            return autoScenario.updateRequest(json);
-        } catch (NamingException ex) {
-            Logger.getLogger(StatelessSessionBean.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(StatelessSessionBean.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (URISyntaxException ex) {
+            return this.autoScenario.updateRequest(json);
+        } catch (NamingException | IOException | URISyntaxException ex) {
             Logger.getLogger(StatelessSessionBean.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             this.autoScenario = null;
@@ -230,9 +226,7 @@ public class StatelessSessionBean implements Serializable{
         this.autoScenario = new AutoScenario();
         try {
             return autoScenario.getDailyRequestValidationLog(idRequestReference, executionDate);
-        } catch (NamingException ex) {
-            Logger.getLogger(StatelessSessionBean.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
+        } catch (NamingException | ParseException ex) {
             Logger.getLogger(StatelessSessionBean.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             this.autoScenario = null;
@@ -255,4 +249,44 @@ public class StatelessSessionBean implements Serializable{
         return success;
     }
     
+    public boolean createQueryReport(String json) throws NamingException{
+        this.autoScenario = new AutoScenario();
+        return this.autoScenario.createQueryReport(json);
+    }
+    
+    public boolean updateQueryReport(String json) throws NamingException{
+        this.autoScenario = new AutoScenario();
+        return this.autoScenario.updateQueryReport(json);
+    }
+    
+    public boolean removeQueryReport(String json) throws NamingException{
+        this.autoScenario = new AutoScenario();
+        return this.autoScenario.removeQueryReport(json);
+    }
+    
+    public String getJsonQueryReportList(){
+        this.autoScenario = new AutoScenario();
+        try {
+            return this.autoScenario.getJsonQueryReportList();
+        } catch (NamingException ex) {
+            Logger.getLogger(StatelessSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        finally {
+            this.autoScenario = null;
+        }
+        return null;
+    }
+    
+    public String getJsonQueryReportChart(int queryId, String since){
+        this.autoScenario = new AutoScenario();
+        try {
+            return this.autoScenario.getJsonQueryReportChart(queryId,since);
+        } catch (NamingException ex) {
+            Logger.getLogger(StatelessSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        finally {
+            this.autoScenario = null;
+        }
+        return null;
+    }
 }

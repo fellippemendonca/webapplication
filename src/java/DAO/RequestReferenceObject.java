@@ -1,21 +1,22 @@
 package DAO;
 
 import DAO.ValidationDAO.Schedule.ScheduledRequestObject;
+import Entities.ReferenceEntities.HeaderReference;
+import Entities.ReferenceEntities.ParameterReference;
+import Entities.ReferenceEntities.RequestReference;
+import Entities.ReferenceEntities.RequestTagReference;
+import Entities.ReferenceEntities.TemplateReference;
+import Entities.Scheduled.ScheduledRequest;
+import Entities.ValidationEntities.ValidationScenario;
 import Entities.ValueEntities.DynamicInputData;
 import Entities.ValueEntities.Environment;
 import Entities.ValueEntities.HostAddress;
 import Entities.ValueEntities.Method;
 import Entities.ValueEntities.Path;
 import Entities.ValueEntities.Payload;
-import Entities.ReferenceEntities.HeaderReference;
-import Entities.ReferenceEntities.ParameterReference;
-import Entities.ReferenceEntities.RequestReference;
-import Entities.ReferenceEntities.RequestTagReference;
-import Entities.ReferenceEntities.TemplateReference;
+import Entities.ValueEntities.RequestDescription;
 import Entities.ValueEntities.RequestName;
-import Entities.Scheduled.ScheduledRequest;
 import Entities.ValueEntities.Scheme;
-import Entities.ValidationEntities.ValidationScenario;
 import HttpConnections.RestRequester;
 import JsonObjects.DynamicData.JsonDynamicData;
 import JsonObjects.JHeader;
@@ -40,6 +41,7 @@ public class RequestReferenceObject {
     DataAccessObject dao;
     RequestReference requestReference;
     RequestName requestName;
+    RequestDescription requestDescription;
     Environment environment;
     Method method;
     Scheme scheme;
@@ -96,7 +98,11 @@ public class RequestReferenceObject {
         boolean success;
         JsonRequestObject jro;
         jro = setJsonRequestObjectFromDataBank(this.dao, id);
-        success = setEntitiesFromJsonRequestObject(jro);
+        if(jro!=null){
+            success = setEntitiesFromJsonRequestObject(jro);
+        } else {
+            success = false;
+        }
         return success;
     }
 
@@ -105,13 +111,12 @@ public class RequestReferenceObject {
         RequestReference reqRef = null;
         try {
             reqRef = dao.getRequestReferenceJpaController().findRequestReference(id);
-        } catch (Exception ex) {
-            System.out.println("failed to retrieve request id from DataBank, " + ex);
-        }
+        
 
         if (reqRef != null) {
             jReqObj.setRequestReference(reqRef.getIdRequestReference());
             jReqObj.setRequestName(dao.getRequestNameJpaController().findRequestName(reqRef.getIdRequestName()).getRequestName());
+            jReqObj.setRequestDescription(dao.getRequestDescriptionJpaController().findRequestDescription(reqRef.getIdRequestDescription()).getRequestDescription());
             jReqObj.setEnvironment(dao.getEnvironmentJpaController().findEnvironment(reqRef.getIdEnvironment()).getEnvironmentName());
             jReqObj.setMethod(dao.getMethodJpaController().findMethod(reqRef.getIdMethod()).getMethodValue());
             jReqObj.setScheme(dao.getSchemeJpaController().findScheme(reqRef.getIdScheme()).getSchemeValue());
@@ -159,7 +164,12 @@ public class RequestReferenceObject {
                 jReqObj.getJsonTags().add(jsonTag);
             }
         }
-        return jReqObj;
+        } catch (Exception ex) {
+            System.out.println("failed to retrieve request id from DataBank, " + ex);
+            jReqObj = null;
+        } finally {
+            return jReqObj;
+        }
     }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -167,6 +177,7 @@ public class RequestReferenceObject {
     public boolean setEntitiesFromJsonRequestObject(JsonRequestObject jsonObj) {
         this.jsonRequestObject = jsonObj;
         this.requestName = new RequestName(0, jsonObj.getRequestName());
+        this.requestDescription = new RequestDescription(0, jsonObj.getRequestDescription());
         this.environment = new Environment(0, jsonObj.getEnvironment().toUpperCase());
         this.method = new Method(0, jsonObj.getMethod().toUpperCase());
         this.scheme = new Scheme(0, jsonObj.getScheme());
@@ -338,6 +349,7 @@ public class RequestReferenceObject {
 //-------------------------PERSIST REQUEST--------------------------------------
     public boolean persistRequestReference() {
         persistRequestName();
+        persistRequestDescription();
         persistEnvironment();
         persistMethod();
         persistScheme();
@@ -345,7 +357,7 @@ public class RequestReferenceObject {
         persistPath();
         persistPayload();
 
-        RequestReference tmp = new RequestReference(0, this.requestName.getIdRequestName(), this.environment.getIdEnvironment(), this.method.getIdMethod(), this.scheme.getIdScheme(), this.host.getIdHostAddress(), this.path.getIdPath(), this.payload.getIdPayload());
+        RequestReference tmp = new RequestReference(0, this.requestName.getIdRequestName(), this.requestDescription.getIdRequestDescription(), this.environment.getIdEnvironment(), this.method.getIdMethod(), this.scheme.getIdScheme(), this.host.getIdHostAddress(), this.path.getIdPath(), this.payload.getIdPayload());
         try {
             this.requestReference = this.dao.getRequestReferenceJpaController().create(tmp);
 
@@ -419,7 +431,7 @@ public class RequestReferenceObject {
             if (jro.getParameters().isEmpty() == false) {
                 for (JParameter jp : jro.getParameters()) {
                     /*threadNumber*/
-                    if (jp.getName().equals("threadNumber")) {
+                    if (jp.getName().toUpperCase().equals("THREADNUMBER")) {
                         //caso encontre a string "threadNumber" Não adiciona ao parametro do request original.
                     } else {
                         restRequester.addParameter(jp.getName(), jp.getValue());
@@ -440,6 +452,15 @@ public class RequestReferenceObject {
     public void persistRequestName() {
         try {
             this.requestName = this.dao.getRequestNameJpaController().findOrAdd(this.requestName);
+        } catch (Exception ex) {
+            Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    /*------------------------------------------------------------------------*/
+
+    public void persistRequestDescription() {
+        try {
+            this.requestDescription = this.dao.getRequestDescriptionJpaController().findOrAdd(this.requestDescription);
         } catch (Exception ex) {
             Logger.getLogger(RequestReferenceObject.class.getName()).log(Level.SEVERE, null, ex);
         }

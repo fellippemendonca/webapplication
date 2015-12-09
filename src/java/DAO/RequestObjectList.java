@@ -5,14 +5,19 @@
  */
 package DAO;
 
+import DAO.QueryReportObject.QueryReportObject;
 import DAO.ValidationDAO.RequestValidationObject;
 import DAO.ValidationDAO.Schedule.ScheduledRequestExecutionLogObject;
 import DAO.ValidationDAO.Schedule.ScheduledRequestObject;
 import DAO.ValidationDAO.ValidationScenarioObject;
-import Entities.ValueEntities.Environment;
+import Entities.QueryReportEntities.QueryReport;
 import Entities.ReferenceEntities.RequestReference;
 import Entities.Scheduled.ScheduledRequest;
+import Entities.ValueEntities.Environment;
+import Entities.ValueEntities.HostAddress;
+import Entities.ValueEntities.Path;
 import JsonObjects.JsonRequestObject;
+import JsonObjects.QueryReport.JsonQueryReport;
 import JsonObjects.Tags.JsonTag;
 import com.google.gson.Gson;
 import java.text.ParseException;
@@ -97,6 +102,41 @@ public class RequestObjectList {
         return this.requestRefObj.deleteRequestReference();
     }
     /*------------------------------------------------------------------------*/
+    
+    
+    /*------------------------------------------------------------------------*/
+    
+    public String getJsonQueryReportList(){
+        List<JsonQueryReport> JsonQueryReportList = new ArrayList();
+        for(QueryReport queryReport : this.dao.getQueryReportJpaController().findQueryReportEntities()){
+            QueryReportObject queryReportObject = new QueryReportObject(this.dao, queryReport.getId());
+            JsonQueryReportList.add(queryReportObject.getJsonQueryReport());
+        }
+        return new Gson().toJson(JsonQueryReportList);
+    }
+    
+    public String getJsonQueryReportChart(int queryId, String since){
+        QueryReportObject queryReportObject = new QueryReportObject(this.dao);
+        return queryReportObject.retrieveGoogleChartMatrixFromLog(queryId,since);
+    }
+    
+    
+    public boolean createQueryReport(String json) {
+        QueryReportObject queryReportObject = new QueryReportObject(this.dao, json);
+        return queryReportObject.createQueryReport();
+    }
+
+    public boolean updateQueryReport(String json) {
+        QueryReportObject queryReportObject = new QueryReportObject(this.dao, json);
+        return queryReportObject.updateQueryReport();
+    }
+
+    public boolean removeQueryReport(String json) {
+        QueryReportObject queryReportObject = new QueryReportObject(this.dao, json);
+        return queryReportObject.removeQueryReport();
+    }
+    /*------------------------------------------------------------------------*/
+    
 
     /*-########################-CRUD VALIDATION-#############################-*/
     /*--------------RETORNA LISTA COM REQUESTS DA BASE DE DADOS---------------*/
@@ -133,7 +173,7 @@ public class RequestObjectList {
             ScheduledRequestObject scheduledRequestObject = new ScheduledRequestObject(this.dao, idRequestReference);
             return scheduledRequestObject.persistSchedule();
         } else {
-            System.out.println("Request ID "+idRequestReference+" não encontrado na base");
+            System.out.println("Request ID " + idRequestReference + " não encontrado na base");
             return false;
         }
     }
@@ -143,7 +183,7 @@ public class RequestObjectList {
             ScheduledRequestObject scheduledRequestObject = new ScheduledRequestObject(this.dao, idRequestReference);
             return scheduledRequestObject.deleteSchedule();
         } else {
-            System.out.println("Request ID "+idRequestReference+" não encontrado na base");
+            System.out.println("Request ID " + idRequestReference + " não encontrado na base");
             return false;
         }
     }
@@ -185,7 +225,7 @@ public class RequestObjectList {
     public List<String> listPathsFromDB() {
         return this.dao.getPathJpaController().listPathEntities();
     }
-    
+
     //------------------------Templates-----------------------------------------
     public List<String> listTemplatesFromDB() {
         return this.dao.getTemplateJpaController().listTemplateEntities();
@@ -195,17 +235,15 @@ public class RequestObjectList {
     public List<String> listParameterNamesFromDB() {
         return this.dao.getParameterJpaController().listParameterNameEntities();
     }
-
     public List<String> listParameterValuesFromDB() {
         return this.dao.getParameterJpaController().listParameterValueEntities();
     }
     //--------------------------------------------------------------------------
-    
+
     //------------------------Headers-------------------------------------------
     public List<String> listHeaderNamesFromDB() {
         return this.dao.getHeaderJpaController().listHeaderNameEntities();
     }
-
     public List<String> listHeaderValuesFromDB() {
         return this.dao.getHeaderJpaController().listHeaderValueEntities();
     }
@@ -214,9 +252,11 @@ public class RequestObjectList {
     public List<JsonTag> listJsonTagValuesFromDB() {
         return this.dao.getRequestTagJpaController().listJsonTagEntities();
     }
-
     public List<String> listTagValuesFromDB() {
         return this.dao.getRequestTagJpaController().listRequestTagEntities();
+    }
+    public List<String> listQueryTagValuesFromDB() {
+        return this.dao.getQueryTagJpaController().listQueryTagEntities();
     }
 
     /*-----------------------------NEW-Version--------------------------------*/
@@ -228,37 +268,99 @@ public class RequestObjectList {
         } catch (Exception e) {
             System.out.println("Problem while retrieving environment " + env + " from database. Message: " + e);
         }
-        //environment.getIdEnvironment()
-        //this.dao.getRequestReferenceJpaController().
-        return this.dao.getHostAddressJpaController().listHostAddressEntities();
+        if (environment != null) {
+            return this.dao.getHostAddressJpaController().listEntitiesBasedOnCriteria(environment.getEnvironmentName());
+        } else {
+            return this.dao.getHostAddressJpaController().listHostAddressEntities();
+        }
+
     }
 
     //------------------------Paths---------------------------------------------
     public List<String> listPathsBasedOnHost(String host) {
-        return this.dao.getPathJpaController().listPathEntities();
+        HostAddress hostAddress = null;
+        try {
+            hostAddress = this.dao.getHostAddressJpaController().find(new HostAddress(0, host));
+        } catch (Exception e) {
+            System.out.println("Problem while retrieving HostAddress " + host + " from database. Message: " + e);
+        }
+        if (hostAddress != null) {
+            /*If host exists on database then the filter will retrieve all related paths*/
+            return this.dao.getPathJpaController().listEntitiesBasedOnCriteria(hostAddress.getHostAddressValue());
+        } else {
+            /*If host not exists on database then the filter will retrieve all paths*/
+            return this.dao.getPathJpaController().listPathEntities();
+        }
     }
 
     //------------------------Templates-----------------------------------------
-    public List<String> listTemplatesBasedOnPath(String path) {
-        return this.dao.getTemplateJpaController().listTemplateEntities();
+    public List<String> listTemplatesBasedOnPath(String host) {
+        Path path = null;
+        try {
+            path = this.dao.getPathJpaController().find(new Path(0, host));
+        } catch (Exception e) {
+            System.out.println("Problem while retrieving Hosts " + host + " from database. Message: " + e);
+        }
+        if (path != null) {
+            /*If host exists on database then the filter will retrieve all related templates*/
+            return this.dao.getTemplateJpaController().listEntitiesBasedOnCriteria(path.getPathValue());
+        } else {
+            /*If host not exists on database then the filter will retrieve all templates*/
+            return this.dao.getTemplateJpaController().listTemplateEntities();
+        }
+
     }
 
     //------------------------Headers-------------------------------------------
     public List<String> listHeaderNamesBasedOnHost(String host) {
-        return this.dao.getHeaderJpaController().listHeaderNameEntities();
+        HostAddress hostAddress = null;
+        try {
+            hostAddress = this.dao.getHostAddressJpaController().find(new HostAddress(0, host));
+        } catch (Exception e) {
+            System.out.println("Problem while retrieving Hosts " + host + " from database. Message: " + e);
+        }
+        if (hostAddress != null) {
+            /*If host exists on database then the filter will retrieve all related Headers*/
+            return this.dao.getHeaderJpaController().listEntitiesBasedOnCriteria(hostAddress.getHostAddressValue());
+        } else {
+            /*If host not exists on database then the filter will retrieve all Headers*/
+            return this.dao.getHeaderJpaController().listHeaderNameEntities();
+        }
     }
 
     public List<String> listHeaderValuesBasedOnHeaderName(String headerName) {
-        return this.dao.getHeaderJpaController().listHeaderValueEntities();
+        List<String> list = this.dao.getHeaderJpaController().listValuesBasedOnName(headerName);
+        if (list.size() > 0) {
+            return list;
+        } else {
+            return this.dao.getHeaderJpaController().listHeaderValueEntities();
+        }
     }
 
     //------------------------Parameters----------------------------------------
     public List<String> listParameterNamesBasedOnHost(String host) {
-        return this.dao.getParameterJpaController().listParameterNameEntities();
+        HostAddress hostAddress = null;
+        try {
+            hostAddress = this.dao.getHostAddressJpaController().find(new HostAddress(0, host));
+        } catch (Exception e) {
+            System.out.println("Problem while retrieving Hosts " + host + " from database. Message: " + e);
+        }
+        if (hostAddress != null) {
+            /*If host exists on database then the filter will retrieve all related Parameters*/
+            return this.dao.getParameterJpaController().listEntitiesBasedOnCriteria(hostAddress.getHostAddressValue());
+        } else {
+            /*If host not exists on database then the filter will retrieve all Parameters*/
+            return this.dao.getParameterJpaController().listParameterNameEntities();
+        }
     }
 
     public List<String> listParameterValuesBasedOnParameterName(String parameterName) {
-        return this.dao.getParameterJpaController().listParameterValueEntities();
+        List<String> list = this.dao.getParameterJpaController().listValuesBasedOnName(parameterName);
+        if (list.size() > 0) {
+            return list;
+        } else {
+            return this.dao.getParameterJpaController().listParameterValueEntities();
+        }
     }
 
     /* GET RequestReferenceObject */

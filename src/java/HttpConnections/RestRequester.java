@@ -5,6 +5,8 @@
  */
 package HttpConnections;
 
+import SoapConnections.SoapConnFactory;
+import SoapConnections.SoapPost;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.soap.SOAPException;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -28,6 +31,7 @@ public class RestRequester {
     HttpGet httpget;
     HttpPut httpput;
     HttpPost httppost;
+    SoapPost soapPost;
     String method;
 
     public RestRequester() {
@@ -36,6 +40,7 @@ public class RestRequester {
         this.httpget = new HttpGet();
         this.httpput = new HttpPut();
         this.httppost = new HttpPost();
+        this.soapPost = new SoapPost();
         this.method = "";
     }
 
@@ -45,6 +50,7 @@ public class RestRequester {
 
     public ResponseContents Request() throws IOException, URISyntaxException {
         RestConnFactory connFactory = new RestConnFactory();
+        SoapConnFactory soapConnFactory = new SoapConnFactory();
         Date startDate = new Date();
         switch (this.method.toUpperCase()) {
             case "GET":
@@ -72,13 +78,23 @@ public class RestRequester {
                 this.RC.setRequest(RequestStringBuilder("POST"));
                 this.RC.getDiffMilliseconds(startDate);
                 break;
+            case "SOAP":
+                this.soapPost.setUri(this.uri.getFinalURIString());
+                this.soapPost.setXmlRequest(this.uri.getStringEntity());
+                /*ADD REQUEST SOAP CONN FACTORY*/
+                this.RC = soapConnFactory.SoapRequest(this.soapPost);
+                this.RC.setEndDate();
+                this.RC.setRequest(RequestStringBuilder("SOAP"));
+                this.RC.getDiffMilliseconds(startDate);
+                break;
         }
         return this.RC;
     }
 
     public ResponseContents ThreadedRequest(int threadNumber) throws IOException, URISyntaxException {
-        String threadResults = "The threadNumber Parameter was detected. This request was executed in Parallel mode.";
-        int threadCounter=0;
+        String threadMessages = "The threadNumber parameter detected. This request executed in Parallel mode.";
+        String threadResults = "";
+        int sum = 0, avg = 0;
         List<ThreadedRestConnFactory> connFactoryList = new ArrayList();
         Date startDate = new Date();
 
@@ -99,14 +115,16 @@ public class RestRequester {
                         thread.join();
                     } catch (InterruptedException ex) {
                         Logger.getLogger(RestRequester.class.getName()).log(Level.SEVERE, null, ex);
-                        threadResults = "O problem occurred while joining the Threads: "+ex;
+                        threadResults = "A problem occurred while joining the Threads: "+ex;
                     }
-                    threadResults += "\nThread Number:" + threadCounter
+                    threadResults += "\nThread ID:" + thread.getId()
                                 + ", Response Status:" + thread.getResponseObj().getStatus()
                                 + ", Elapsed Time:" + thread.getResponseObj().getExecTime();
-                    threadCounter++;
+                    sum+=thread.getResponseObj().getExecTime();
                 }
-                this.RC.setContents(threadResults);
+                avg = sum/threadNumber;
+                threadMessages+=" Average response time: "+avg+"ms";
+                this.RC.setContents(threadMessages+threadResults);
                 /*------------------------------------------------------------*/
                 this.RC.setEndDate();
                 this.RC.setRequest(RequestStringBuilder("GET"));
@@ -130,14 +148,16 @@ public class RestRequester {
                         thread.join();
                     } catch (InterruptedException ex) {
                         Logger.getLogger(RestRequester.class.getName()).log(Level.SEVERE, null, ex);
-                        threadResults = "O problem occurred while joining the Threads: "+ex;
+                        threadResults = "A problem occurred while joining the Threads: "+ex;
                     }
-                    threadResults += "\nThread Number:" + threadCounter
+                    threadResults += "\nThread ID:" + thread.getId()
                                 + ", Response Status:" + thread.getResponseObj().getStatus()
                                 + ", Elapsed Time:" + thread.getResponseObj().getExecTime();
-                    threadCounter++;
+                    sum+=thread.getResponseObj().getExecTime();
                 }
-                this.RC.setContents(threadResults);
+                avg = sum/threadNumber;
+                threadMessages+=" Average response time: "+avg+"ms";
+                this.RC.setContents(threadMessages+threadResults);
                 /*------------------------------------------------------------*/
                 this.RC.setEndDate();
                 this.RC.setRequest(RequestStringBuilder("PUT"));
@@ -161,20 +181,23 @@ public class RestRequester {
                         thread.join();
                     } catch (InterruptedException ex) {
                         Logger.getLogger(RestRequester.class.getName()).log(Level.SEVERE, null, ex);
-                        threadResults = "O problem occurred while joining the Threads: "+ex;
+                        threadResults = "A problem occurred while joining the Threads: "+ex;
                     }
-                    threadResults += "\nThread Number:" + threadCounter
+                    threadResults += "\nThread ID:" + thread.getId()
                                 + ", Response Status:" + thread.getResponseObj().getStatus()
                                 + ", Elapsed Time:" + thread.getResponseObj().getExecTime();
-                    threadCounter++;
+                    sum+=thread.getResponseObj().getExecTime();
                 }
-                this.RC.setContents(threadResults);
+                avg = sum/threadNumber;
+                threadMessages+=" Average response time: "+avg+"ms";
+                this.RC.setContents(threadMessages+threadResults);
                 /*------------------------------------------------------------*/
                 this.RC.setEndDate();
                 this.RC.setRequest(RequestStringBuilder("POST"));
                 this.RC.getDiffMilliseconds(startDate);
                 break;
         }
+                connFactoryList.clear();
         return this.RC;
     }
 
@@ -245,5 +268,4 @@ public class RestRequester {
         }
         return requestString;
     }
-
 }

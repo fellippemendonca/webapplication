@@ -189,4 +189,15 @@ public class PathJpaController implements Serializable {
         return list;
     }
     
+    public List<String> listEntitiesBasedOnCriteria(String criteria) {
+        EntityManager em = getEntityManager(); 
+        Query query = em.createQuery("select p from Path p where p.idPath in (select distinct r.idPath from RequestReference r where r.idHostAddress in (select h.idHostAddress from HostAddress h where h.hostAddressValue = '"+criteria+"'))",Path.class);
+        List<Path> objectList = (List<Path>) query.getResultList();  
+        List<String> list = new ArrayList();
+        for (Path m : objectList) {
+            list.add(m.getPathValue());
+        }
+        return list;
+    }
+    
 }

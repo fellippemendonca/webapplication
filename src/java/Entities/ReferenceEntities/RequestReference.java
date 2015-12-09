@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "RequestReference.findAll", query = "SELECT r FROM RequestReference r"),
     @NamedQuery(name = "RequestReference.findByIdRequestReference", query = "SELECT r FROM RequestReference r WHERE r.idRequestReference = :idRequestReference"),
     @NamedQuery(name = "RequestReference.findByIdRequestName", query = "SELECT r FROM RequestReference r WHERE r.idRequestName = :idRequestName"),
+    @NamedQuery(name = "RequestReference.findByIdRequestDescription", query = "SELECT r FROM RequestReference r WHERE r.idRequestDescription = :idRequestDescription"),
     @NamedQuery(name = "RequestReference.findByIdEnvironment", query = "SELECT r FROM RequestReference r WHERE r.idEnvironment = :idEnvironment"),
     @NamedQuery(name = "RequestReference.findByIdMethod", query = "SELECT r FROM RequestReference r WHERE r.idMethod = :idMethod"),
     @NamedQuery(name = "RequestReference.findByIdScheme", query = "SELECT r FROM RequestReference r WHERE r.idScheme = :idScheme"),
@@ -47,6 +48,10 @@ public class RequestReference implements Serializable {
     @NotNull
     @Column(name = "id_request_name")
     private int idRequestName;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "id_request_description")
+    private int idRequestDescription;
     @Basic(optional = false)
     @NotNull
     @Column(name = "id_environment")
@@ -79,9 +84,10 @@ public class RequestReference implements Serializable {
         this.idRequestReference = idRequestReference;
     }
 
-    public RequestReference(Integer idRequestReference, int idRequestName, int idEnvironment, int idMethod, int idScheme, int idHostAddress, int idPath, int idPayload) {
+    public RequestReference(Integer idRequestReference, int idRequestName, int idRequestDescription, int idEnvironment, int idMethod, int idScheme, int idHostAddress, int idPath, int idPayload) {
         this.idRequestReference = idRequestReference;
         this.idRequestName = idRequestName;
+        this.idRequestDescription = idRequestDescription;
         this.idEnvironment = idEnvironment;
         this.idMethod = idMethod;
         this.idScheme = idScheme;
@@ -104,6 +110,14 @@ public class RequestReference implements Serializable {
 
     public void setIdRequestName(int idRequestName) {
         this.idRequestName = idRequestName;
+    }
+    
+    public int getIdRequestDescription() {
+        return idRequestDescription;
+    }
+    
+    public void setIdRequestDescription(int idRequestDescription) {
+        this.idRequestDescription = idRequestDescription;
     }
 
     public int getIdEnvironment() {

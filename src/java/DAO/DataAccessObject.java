@@ -13,6 +13,15 @@ import Entities.ReferenceEntities.TemplateReference;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
+import jpa.QueryReportJpaControllers.QueryReportJpaController;
+import jpa.QueryReportJpaControllers.QueryReportLogJpaController;
+import jpa.QueryReportJpaControllers.QueryTagJpaController;
+import jpa.QueryReportJpaControllers.QueryTagReferenceJpaController;
+import jpa.RequestReferenceJpaControllers.HeaderReferenceJpaController;
+import jpa.RequestReferenceJpaControllers.ParameterReferenceJpaController;
+import jpa.RequestReferenceJpaControllers.RequestReferenceJpaController;
+import jpa.RequestReferenceJpaControllers.RequestTagReferenceJpaController;
+import jpa.RequestReferenceJpaControllers.TemplateReferenceJpaController;
 import jpa.RequestValueJpaControllers.DatabaseSelectJpaController;
 import jpa.RequestValueJpaControllers.DynamicInputDataJpaController;
 import jpa.RequestValueJpaControllers.EnvironmentJpaController;
@@ -22,18 +31,14 @@ import jpa.RequestValueJpaControllers.MethodJpaController;
 import jpa.RequestValueJpaControllers.ParameterJpaController;
 import jpa.RequestValueJpaControllers.PathJpaController;
 import jpa.RequestValueJpaControllers.PayloadJpaController;
-import jpa.RequestReferenceJpaControllers.HeaderReferenceJpaController;
-import jpa.RequestReferenceJpaControllers.ParameterReferenceJpaController;
-import jpa.RequestReferenceJpaControllers.RequestReferenceJpaController;
-import jpa.RequestReferenceJpaControllers.RequestTagReferenceJpaController;
-import jpa.RequestReferenceJpaControllers.TemplateReferenceJpaController;
+import jpa.RequestValueJpaControllers.RequestDescriptionJpaController;
 import jpa.RequestValueJpaControllers.RequestNameJpaController;
 import jpa.RequestValueJpaControllers.RequestTagJpaController;
-import jpa.Scheduled.ScheduledRequestExecutionLogJpaController;
-import jpa.Scheduled.ScheduledRequestJpaController;
 import jpa.RequestValueJpaControllers.SchemeJpaController;
 import jpa.RequestValueJpaControllers.StoreJpaController;
 import jpa.RequestValueJpaControllers.TemplateJpaController;
+import jpa.Scheduled.ScheduledRequestExecutionLogJpaController;
+import jpa.Scheduled.ScheduledRequestJpaController;
 import jpa.ValidationJPA.ValidationElementJpaController;
 import jpa.ValidationJPA.ValidationOperationJpaController;
 import jpa.ValidationJPA.ValidationScenarioJpaController;
@@ -52,6 +57,7 @@ public class DataAccessObject implements Serializable{
     /*Atributos simples dos requests*/
     RequestReferenceJpaController requestReferenceJpaController;
     RequestNameJpaController requestNameJpaController;
+    RequestDescriptionJpaController requestDescriptionJpaController;
     MethodJpaController methodJpaController;
     EnvironmentJpaController environmentJpaController;
     StoreJpaController storeJpaController;
@@ -87,6 +93,12 @@ public class DataAccessObject implements Serializable{
     ScheduledRequestJpaController scheduledRequestJpaController;
     ScheduledRequestExecutionLogJpaController scheduledRequestExecutionLogJpaController;
     
+    /* ---- Query Report JPAs ---- */
+    QueryReportJpaController queryReportJpaController;
+    QueryReportLogJpaController queryReportLogJpaController;
+    
+    QueryTagJpaController queryTagJpaController;
+    QueryTagReferenceJpaController queryTagReferenceJpaController;
     
     public DataAccessObject()  {
         /*Inicializa o Entity Manager Factory para a conexao com o banco de dados configurada no Glassfish*/
@@ -97,6 +109,7 @@ public class DataAccessObject implements Serializable{
         
         /*Atributos simples dos requests*/
         this.requestNameJpaController = new RequestNameJpaController(this.emf);
+        this.requestDescriptionJpaController = new RequestDescriptionJpaController(this.emf);
         this.methodJpaController = new MethodJpaController(this.emf);
         this.environmentJpaController = new EnvironmentJpaController(this.emf);
         this.storeJpaController = new StoreJpaController(this.emf);
@@ -136,6 +149,17 @@ public class DataAccessObject implements Serializable{
         /* ---- SCHEDULED SCENARIOS ---- */
         this.scheduledRequestJpaController = new ScheduledRequestJpaController(this.emf);        
         this.scheduledRequestExecutionLogJpaController = new ScheduledRequestExecutionLogJpaController(this.emf);
+        /*--------------------------------------------------------------------*/
+        
+        /* ---- Query Report JPAs ---- */
+        this.queryReportJpaController = new QueryReportJpaController(this.emf);
+        this.queryReportLogJpaController = new QueryReportLogJpaController(this.emf);
+        
+        this.queryTagJpaController = new QueryTagJpaController(this.emf);
+        this.queryTagReferenceJpaController = new QueryTagReferenceJpaController(this.emf);
+        /*--------------------------------------------------------------------*/
+        
+        
     }
     
     
@@ -164,6 +188,10 @@ public class DataAccessObject implements Serializable{
 
     public RequestNameJpaController getRequestNameJpaController() {
         return this.requestNameJpaController;
+    }
+    
+    public RequestDescriptionJpaController getRequestDescriptionJpaController() {
+        return this.requestDescriptionJpaController;
     }
     
     public MethodJpaController getMethodJpaController() {
@@ -253,6 +281,26 @@ public class DataAccessObject implements Serializable{
     public ScheduledRequestExecutionLogJpaController getScheduledRequestExecutionLogJpaController() {
         return this.scheduledRequestExecutionLogJpaController;
     }
+
+    
+    /* ---- GET de Controladores de Query Reports ---- */
+    public QueryReportJpaController getQueryReportJpaController() {
+        return this.queryReportJpaController;
+    }
+
+    public QueryReportLogJpaController getQueryReportLogJpaController() {
+        return this.queryReportLogJpaController;
+    }
+
+    public QueryTagJpaController getQueryTagJpaController() {
+        return queryTagJpaController;
+    }
+
+    public QueryTagReferenceJpaController getQueryTagReferenceJpaController() {
+        return queryTagReferenceJpaController;
+    }
+    
+    
     
     
     

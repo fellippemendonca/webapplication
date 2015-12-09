@@ -128,5 +128,34 @@ public class AutoScenario implements Serializable {
         RequestObjectList rob = new RequestObjectList();
         return rob.getDailyRequestValidationLog(idRequestReference, executionDate);
     }
+    
+    
+    /*QUERY REPORTS CRUD*/
+    
+    public boolean createQueryReport(String json) throws NamingException{
+        RequestObjectList rob = new RequestObjectList();
+        return rob.createQueryReport(json);
+    }
+    
+    public boolean updateQueryReport(String json) throws NamingException{
+        RequestObjectList rob = new RequestObjectList();
+        return rob.updateQueryReport(json);
+    }
+    
+    public boolean removeQueryReport(String json) throws NamingException{
+        RequestObjectList rob = new RequestObjectList();
+        return rob.removeQueryReport(json);
+    }
+    
+    public String getJsonQueryReportList() throws NamingException {
+        RequestObjectList rob = new RequestObjectList();
+        return rob.getJsonQueryReportList();
+    }
+    
+    public String getJsonQueryReportChart(int queryId, String since) throws NamingException {
+        RequestObjectList rob = new RequestObjectList();
+        return rob.getJsonQueryReportChart(queryId, since);
+    }
+    
    
 }

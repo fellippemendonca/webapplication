@@ -15,6 +15,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.UserTransaction;
@@ -147,7 +148,7 @@ public class HostAddressJpaController implements Serializable {
     }
 
     public HostAddress find(HostAddress host) {
-        EntityManager em = getEntityManager();
+        EntityManager em = getEntityManager(); 
         Query query = em.createNamedQuery("HostAddress.findByHostAddressValue");
         query.setParameter("hostAddressValue", host.getHostAddressValue());
         List<HostAddress> hostList = (List<HostAddress>) query.getResultList();
@@ -191,16 +192,14 @@ public class HostAddressJpaController implements Serializable {
         return list;
     }
     
-    public List<String> listHostAddressEntitiesBasedOnEnvironment(String environment) {
-        
-        
-        /*select * from host_address where id_host_address in (select distinct id_host_address from request_reference where id_environment = (select id_environment from environment where environment_name = 'HLG'));*/
-
+    public List<String> listEntitiesBasedOnCriteria(String criteria) {
+        EntityManager em = getEntityManager(); 
+        Query query = em.createQuery("select h from HostAddress h where h.idHostAddress in (select distinct r.idHostAddress from RequestReference r where r.idEnvironment in (select e.idEnvironment from Environment e where e.environmentName = '"+criteria+"'))",HostAddress.class);
+        List<HostAddress> objectList = (List<HostAddress>) query.getResultList();
         List<String> list = new ArrayList();
-        for (HostAddress m : findHostAddressEntities(true, -1, -1)) {
+        for (HostAddress m : objectList) {
             list.add(m.getHostAddressValue());
         }
         return list;
     }
-
 }

@@ -197,6 +197,22 @@ public class ParameterJpaController implements Serializable {
         }
         return list;
     }
+    
+    public List<String> listEntitiesBasedOnCriteria(String criteria) {
+        EntityManager em = getEntityManager(); 
+        Query query = em.createQuery("select p from Parameter p where p.idParameter in (select pr.idParameter from ParameterReference pr where pr.idRequestReference in (select r.idRequestReference from RequestReference r where r.idHostAddress in (select h.idHostAddress from HostAddress h where h.hostAddressValue = '"+criteria+"')))",Parameter.class);
+        List<Parameter> objectList = (List<Parameter>) query.getResultList();  
+        List<String> list = new ArrayList();
+        for (Parameter m : objectList) {
+            if(list.contains(m.getParameterName())){
+                //disconsider duplicated
+            } else {
+                list.add(m.getParameterName());
+            }
+        }
+        return list;
+    }
+    
 
     public List<String> listParameterValueEntities() {
         List<String> list = new ArrayList();
@@ -204,6 +220,17 @@ public class ParameterJpaController implements Serializable {
             if (list.contains(m.getParameterValue()) == false) {
                 list.add(m.getParameterValue());
             }
+        }
+        return list;
+    }
+    
+    public List<String> listValuesBasedOnName(String name) {
+        EntityManager em = getEntityManager(); 
+        Query query = em.createQuery("select p from Parameter p where p.parameterName = '"+name+"'", Parameter.class);
+        List<Parameter> objectList = (List<Parameter>) query.getResultList();  
+        List<String> list = new ArrayList();
+        for (Parameter m : objectList) {
+            list.add(m.getParameterValue());
         }
         return list;
     }

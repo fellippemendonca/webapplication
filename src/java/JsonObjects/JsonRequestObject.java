@@ -18,6 +18,7 @@ import java.util.List;
 public class JsonRequestObject {
     int dbId;
     String requestName;
+    String requestDescription;
     String environment;
     String method;
     String scheme;
@@ -33,6 +34,7 @@ public class JsonRequestObject {
     public JsonRequestObject(){
         this.dbId = 0;
         this.requestName = "";
+        this.requestDescription = "";
         this.environment = "";
         this.method = "";
         this.scheme = "";
@@ -46,9 +48,10 @@ public class JsonRequestObject {
         this.jsonTags = new ArrayList();
     }
 
-    public JsonRequestObject(int dbId, String requestName, String environment, String method, String scheme, String host, String path, String payload, JsonDynamicData jsonDynamicData, List<String> templates, List<JHeader> headers, List<JParameter> parameters, List<JsonTag> jsonTags) {
+    public JsonRequestObject(int dbId, String requestName, String requestDescription, String environment, String method, String scheme, String host, String path, String payload, JsonDynamicData jsonDynamicData, List<String> templates, List<JHeader> headers, List<JParameter> parameters, List<JsonTag> jsonTags) {
         this.dbId = dbId;
         this.requestName = requestName;
+        this.requestDescription = requestDescription;
         this.environment = environment;
         this.method = method;
         this.scheme = scheme;
@@ -76,6 +79,14 @@ public class JsonRequestObject {
 
     public void setRequestName(String requestName) {
         this.requestName = requestName;
+    }
+    
+    public String getRequestDescription() {
+        return this.requestDescription;
+    }
+
+    public void setRequestDescription(String requestDescription) {
+        this.requestDescription = requestDescription;
     }
     
     public String getEnvironment() {

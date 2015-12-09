@@ -11,6 +11,7 @@ import JsonObjects.Validation.JsonRequestValidation;
 import JsonObjects.Validation.JsonValidationScenario;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.soap.SOAPException;
 
 /**
  *

@@ -3,45 +3,43 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jpa.RequestValueJpaControllers;
 
-import Entities.ValueEntities.RequestName;
+package jpa.QueryReportJpaControllers;
+
+import Entities.QueryReportEntities.QueryReport;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import jpa.exceptions.NonexistentEntityException;
-import jpa.exceptions.RollbackFailureException;
+import javax.transaction.UserTransaction;
+import jpa.QueryReportJpaControllers.exceptions.NonexistentEntityException;
+import jpa.QueryReportJpaControllers.exceptions.RollbackFailureException;
 
 /**
  *
  * @author fellippe.mendonca
  */
-public class RequestNameJpaController implements Serializable {
+public class QueryReportJpaController implements Serializable {
 
-    public RequestNameJpaController(EntityManagerFactory emf) {
+    public QueryReportJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
-
     private EntityManagerFactory emf = null;
-
     public EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
 
-    public RequestName create(RequestName requestName) throws RollbackFailureException, Exception {
-        EntityManager em = null;
-        EntityTransaction etx = null;
+    public QueryReport create(QueryReport queryReport) throws RollbackFailureException, Exception {
+        EntityManager em = getEntityManager();
+        EntityTransaction etx = em.getTransaction();
         try {
-            em = getEntityManager();
-            etx = em.getTransaction();
             etx.begin();
-            em.persist(requestName);
+            em.persist(queryReport);
             em.flush();
             etx.commit();
         } catch (Exception ex) {
@@ -56,17 +54,15 @@ public class RequestNameJpaController implements Serializable {
                 em.close();
             }
         }
-        return requestName;
+        return queryReport;
     }
 
-    public void edit(RequestName requestName) throws NonexistentEntityException, RollbackFailureException, Exception {
-        EntityManager em = null;
-        EntityTransaction etx = null;
+    public QueryReport edit(QueryReport queryReport) throws NonexistentEntityException, RollbackFailureException, Exception {
+        EntityManager em = getEntityManager();
+        EntityTransaction etx = em.getTransaction();
         try {
-            em = getEntityManager();
-            etx = em.getTransaction();
             etx.begin();
-            requestName = em.merge(requestName);
+            queryReport = em.merge(queryReport);
             etx.commit();
         } catch (Exception ex) {
             try {
@@ -76,9 +72,9 @@ public class RequestNameJpaController implements Serializable {
             }
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Integer id = requestName.getIdRequestName();
-                if (findRequestName(id) == null) {
-                    throw new NonexistentEntityException("The requestName with id " + id + " no longer exists.");
+                Integer id = queryReport.getId();
+                if (findQueryReport(id) == null) {
+                    throw new NonexistentEntityException("The queryReport with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -87,23 +83,22 @@ public class RequestNameJpaController implements Serializable {
                 em.close();
             }
         }
+        return queryReport;
     }
 
     public void destroy(Integer id) throws NonexistentEntityException, RollbackFailureException, Exception {
-        EntityManager em = null;
-        EntityTransaction etx = null;
+        EntityManager em = getEntityManager();
+        EntityTransaction etx = em.getTransaction();
         try {
-            em = getEntityManager();
-            etx = em.getTransaction();
             etx.begin();
-            RequestName requestName;
+            QueryReport queryReport;
             try {
-                requestName = em.getReference(RequestName.class, id);
-                requestName.getIdRequestName();
+                queryReport = em.getReference(QueryReport.class, id);
+                queryReport.getId();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The requestName with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The queryReport with id " + id + " no longer exists.", enfe);
             }
-            em.remove(requestName);
+            em.remove(queryReport);
             etx.commit();
         } catch (Exception ex) {
             try {
@@ -119,19 +114,19 @@ public class RequestNameJpaController implements Serializable {
         }
     }
 
-    public List<RequestName> findRequestNameEntities() {
-        return findRequestNameEntities(true, -1, -1);
+    public List<QueryReport> findQueryReportEntities() {
+        return findQueryReportEntities(true, -1, -1);
     }
 
-    public List<RequestName> findRequestNameEntities(int maxResults, int firstResult) {
-        return findRequestNameEntities(false, maxResults, firstResult);
+    public List<QueryReport> findQueryReportEntities(int maxResults, int firstResult) {
+        return findQueryReportEntities(false, maxResults, firstResult);
     }
 
-    private List<RequestName> findRequestNameEntities(boolean all, int maxResults, int firstResult) {
+    private List<QueryReport> findQueryReportEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(RequestName.class));
+            cq.select(cq.from(QueryReport.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -143,44 +138,20 @@ public class RequestNameJpaController implements Serializable {
         }
     }
 
-    public RequestName findRequestName(Integer id) {
+    public QueryReport findQueryReport(Integer id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(RequestName.class, id);
+            return em.find(QueryReport.class, id);
         } finally {
             em.close();
         }
     }
 
-    public RequestName find(RequestName name) {
-        EntityManager em = getEntityManager();
-        Query query = em.createNamedQuery("RequestName.findByRequestName");
-        query.setParameter("requestName", name.getRequestName());
-        List<RequestName> requestNameList = (List<RequestName>) query.getResultList();
-        try {
-            if (requestNameList.size() > 0) {
-                return requestNameList.get(0);
-            } else {
-                return null;
-            }
-        } finally {
-            em.close();
-        }
-    }
-
-    public RequestName findOrAdd(RequestName requestName) throws Exception {
-        if (find(requestName) != null) {
-            return find(requestName);
-        } else {
-            return create(requestName);//find(environment);
-        }
-    }
-
-    public int getRequestNameCount() {
+    public int getQueryReportCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<RequestName> rt = cq.from(RequestName.class);
+            Root<QueryReport> rt = cq.from(QueryReport.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
@@ -188,5 +159,5 @@ public class RequestNameJpaController implements Serializable {
             em.close();
         }
     }
-
+    
 }

@@ -3,10 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package servlet.stateless.autocomplete;
 
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,9 +25,19 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author fellippe.mendonca
  */
-@WebServlet("/ajaxautocompleteservlet/*")
-public class AjaxAutocompleteServlet extends HttpServlet {
+@WebServlet(name = "AjaxConditionalAutocompleteServlet", urlPatterns = {"/AjaxConditionalAutocompleteServlet"})
+public class AjaxConditionalAutocompleteServlet extends HttpServlet {
 
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     * @throws javax.naming.NamingException
+     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, NamingException {
 
@@ -33,12 +45,8 @@ public class AjaxAutocompleteServlet extends HttpServlet {
         response.setContentType("application/json;charset=UTF-8");
         SearchInDatabank search = new SearchInDatabank();
         
-        /*Search and list just by field type*/
-        List<String> suggestions = search.selectStringArrayFrom(request.getParameter("field")); /*OLD*/
-        
         /*Search and list by field type and criteria*/
-        //List<String> suggestions = search.selectConditionalStringArrayFrom(request.getParameter("field"), request.getParameter("criteria")); /*NEW*/
-        //System.out.println("Field:"+request.getParameter("field")+", Criteria:"+request.getParameter("criteria"));
+        List<String> suggestions = search.selectConditionalStringArrayFrom(request.getParameter("field"), request.getParameter("criteria")); /*NEW*/
         
         Collections.sort(suggestions);
         String param = request.getParameter("term");
@@ -73,7 +81,7 @@ public class AjaxAutocompleteServlet extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (NamingException ex) {
-            Logger.getLogger(AjaxAutocompleteServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AjaxConditionalAutocompleteServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -91,7 +99,7 @@ public class AjaxAutocompleteServlet extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (NamingException ex) {
-            Logger.getLogger(AjaxAutocompleteServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AjaxConditionalAutocompleteServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

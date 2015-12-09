@@ -61,6 +61,9 @@ public class SearchInDatabank {
             case "tag":
                 search = this.rob.listTagValuesFromDB();
                 break;
+            case "query-tag":
+                search = this.rob.listQueryTagValuesFromDB();
+                break;
         }
         return search;
     }
@@ -69,8 +72,8 @@ public class SearchInDatabank {
         return this.rob.listJsonTagValuesFromDB();
     }
     
-    
-    public List<String> selectConditionalStringArrayFrom(String param, String condition) {
+    //NEW
+    public List<String> selectConditionalStringArrayFrom(String param, String criteria) {
         List<String> search = new ArrayList();
         switch (param.toLowerCase()) {
             case "method":
@@ -83,25 +86,25 @@ public class SearchInDatabank {
                 search = this.rob.listSchemesFromDB();
                 break;
             case "host":
-                search = this.rob.listHostsFromDB();
+                search = this.rob.listHostsBasedOnEnvironment(criteria);
                 break;
             case "path":
-                search = this.rob.listPathsFromDB();
+                search = this.rob.listPathsBasedOnHost(criteria);
                 break;
             case "templatename":
-                search = this.rob.listTemplatesFromDB();
+                search = this.rob.listTemplatesBasedOnPath(criteria);
                 break;
             case "parametername":
-                search = this.rob.listParameterNamesFromDB();
+                search = this.rob.listParameterNamesBasedOnHost(criteria);
                 break;
             case "parametervalue":
-                search = this.rob.listParameterValuesFromDB();
+                search = this.rob.listParameterValuesBasedOnParameterName(criteria);
                 break;
             case "headername":
-                search = this.rob.listHeaderNamesFromDB();
+                search = this.rob.listHeaderNamesBasedOnHost(criteria);
                 break;
             case "headervalue":
-                search = this.rob.listHeaderValuesFromDB();
+                search = this.rob.listHeaderValuesBasedOnHeaderName(criteria);
                 break;
             case "tag":
                 search = this.rob.listTagValuesFromDB();

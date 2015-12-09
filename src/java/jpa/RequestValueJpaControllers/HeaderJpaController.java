@@ -194,12 +194,41 @@ public class HeaderJpaController implements Serializable {
         }
         return list;
     }
+    
+    
+    public List<String> listEntitiesBasedOnCriteria(String criteria) {
+        EntityManager em = getEntityManager();
+        Query query = em.createQuery("select h from Header h where h.idHeader in (select hr.idHeader from HeaderReference hr where hr.idRequestReference in (select r.idRequestReference from RequestReference r where r.idHostAddress in (select h.idHostAddress from HostAddress h where h.hostAddressValue = '"+criteria+"')))",Header.class);
+        List<Header> objectList = (List<Header>) query.getResultList();  
+        List<String> list = new ArrayList();
+        for (Header m : objectList) {
+            if(list.contains(m.getHeaderName())){
+                //disconsider duplicated
+            } else {
+                list.add(m.getHeaderName());
+            }
+        }
+        return list;
+    }
+    
+    
     public List<String> listHeaderValueEntities() {
         List<String> list = new ArrayList();
         for(Header m : findHeaderEntities(true, -1, -1)){
             if (list.contains(m.getHeaderValue()) == false) {
                 list.add(m.getHeaderValue());
             }
+        }
+        return list;
+    }
+    
+    public List<String> listValuesBasedOnName(String name) {
+        EntityManager em = getEntityManager(); 
+        Query query = em.createQuery("select h from Header h where h.headerName = '"+name+"'", Header.class);
+        List<Header> objectList = (List<Header>) query.getResultList();  
+        List<String> list = new ArrayList();
+        for (Header m : objectList) {
+            list.add(m.getHeaderValue());
         }
         return list;
     }
