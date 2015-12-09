@@ -16,7 +16,7 @@
         <!--script type="text/javascript" src="http://code.jquery.com/ui/1.11.4/jquery-ui.js" language="Javascript"></script-->
         <script type="text/javascript" src="Jquery/jquery-2.1.3.min.js" language="Javascript"></script> 
         <script type="text/javascript" src="Jquery/jquery-ui.min.js" language="Javascript"></script>
-        
+
         <!-- Load the scripts needed for the autocomplete function. -->
         <!--link rel="stylesheet" href="http://cdn.datatables.net/1.10.5/css/jquery.dataTables.css"/-->
         <!--link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/-->
@@ -62,6 +62,7 @@
                         <li><a href="http://10.116.45.34:8080/servlet-stateless/insertions.jsp">APIs</a></li>
                         <li class="active"><a href="http://10.116.45.34:8080/servlet-stateless/validations.jsp">Validations</a></li>
                         <li><a href="http://10.116.45.34:8080/servlet-stateless/monitor.jsp">Monitoring</a></li>
+                        <li><a href="http://10.116.45.34:8080/servlet-stateless/charts.jsp">Charts</a></li>
                         <li><a href="http://10.116.45.34:8080/servlet-stateless/About.html">About</a></li>
                         <li><a href="https://mktplace.atlassian.net/secure/Dashboard.jspa">Contact</a></li>
                     </ul>
@@ -136,7 +137,7 @@
             <!-- Modal -->
             <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <!--div class="modal-dialog modal-lg"-->
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -156,7 +157,7 @@
                                     </div>
                                     <br>
                                     <div class="row">
-                                        <div class="col-lg-4">
+                                        <div class="col-lg-2">
                                             <fieldset disabled>
                                                 <div class="input-group">
                                                     <span class="input-group-addon" id="basic-addon1">ID</span>
@@ -164,59 +165,62 @@
                                                 </div>
                                             </fieldset>
                                         </div>
-                                        <div class="col-lg-4">
+                                        <div class="col-lg-3">
                                             <div class="input-group">
                                                 <span class="input-group-addon" id="basic-addon1">Method</span>
                                                 <input type="text" id="method" class="form-control" size="5" placeholder="GET" aria-describedby="basic-addon1" maxlength="45" autocomplete="on">
                                             </div>
                                         </div>
-                                        <div class="col-lg-4">
+
+                                        <div class="col-lg-3">
                                             <div class="input-group">
                                                 <span class="input-group-addon" id="basic-addon1">Environment</span>
                                                 <input type="text" id="environment" class="form-control" size="5" placeholder="HLG" aria-describedby="basic-addon1" maxlength="45" autocomplete="on">
                                             </div>
                                         </div>
-                                    </div>
-                                    <br>
-                                    <div class="row">
-                                        <div class="col-lg-4">
+                                        <div class="col-lg-3">
                                             <div class="input-group">
                                                 <span class="input-group-addon" id="basic-addon1">Scheme</span>
                                                 <input type="text" id="scheme" class="form-control" size="5" placeholder="http" aria-describedby="basic-addon1" maxlength="45" autocomplete="on">
                                             </div>
                                         </div>
-                                        <div class="col-lg-8">
-                                            <div class="input-group">
-                                                <span class="input-group-addon" id="basic-addon1">Host</span>
-                                                <input type="text" id="host" class="form-control" size="5" placeholder="api.extra.com.br" aria-describedby="basic-addon1" maxlength="45" autocomplete="on">
-                                            </div>
-                                        </div>
-
                                     </div>
                                     <br>
                                     <div class="row">
-                                        <div class="col-lg-12">
-                                            <div class="input-group">
-                                                <span class="input-group-addon" id="basic-addon1">Path</span>
-                                                <input type="text" id="path" class="form-control" size="5" placeholder="api/v1/sellerItems" aria-describedby="basic-addon1" maxlength="45" autocomplete="on">
+                                        <div class="col-lg-6">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon" id="basic-addon1">Host</span>
+                                                    <input type="text" id="host" class="form-control" size="5" placeholder="api.extra.com.br" aria-describedby="basic-addon1" maxlength="45" autocomplete="on">
+                                                </div>
+                                            </div>
+                                        </div>
+                                            <br>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="input-group">
+                                                    <span class="input-group-addon" id="basic-addon1">Path</span>
+                                                    <input type="text" id="path" class="form-control" size="5" placeholder="api/v1/sellerItems" aria-describedby="basic-addon1" maxlength="45" autocomplete="on">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">Template</div>
+                                                <div class="panel-body">
+                                                    <div id="Template"></div>
+                                                    <input type="button" class="btn btn-primary btn-xs" value="+" onClick="addElement('Template', '');">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <br>
                                 </div>
                                 <br>
                                 <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading">Template</div>
-                                            <div class="panel-body">
-                                                <div id="Template"></div>
-                                                <input type="button" class="btn btn-primary btn-xs" value="+" onClick="addElement('Template', '');">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-12">
+                                    <div class="col-lg-6">
                                         <div class="panel panel-default">
                                             <div class="panel-heading">Header</div>
                                             <div class="panel-body">
@@ -225,9 +229,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-12">
+                                    <div class="col-lg-6">
                                         <div class="panel panel-default">
                                             <div class="panel-heading">Parameter</div>
                                             <div class="panel-body">
@@ -248,7 +250,7 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-9">
                                             <h4>Labels:</h4>
                                             <ul id="request-tags"></ul>
                                         </div>
@@ -276,19 +278,20 @@
                                 <br>
                                 <div class="container">
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-9">
                                             <span class="input-group-addon" id="basic-addon1">Validations:</span>
                                         </div>
                                     </div>
-                                    <form>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="input-group">
-                                                    <span class="input-group-addon" id="basic-addon1">Description</span>
-                                                    <input type="text" id="scenario-description" class="form-control" size="15" placeholder="Scenario description..." aria-describedby="basic-addon1" maxlength="200" autocomplete="on">
-                                                </div>
+                                    <div class="row">
+                                        <div class="col-md-9">
+                                            <div class="input-group">
+                                                <span class="input-group-addon" id="basic-addon1">Description</span>
+                                                <input type="text" id="scenario-description" class="form-control" size="25" placeholder="Scenario description..." aria-describedby="basic-addon1" maxlength="200" autocomplete="on">
                                             </div>
                                         </div>
+                                    </div>
+                                    <form>
+
                                         <br><br>
                                         <div id="Validation"></div>
                                     </form>

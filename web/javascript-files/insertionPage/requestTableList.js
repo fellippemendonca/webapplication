@@ -74,6 +74,7 @@ function Synthesizer(list) {
         elementClear();
         el('request-id').value = requestList[row.cells[0].innerHTML].dbId;
         el('requestName').value = requestList[row.cells[0].innerHTML].requestName;
+        el('requestDescription').value = requestList[row.cells[0].innerHTML].requestDescription;
         el('method').value = requestList[row.cells[0].innerHTML].method;
         el('environment').value = requestList[row.cells[0].innerHTML].environment;
         el('scheme').value = requestList[row.cells[0].innerHTML].scheme;
@@ -86,7 +87,7 @@ function Synthesizer(list) {
             if(requestList[row.cells[0].innerHTML].jsonDynamicData!==null){
                 el('databank-selector').value = JSON.parse(requestList[row.cells[0].innerHTML].jsonDynamicData.jsonRequest).databaseName;
                 el('dynamic-data-query').value = JSON.parse(requestList[row.cells[0].innerHTML].jsonDynamicData.jsonRequest).request;
-            } else{
+            } else {
                 el('databank-selector').value = null;
                 el('dynamic-data-query').value = null;
             }

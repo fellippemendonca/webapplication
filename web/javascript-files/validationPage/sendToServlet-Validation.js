@@ -93,6 +93,7 @@ function fillRequestObject() {
     }
 
     var RequestName = $("#requestName").val();
+    var RequestDescription = "";
     var Environment = $("#environment").val();
     var Method = $("#method").val();
     var Scheme = $("#scheme").val();
@@ -140,6 +141,7 @@ function fillRequestObject() {
         var RequestObj = {
             dbId: id
             , requestName: RequestName
+            , requestDescription: RequestDescription
             , environment: Environment
             , method: Method
             , scheme: Scheme
@@ -264,7 +266,7 @@ function printValidationResponse(json) {
     if (isJson(json.responseContents.contents)) {
         responseContents = JSON.stringify(JSON.parse(json.responseContents.contents), null, 4);
     } else {
-        responseContents = json.responseContents.contents;
+        responseContents = formatXml(json.responseContents.contents);
     }
 
     var responseTable = "<br/><h4>API Response:</h4><br/><table id='responseTable' class='table table-bordered' cellspacing='0'>";
@@ -358,6 +360,37 @@ function syntaxHighlight(json) {
         }
         return '<span class="' + cls + '">' + match + '</span>';
     });
+}
+
+function formatXml(xml) {
+    var formatted = '';
+    var reg = /(>)(<)(\/*)/g;
+    xml = xml.replace(reg, '$1\r\n$2$3');
+    var pad = 0;
+    jQuery.each(xml.split('\r\n'), function(index, node) {
+        var indent = 0;
+        if (node.match( /.+<\/\w[^>]*>$/ )) {
+            indent = 0;
+        } else if (node.match( /^<\/\w/ )) {
+            if (pad != 0) {
+                pad -= 1;
+            }
+        } else if (node.match( /^<\w[^>]*[^\/]>.*$/ )) {
+            indent = 1;
+        } else {
+            indent = 0;
+        }
+
+        var padding = '';
+        for (var i = 0; i < pad; i++) {
+            padding += '  ';
+        }
+
+        formatted += padding + node + '\r\n';
+        pad += indent;
+    });
+
+    return formatted;
 }
 
 

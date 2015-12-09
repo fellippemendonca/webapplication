@@ -49,8 +49,10 @@ function addElement(divName, fieldValue) {
         document.getElementById(divName).appendChild(tableRow);
 
         $("#" + newdiv.id).autocomplete(searchParameters(newdiv.name), "").focus(function() {
+            $(this).autocomplete(searchConditionalParameters(newdiv.name,$("#path").val()));
             $(this).autocomplete('search', $(this).val());
         });
+
         ElementCounter++;
     }
 }
@@ -63,7 +65,7 @@ function addElement2(divName, fieldValue1, fieldValue2) {
     if (ElementCounter2 === ElementLimit2) {
         alert("You have reached the limit of adding " + ElementCounter2 + " " + divName);
     } else {
-        
+
         var tableRow = document.createElement('div');
         tableRow.id = "RowElement" + divName + ElementCounter2;
         tableRow.className = "row";
@@ -71,7 +73,7 @@ function addElement2(divName, fieldValue1, fieldValue2) {
         var cell1 = document.createElement('div');
         cell1.id = "cell1";
         cell1.className = 'col-lg-5';
-        
+
         var cell2 = document.createElement('div');
         cell2.id = "cell2";
         cell2.className = 'col-lg-5';
@@ -94,7 +96,7 @@ function addElement2(divName, fieldValue1, fieldValue2) {
         newdiv.name = divName + "Name";
         newdiv.className = "form-control";
         newdiv.value = fieldValue1;
-        
+
         var newdiv2 = document.createElement('input');
         newdiv2.id = divName + "Value" + ElementCounter2;
         newdiv2.setAttribute("type", "text");
@@ -108,15 +110,20 @@ function addElement2(divName, fieldValue1, fieldValue2) {
         tableRow.appendChild(cell1);
         tableRow.appendChild(cell2);
         tableRow.appendChild(cell3);
-        
+
         document.getElementById(divName).appendChild(tableRow);
-        
+
         $("#" + newdiv.id).autocomplete(searchParameters(newdiv.name), "").focus(function() {
+            $(this).autocomplete(searchConditionalParameters(newdiv.name, $("#host").val()));
             $(this).autocomplete('search', $(this).val());
         });
         $("#" + newdiv2.id).autocomplete(searchParameters(newdiv2.name), "").focus(function() {
+            $(this).autocomplete(searchConditionalParameters(newdiv2.name, newdiv.value));
             $(this).autocomplete('search', $(this).val());
         });
+
+
+
         ElementCounter2++;
     }
 }
@@ -130,6 +137,9 @@ function removeInnerElement(divName) {
 }
 function removeElementValue(divName) {
     document.getElementById(divName).value = "";
+}
+function setElementValue(divName, content) {
+    document.getElementById(divName).value = content;
 }
 
 function removeDivElement(divName) {
@@ -153,6 +163,7 @@ function elementClear() {
     document.getElementById("response-div").innerHTML = "";
     $('#request-tags').tagit('removeAll');
     removeElementValue('requestName');
+    setElementValue('requestDescription',"Nenhuma descricao foi definida para este request.");
     removeElementValue('request-id');
     removeElementValue('method');
     removeElementValue('environment');
@@ -187,6 +198,24 @@ function searchParameters(parameter) {
     return autocomp_opt;
 }
 
+//Função que busca valores no servlet com base no nome do campo + criterias.
+function searchConditionalParameters(parameter, criteria) {
+    var autocomp_opt = {source: function(request, response)
+        {
+            $.ajax({
+                url: "AjaxConditionalAutocompleteServlet",
+                type: "GET",
+                data: {term: request.term, field: parameter, criteria: criteria},
+                dataType: "json",
+                success: function(data) {
+                    response(data);
+                }
+            });
+        }, minLength: 0
+    };
+    return autocomp_opt;
+}
+
 
 //Aplica função Autocomplete nos campos do documento.
 $(document).ready(function() {
@@ -201,13 +230,15 @@ $(document).ready(function() {
         $(this).autocomplete('search', $(this).val());
     });
     $("#host").autocomplete(searchParameters("host"), "").focus(function() {
+        $(this).autocomplete(searchConditionalParameters("host", $("#environment").val()));
         $(this).autocomplete('search', $(this).val());
     });
     $("#path").autocomplete(searchParameters("path"), "").focus(function() {
+        $(this).autocomplete(searchConditionalParameters("path", $("#host").val()));
         $(this).autocomplete('search', $(this).val());
-        $(this).autocomplete( "option", "appendTo", $(this).id );
+        $(this).autocomplete("option", "appendTo", $(this).id);
     });
-    
+
     $("#tag-array").tagit({
         autocomplete: searchParameters("tag"),
         triggerKeys: ['enter', 'comma', 'tab'],
@@ -222,4 +253,9 @@ $(document).ready(function() {
         sortable: true,
         allowSpaces: true
     });
+
+
+
+
+
 });

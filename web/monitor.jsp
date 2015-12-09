@@ -70,6 +70,7 @@
                         <li><a href="http://10.116.45.34:8080/servlet-stateless/insertions.jsp">APIs</a></li>
                         <li><a href="http://10.116.45.34:8080/servlet-stateless/validations.jsp">Validations</a></li>
                         <li class="active"><a href="http://10.116.45.34:8080/servlet-stateless/monitor.jsp">Monitoring</a></li>
+                        <li><a href="http://10.116.45.34:8080/servlet-stateless/charts.jsp">Charts</a></li>
                         <li><a href="http://10.116.45.34:8080/servlet-stateless/About.html">About</a></li>
                         <li><a href="https://mktplace.atlassian.net/secure/Dashboard.jspa">Contact</a></li>
                     </ul>
@@ -113,7 +114,7 @@
             <!-- Modal -->
             <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <!--div class="modal-dialog modal-lg"-->
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -249,13 +250,18 @@
                                 <br>
                                 <div class="container">
                                     <div class="row">
-                                        <div class="col-md-5"><span class="input-group-addon" id="basic-addon1">Validations:</span></div>
+                                        <div class="col-md-9"><span class="input-group-addon" id="basic-addon1">Validations:</span></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-9">
+                                            <div class="input-group">
+                                                <span class="input-group-addon" id="basic-addon1">Description</span>
+                                                <input type="text" id="scenario-description" class="form-control" size="25" placeholder="Scenario description..." aria-describedby="basic-addon1" maxlength="200" autocomplete="on">
+                                            </div>
+                                        </div>
                                     </div>
                                     <form>
-                                        <div class="input-group">
-                                            <span class="input-group-addon" id="basic-addon1">Description</span>
-                                            <input type="text" id="scenario-description" class="form-control" size="5" placeholder="Scenario Description..." aria-describedby="basic-addon1" maxlength="200" autocomplete="on">
-                                        </div>
+                                        
                                         <br><br>
                                         <div id="Validation"></div>
                                     </form>

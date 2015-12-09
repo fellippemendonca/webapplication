@@ -1,0 +1,66 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Dec 4, 2015, 10:39:35 AM
+    Author     : fellippe.mendonca
+*/
+
+#query-list tr.normal td {
+    color: #235A81;
+    background-color: white;
+}
+#query-list tr.highlighted td {
+    color: #FFFFFF;
+    background-color: #235A81;
+}
+
+#query-select{
+    height: 15em;
+    width: 55%;
+    padding: 3px;
+    transition: all 0.5s ease;
+}
+#query-select:focus{
+    height: 25em;
+}
+
+html,body{
+    height: 100%;
+}
+
+#message-text:focus{
+    height: 20em;
+}
+
+#scenario-description {
+    width: 35%;
+}
+
+body.wait, body.wait *{
+    cursor : wait !important;   
+}
+
+pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
+.string { color: blue; }
+.number { color: blue; }
+.boolean { color: blue; }
+.null { color: blue; }
+.key { color: black; }
+
+.ui-autocomplete {
+    position: absolute;
+}
+
+textarea {
+    height: 10em;
+    width: 45%;
+    padding: 3px;
+    transition: all 0.5s ease;
+}
+
+textarea:focus {
+    height: 20em;
+}

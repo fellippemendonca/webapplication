@@ -87,6 +87,7 @@ function fillRequestObject() {
     }
 
     var RequestName = $("#requestName").val();
+    var RequestDescription = $("#requestDescription").val();
     var Environment = $("#environment").val();
     var Method = $("#method").val();
     var Scheme = $("#scheme").val();
@@ -134,6 +135,7 @@ function fillRequestObject() {
         var RequestObj = {
             dbId: id
             , requestName: RequestName
+            , requestDescription: RequestDescription
             , environment: Environment
             , method: Method
             , scheme: Scheme
@@ -202,7 +204,7 @@ function printResponse(json) {
     if (isJson(json.contents)) {
         responseContents = JSON.stringify(JSON.parse(json.contents), null, 4);
     } else {
-        responseContents = json.contents;
+        responseContents = formatXml(json.contents);
     }
 
     var responseTable = "<table id='responseTable' class='table table-bordered' cellspacing='0' width='100%'>";
@@ -229,6 +231,7 @@ function printResponse(json) {
 
     //Destrava cursor após preencher o response
     $("body").toggleClass("wait");
+    //Scroll into position
     document.getElementById("response-view-div").scrollIntoView();
 }
 
@@ -287,5 +290,36 @@ function generatePanel(title, childNode) {
 
 function selectOnClick(divId) {
     document.getElementById(divId).select();
+}
+
+function formatXml(xml) {
+    var formatted = '';
+    var reg = /(>)(<)(\/*)/g;
+    xml = xml.replace(reg, '$1\r\n$2$3');
+    var pad = 0;
+    jQuery.each(xml.split('\r\n'), function(index, node) {
+        var indent = 0;
+        if (node.match( /.+<\/\w[^>]*>$/ )) {
+            indent = 0;
+        } else if (node.match( /^<\/\w/ )) {
+            if (pad != 0) {
+                pad -= 1;
+            }
+        } else if (node.match( /^<\w[^>]*[^\/]>.*$/ )) {
+            indent = 1;
+        } else {
+            indent = 0;
+        }
+
+        var padding = '';
+        for (var i = 0; i < pad; i++) {
+            padding += '  ';
+        }
+
+        formatted += padding + node + '\r\n';
+        pad += indent;
+    });
+
+    return formatted;
 }
 //"document.getElementById('responseContents-div').select();"

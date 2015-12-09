@@ -10,11 +10,11 @@
 }
 
 #responseTable{
-    width: 45%;
+    width: 70%;
 }
 
 #responseContentsDiv001 {
-    width: 45%;
+    width: 70%;
 }
 
 
@@ -44,7 +44,7 @@
 
 #Payload {
     height: 7em;
-    width: 45%;
+    width: 70%;
     padding: 3px;
     transition: all 0.5s ease;
 }
@@ -55,7 +55,7 @@
 
 #dynamic-data-query{
     height: 6em;
-    width: 45%;
+    width: 70%;
     padding: 3px;
     transition: all 0.5s ease;
 }
@@ -75,12 +75,12 @@
     height: 20em;
 }
 
-#scenario-description {
+/*#scenario-description {
     width: 35%;
-}
+}*/
 
 #Validation {
-    width: 45%;
+    width: 70%;
 }
 
 html,body{
@@ -162,7 +162,7 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 
 textarea {
     height: 10em;
-    width: 45%;
+    width: 50%;
     padding: 3px;
     transition: all 0.5s ease;
 }

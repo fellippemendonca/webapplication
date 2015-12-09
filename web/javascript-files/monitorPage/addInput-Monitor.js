@@ -49,7 +49,9 @@ function addElement(divName, fieldValue) {
         document.getElementById(divName).appendChild(tableRow);
 
         $("#" + newdiv.id).autocomplete(searchParameters(newdiv.name), "").focus(function() {
+            $(this).autocomplete(searchConditionalParameters(newdiv.name,$("#path").val()));
             $(this).autocomplete('search', $(this).val());
+            $(this).autocomplete( "option", "appendTo", $(this).id );
         });
 
         ElementCounter++;
@@ -113,9 +115,11 @@ function addElement2(divName, fieldValue1, fieldValue2) {
         document.getElementById(divName).appendChild(tableRow);
         
         $("#" + newdiv.id).autocomplete(searchParameters(newdiv.name), "").focus(function() {
+            $(this).autocomplete(searchConditionalParameters(newdiv.name,$("#host").val()));
             $(this).autocomplete('search', $(this).val());
         });
         $("#" + newdiv2.id).autocomplete(searchParameters(newdiv2.name), "").focus(function() {
+            $(this).autocomplete(searchConditionalParameters(newdiv2.name,newdiv.value));
             $(this).autocomplete('search', $(this).val());
         });
         ElementCounter2++;
@@ -339,6 +343,24 @@ function searchParameters(parameter) {
     return autocomp_opt;
 }
 
+//Função que busca valores no servlet com base no nome do campo + criterias.
+function searchConditionalParameters(parameter, criteria) {
+    var autocomp_opt = {source: function(request, response)
+        {
+            $.ajax({
+                url: "AjaxConditionalAutocompleteServlet",
+                type: "GET",
+                data: {term: request.term, field: parameter, criteria: criteria},
+                dataType: "json",
+                success: function(data) {
+                    response(data);
+                }
+            });
+        }, minLength: 0
+    };
+    return autocomp_opt;
+}
+
 
 //Aplica função Autocomplete nos campos do documento.
 $(document).ready(function() {
@@ -353,9 +375,11 @@ $(document).ready(function() {
         $(this).autocomplete('search', $(this).val());
     });
     $("#host").autocomplete(searchParameters("host"), "").focus(function() {
+        $(this).autocomplete(searchConditionalParameters("host",$("#environment").val()));
         $(this).autocomplete('search', $(this).val());
     });
     $("#path").autocomplete(searchParameters("path"), "").focus(function() {
+        $(this).autocomplete(searchConditionalParameters("path", $("#host").val()));
         $(this).autocomplete('search', $(this).val());
     });
 

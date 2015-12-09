@@ -15,14 +15,10 @@
         <title>API's Insertions</title>
 
         <!-- Load the scripts needed for the application.-->
-        <!--script type="text/javascript" src="http://code.jquery.com/jquery-2.1.3.min.js" language="Javascript"></script--> 
-        <!--script type="text/javascript" src="http://code.jquery.com/ui/1.11.4/jquery-ui.js" language="Javascript"></script-->
         <script type="text/javascript" src="Jquery/jquery-2.1.3.min.js" language="Javascript"></script> 
         <script type="text/javascript" src="Jquery/jquery-ui.min.js" language="Javascript"></script>
 
         <!-- Load the scripts needed for the autocomplete function. -->
-        <!--link rel="stylesheet" href="http://cdn.datatables.net/1.10.5/css/jquery.dataTables.css"/-->
-        <!--link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/-->
         <link rel="stylesheet" href="Jquery/jquery.dataTables.min.css">
         <link rel="stylesheet" href="Jquery/jquery-ui.css">
 
@@ -60,6 +56,7 @@
                     <li class="active"><a href="http://10.116.45.34:8080/servlet-stateless/insertions.jsp">APIs</a></li>
                     <li><a href="http://10.116.45.34:8080/servlet-stateless/validations.jsp">Validations</a></li>
                     <li><a href="http://10.116.45.34:8080/servlet-stateless/monitor.jsp">Monitoring</a></li>
+                    <li><a href="http://10.116.45.34:8080/servlet-stateless/charts.jsp">Charts</a></li>
                     <li><a href="http://10.116.45.34:8080/servlet-stateless/About.html">About</a></li>
                     <li><a href="https://mktplace.atlassian.net/secure/Dashboard.jspa">Contact</a></li>
                 </ul>
@@ -120,11 +117,14 @@
                                     <input type="text" id="environment" class="form-control" size="5" placeholder="HLG" aria-describedby="basic-addon1" maxlength="45" autocomplete="on">
                                 </div>
                             </div>
-                            <div class="col-lg-7">
+                            <div class="col-lg-6">
                                 <div class="input-group">
                                     <span class="input-group-addon" id="basic-addon1">Name</span>
                                     <input type="text" id="requestName" class="form-control" size="5" placeholder="Request Name..." aria-describedby="basic-addon1" maxlength="100" autocomplete="on">
                                 </div>
+                            </div>
+                            <div class="col-lg-1">
+                                <button id="show_description" type="button" class="btn btn-default" onClick="$('#descriptionModal').modal('show');">Description</button>
                             </div>
                         </div>
                         <br>
@@ -225,7 +225,7 @@
         </div>
         <!---->
         <br><br>
-        
+
         <div class="container">
             <div id="update-button-div">
                 <div class="row">
@@ -253,7 +253,25 @@
         </div>
     </div>
     <br>
-    <!--input type="text" onclick="select()" value="click to select me"/-->
+    <!-- Modal -->
+    <div class="modal fade" id="descriptionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <!--div class="modal-dialog modal-lg"-->
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Description</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="ui-front">
+                        <div class="container">
+                            <textarea id="requestDescription" rows="25" cols="80">Nenhuma descrição foi definida para este request.</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 
