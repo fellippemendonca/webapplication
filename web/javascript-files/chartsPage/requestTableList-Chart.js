@@ -87,6 +87,7 @@ function Synthesizer(list) {
         }
         row.className = row.className === "highlighted" ? "" : "highlighted";
         ishigh = row;
+        $('#datepicker-field').datepicker('setDate', getDateNow());
         setIdQueryReport(queryList[row.cells[0].innerHTML].id);
         setJsonQueryReport(queryList[row.cells[0].innerHTML]);
         removeInnerElement('chart_div'); 
@@ -112,7 +113,7 @@ function drawChart(queryId,since) {
     .done(function(rawdata) {
         var options = {
             title: getJsonQueryReport().name,
-            hAxis: {title: 'Tempo', titleTextStyle: {color: '#333'}},
+            hAxis: {title: 'Time', titleTextStyle: {color: '#333'}},
             vAxis: {minValue: 0}
         };
         var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
@@ -134,6 +135,11 @@ function transformMatrix(data) {
             jsonObject[i][j] = parseInt(jsonObject[i][j]);
         }
     }
+    
+    /*for(var i = 1; i < jsonObject.length; i++){
+        console.log(jsonObject[i][0]);
+        jsonObject[i][0]=Date.parse(jsonObject[i][0]);
+    }*/
     //Destrava cursor após preencher o response
     $("body").toggleClass("wait");
     return jsonObject;
