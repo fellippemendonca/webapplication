@@ -198,13 +198,14 @@ public class QueryReportObject {
                 for (QueryReportLog log : logList) {
                     DynamicMatrix dx = new Gson().fromJson(log.getQueryResultJsonString(), DynamicMatrix.class);
                     List<String> chartValues = new ArrayList();
-                    chartValues.add(new SimpleDateFormat("dd MMM HH:mm").format(log.getExecutionDateTime()));
-                    for (int i = 0; i < dx.getMaxCol(0); i++) {
-                        chartValues.add(dx.getValue(0, i));
+                    chartValues.add(new SimpleDateFormat("dd/MMM HH:mm").format(log.getExecutionDateTime()));
+                    if (dx.getMaxRow() > 0) {
+                        for (int i = 0; i < dx.getMaxCol(0); i++) {
+                            chartValues.add(dx.getValue(0, i));
+                        }
+                        list.add(chartValues);
                     }
-                    list.add(chartValues);
                 }
-
             } else {
                 int maxVariables = dx1.getMaxRow();
                 if (maxVariables > 10) {
@@ -221,7 +222,7 @@ public class QueryReportObject {
                     boolean found;
                     for (String chartVariable : chartVariables) {
                         if (chartVariable.equals("Execution")) {
-                            chartValues.add(new SimpleDateFormat("dd MMM HH:mm").format(log.getExecutionDateTime()));
+                            chartValues.add(new SimpleDateFormat("dd/MMM HH:mm").format(log.getExecutionDateTime()));
                         } else {
                             found = false;
                             for (int i = 0; i < dx.getMaxRow(); i++) {

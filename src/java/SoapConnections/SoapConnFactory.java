@@ -49,8 +49,21 @@ public class SoapConnFactory {
         try {
             SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
             this.soapConnection = soapConnectionFactory.createConnection();
-            soapResponse = this.soapConnection.call(getSoapMessageFromString(soapPost.getXmlRequest()), soapPost.getUri());
+            //soapConnectionFactory
+
+            /**/
+            // Using a URLConnection
+            /*var conn = new URLConnection("http://localhost:8080/se/soap");
+
+            conn.setConnectTimeout(10000);	// Set timeout to 10 seconds
+            conn.setReadTimeout(10000);
+
+            var response = soapConnection.call(conn, request);
+            */
+            /**/
             
+            
+            soapResponse = this.soapConnection.call(getSoapMessageFromString(soapPost.getXmlRequest()), soapPost.getUri());
             soapResponseString = getStringFromSoapMessage(soapResponse);
         } catch (IOException ex) {
             System.out.println("An error occured while executing the request. Message: " + ex);
@@ -78,6 +91,8 @@ public class SoapConnFactory {
     }
 
     private static String getStringFromSoapMessage(SOAPMessage soapResponse) throws SOAPException, IOException {
+        
+        
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         soapResponse.writeTo(out);
         return new String(out.toByteArray());

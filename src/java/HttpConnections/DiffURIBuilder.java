@@ -51,7 +51,11 @@ public class DiffURIBuilder extends URIBuilder{
     }
     
     public HttpEntity getEntity(){
-        return new StringEntity(this.entity, "UTF-8");
+        if(this.entity == null){
+            return new StringEntity("", "UTF-8");
+        } else {
+            return new StringEntity(this.entity, "UTF-8");
+        }
     }
 
     public URIBuilder getFinalURI(){

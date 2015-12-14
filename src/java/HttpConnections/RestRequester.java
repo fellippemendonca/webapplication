@@ -63,7 +63,7 @@ public class RestRequester {
 
             case "PUT":
                 this.httpput.setURI(this.uri.getFinalURI().build());
-                this.httpput.setEntity(uri.getEntity());
+                this.httpput.setEntity(this.uri.getEntity());
                 this.RC = connFactory.RestRequest(this.httpput);
                 this.RC.setEndDate();
                 this.RC.setRequest(RequestStringBuilder("PUT"));
@@ -72,7 +72,7 @@ public class RestRequester {
 
             case "POST":
                 this.httppost.setURI(this.uri.getFinalURI().build());
-                this.httppost.setEntity(uri.getEntity());
+                this.httppost.setEntity(this.uri.getEntity());
                 this.RC = connFactory.RestRequest(this.httppost);
                 this.RC.setEndDate();
                 this.RC.setRequest(RequestStringBuilder("POST"));
