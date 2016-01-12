@@ -44,12 +44,12 @@ public class DatabankConnector {
             }
             if (con != null) {
                 stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                System.out.print("-------------------------\nExecutando Query: " + query + " ... ");
+                System.out.print("-------------------------\nExecuting Select: " + query + " ... ");
                 ResultSet rs = stmt.executeQuery(query);
-                System.out.println("OK");
+                System.out.println("Done.");
                 ResultSetMetaData rsmd = rs.getMetaData();
                 int maxCol = rsmd.getColumnCount();
-                System.out.print("Preenchendo Matriz... ");
+                System.out.print("Retrieving Matrix... ");
                 for (int i = 1; i <= maxCol; i++) {
                     DX.setColumnName(i - 1, rsmd.getColumnName(i));
                 }
@@ -63,22 +63,23 @@ public class DatabankConnector {
                             DX.setValue((i - 1), (j - 1), columnValue);
                         }
                     }
-
                     i++;
                 }
-                System.out.println("OK");
+                System.out.println("Done.");
                 stmt.close();
                 con.close();
-                System.out.println("Conexão Finalizada");
+                System.out.println("Connection Closed.");
             } else {
-                System.out.println("conexão não inicializada!");
+                System.out.println("Connection not Started");
             }
         } catch (SQLException ex) {
             System.err.print("SQLException: ");
             System.err.println(ex.getMessage());
+            DX.setColumnName(0, "Problem");
+            DX.setValue(0, 0, ex.toString());
+        } finally {
+            System.out.println("-------------------------");
+            return DX;
         }
-        System.out.println("-------------------------");
-        return DX;
-
     }
 }

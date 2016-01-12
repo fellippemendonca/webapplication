@@ -64,7 +64,7 @@
                         <li><a href="http://10.116.45.34:8080/servlet-stateless/monitor.jsp">Monitoring</a></li>
                         <li class="active"><a href="http://10.116.45.34:8080/servlet-stateless/charts.jsp">Charts</a></li>
                         <li><a href="http://10.116.45.34:8080/servlet-stateless/About.html">About</a></li>
-                        <li><a href="https://mktplace.atlassian.net/secure/Dashboard.jspa">Contact</a></li>
+                        <li><a href="https://mktplace.atlassian.net/secure/CreateIssue!default.jspa">Contact</a></li>
                     </ul>
                 </div>
             </div>
@@ -75,9 +75,8 @@
             <div class="panel panel-info">
                 <div class="panel-heading">How does it work?</div>
                 <div class="panel-body">
-                    Select a databank query from the list below to view the execution chart log since the pre-selected date.
-                    <br>Tip: The Charts have a limit of 10 variables. So do not forget to sort the output by relevance.
-                    <br>(If the query condition generate more than 10 variables the rest will not be shown.)
+                    Select an item from the list below to view the execution log-chart since the pre-selected date.
+                    <br>The Charts have a limit of 10 visible variables, so do not forget to sort the generated output by relevance.
                 </div>
             </div>
         </div>
@@ -85,7 +84,7 @@
         <br>
         <div class="container">
             <h4>Labels:</h4>
-            <input type="text" id="tag-array" class="form-control" placeholder="Rótulos..." size="5"><div id="filter-view-div"></div>
+            <input type="text" id="tag-array" class="form-control" placeholder="Rótulos..." size="5">
             <input type="submit" class="btn btn-primary" id="submit-tag-filter" value="Filter" align="left"/>
         </div>
         <br>
@@ -96,7 +95,7 @@
                     <h3 class="panel-title">Query Report List</h3>
                 </div>
                 <div id="query-list"></div>
-            </div>
+            </div><div id="filter-view-div"></div>
         </div>
 
         <div id="section">
@@ -129,7 +128,7 @@
                                         <div class="col-lg-9">
                                             <div class="input-group">
                                                 <span class="input-group-addon" id="basic-addon1">Name</span>
-                                                <input type="text" id="query-name" class="form-control" size="5" placeholder="Query Name..." aria-describedby="basic-addon1" maxlength="100" autocomplete="on">
+                                                <input type="text" id="query-name" class="form-control" size="5" placeholder="Query Name..." aria-describedby="basic-addon1" maxlength="200" autocomplete="on">
                                             </div>
                                         </div>
                                     </div>
@@ -138,7 +137,7 @@
                                         <div class="col-lg-12">
                                             <div class="input-group">
                                                 <span class="input-group-addon" id="basic-addon1">Description</span>
-                                                <input type="text" id="query-description" class="form-control" size="5" placeholder="Query Description..." aria-describedby="basic-addon1" maxlength="100" autocomplete="on">
+                                                <input type="text" id="query-description" class="form-control" size="5" placeholder="Query Description..." aria-describedby="basic-addon1" maxlength="200" autocomplete="on">
                                             </div>
                                         </div>
                                     </div>

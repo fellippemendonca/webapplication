@@ -34,12 +34,10 @@ public class RestConnFactory {
     /*Simple Rest Request*/
     public ResponseContents RestRequest(HttpRequestBase httprequest) throws IOException {
         HttpResponse httpResponseTemp = null;
-        //this.httpclient = HttpClients.createDefault();
-        HttpParams httpParams = new BasicHttpParams(); /*NEW*/
-
+        HttpParams httpParams = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
         HttpConnectionParams.setSoTimeout(httpParams, 30000);
-        this.httpclient = new DefaultHttpClient(httpParams); /*NEW*/
+        this.httpclient = new DefaultHttpClient(httpParams);
 
         try {
             httpResponseTemp = this.httpclient.execute(httprequest);

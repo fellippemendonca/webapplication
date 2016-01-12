@@ -198,10 +198,21 @@ public class QueryReportObject {
                 for (QueryReportLog log : logList) {
                     DynamicMatrix dx = new Gson().fromJson(log.getQueryResultJsonString(), DynamicMatrix.class);
                     List<String> chartValues = new ArrayList();
-                    chartValues.add(new SimpleDateFormat("dd/MMM HH:mm").format(log.getExecutionDateTime()));
+
                     if (dx.getMaxRow() > 0) {
-                        for (int i = 0; i < dx.getMaxCol(0); i++) {
-                            chartValues.add(dx.getValue(0, i));
+                        for (String chartVariable : chartVariables) {
+                            if (chartVariable.equals("Execution")) {
+                                //chartValues.add(new SimpleDateFormat("dd/MMM HH:mm").format(log.getExecutionDateTime()));
+                                chartValues.add(new SimpleDateFormat("MM/dd/yyyy HH:mm").format(log.getExecutionDateTime()));
+                            } else {
+                                String currentValue = "0";
+                                for (int i = 0; i < dx.getMaxCol(0); i++) {
+                                    if (dx.getColumnName(i).equals(chartVariable)) {
+                                        currentValue = dx.getValue(0, i);
+                                    }
+                                }
+                                chartValues.add(currentValue);
+                            }
                         }
                         list.add(chartValues);
                     }
@@ -219,21 +230,24 @@ public class QueryReportObject {
                 for (QueryReportLog log : logList) {
                     DynamicMatrix dx = new Gson().fromJson(log.getQueryResultJsonString(), DynamicMatrix.class);
                     List<String> chartValues = new ArrayList();
-                    boolean found;
+                    int count = 0;
                     for (String chartVariable : chartVariables) {
+                        count++;
                         if (chartVariable.equals("Execution")) {
-                            chartValues.add(new SimpleDateFormat("dd/MMM HH:mm").format(log.getExecutionDateTime()));
+                            //chartValues.add(new SimpleDateFormat("dd/MMM HH:mm").format(log.getExecutionDateTime()));
+                            chartValues.add(new SimpleDateFormat("MM/dd/yyyy HH:mm").format(log.getExecutionDateTime()));
                         } else {
-                            found = false;
+                            String tempValue = "0";
                             for (int i = 0; i < dx.getMaxRow(); i++) {
                                 if (chartVariable.equals(dx.getValue(i, 0))) {
-                                    chartValues.add(dx.getValue(i, 1));
-                                    found = true;
+                                    tempValue = dx.getValue(i, 1);
                                 }
                             }
-                            if (found != true) {
-                                chartValues.add("0");
+                            if (count > 11) {
+                                System.out.println("exceeded 11 rows, breaking operation...");
+                                break;
                             }
+                            chartValues.add(tempValue);
                         }
                     }
                     list.add(chartValues);
@@ -246,25 +260,24 @@ public class QueryReportObject {
     public boolean executeQueriesReport() {
         System.out.println("Scheduled Query Report Starting...");
         DatabankConnector databankConnector = new DatabankConnector();
-
+        boolean success = true;
         for (QueryReport queryReport : dao.getQueryReportJpaController().findQueryReportEntities()) {
             String query = queryReport.getSelectString().replaceAll(";", " ");
             String dbName = queryReport.getDbName();
             DynamicMatrix DX = databankConnector.executeQuery(dbName, query);
             String JsonResponse = new Gson().toJson(DX);
             Date date = new Date();
-
             try {
                 QueryReportLog queryReportLog = new QueryReportLog(0, queryReport.getId(), date, JsonResponse);
                 dao.getQueryReportLogJpaController().create(queryReportLog);
-                System.out.println("Scheduled Query Report Done!");
-                return true;
             } catch (Exception ex) {
                 Logger.getLogger(QueryReportObject.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
+                System.out.println("Scheduled Query Report Failed!");
+                success = false;
+                return success;
             }
         }
-        return false;
+        System.out.println("Scheduled Query Report Done!");
+        return success;
     }
-
 }

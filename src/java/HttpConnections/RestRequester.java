@@ -78,6 +78,7 @@ public class RestRequester {
                 this.RC.setRequest(RequestStringBuilder("POST"));
                 this.RC.getDiffMilliseconds(startDate);
                 break;
+                
             case "SOAP":
                 this.soapPost.setUri(this.uri.getFinalURIString());
                 this.soapPost.setXmlRequest(this.uri.getStringEntity());

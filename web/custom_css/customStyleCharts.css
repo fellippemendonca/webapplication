@@ -8,6 +8,12 @@ and open the template in the editor.
     Author     : fellippe.mendonca
 */
 
+#query-list {
+    overflow-y: scroll;
+    display:block;
+    height:300px;
+}
+
 #query-list tr.normal td {
     color: #235A81;
     background-color: white;

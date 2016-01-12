@@ -49,20 +49,6 @@ public class SoapConnFactory {
         try {
             SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
             this.soapConnection = soapConnectionFactory.createConnection();
-            //soapConnectionFactory
-
-            /**/
-            // Using a URLConnection
-            /*var conn = new URLConnection("http://localhost:8080/se/soap");
-
-            conn.setConnectTimeout(10000);	// Set timeout to 10 seconds
-            conn.setReadTimeout(10000);
-
-            var response = soapConnection.call(conn, request);
-            */
-            /**/
-            
-            
             soapResponse = this.soapConnection.call(getSoapMessageFromString(soapPost.getXmlRequest()), soapPost.getUri());
             soapResponseString = getStringFromSoapMessage(soapResponse);
         } catch (IOException ex) {
@@ -91,8 +77,6 @@ public class SoapConnFactory {
     }
 
     private static String getStringFromSoapMessage(SOAPMessage soapResponse) throws SOAPException, IOException {
-        
-        
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         soapResponse.writeTo(out);
         return new String(out.toByteArray());
@@ -103,12 +87,9 @@ public class SoapConnFactory {
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.parse(new InputSource(new StringReader(xml)));
         Element rootElement = document.getDocumentElement();
-
         NodeList list = rootElement.getElementsByTagName(tagName);
-
         if (list != null && list.getLength() > 0) {
             NodeList subList = list.item(0).getChildNodes();
-
             if (subList != null && subList.getLength() > 0) {
                 return subList.item(0).getNodeValue();
             }

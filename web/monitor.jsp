@@ -72,7 +72,7 @@
                         <li class="active"><a href="http://10.116.45.34:8080/servlet-stateless/monitor.jsp">Monitoring</a></li>
                         <li><a href="http://10.116.45.34:8080/servlet-stateless/charts.jsp">Charts</a></li>
                         <li><a href="http://10.116.45.34:8080/servlet-stateless/About.html">About</a></li>
-                        <li><a href="https://mktplace.atlassian.net/secure/Dashboard.jspa">Contact</a></li>
+                        <li><a href="https://mktplace.atlassian.net/secure/CreateIssue!default.jspa">Contact</a></li>
                     </ul>
                 </div>
             </div>

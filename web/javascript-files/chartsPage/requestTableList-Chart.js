@@ -90,13 +90,13 @@ function Synthesizer(list) {
         $('#datepicker-field').datepicker('setDate', getDateNow());
         setIdQueryReport(queryList[row.cells[0].innerHTML].id);
         setJsonQueryReport(queryList[row.cells[0].innerHTML]);
-        removeInnerElement('chart_div'); 
+        removeInnerElement('chart_div');
         document.getElementById('database-name-indicator').value = queryList[row.cells[0].innerHTML].dbName;
         document.getElementById('query-name-indicator').value = queryList[row.cells[0].innerHTML].name;
-        drawChart(queryList[row.cells[0].innerHTML].id , getSelectedDate());
+        drawChart(queryList[row.cells[0].innerHTML].id, getSelectedDate());
         document.getElementById('edit-query-button').className = 'btn btn-default';
-        
-        
+
+
         //Trava cursor após preencher o response
         //$("body").toggleClass("wait");
         //Scroll into position
@@ -108,18 +108,18 @@ function Synthesizer(list) {
 google.load("visualization", "1", {packages: ["corechart"]});
 //google.setOnLoadCallback(drawChart(requestList[row.cells[0].innerHTML].id , getSelectedDate()));
 
-function drawChart(queryId,since) {
+function drawChart(queryId, since) {
     retrieveChartFromLog(queryId, since)
-    .done(function(rawdata) {
-        var options = {
-            title: getJsonQueryReport().name,
-            hAxis: {title: 'Time', titleTextStyle: {color: '#333'}},
-            vAxis: {minValue: 0}
-        };
-        var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
-        var data = google.visualization.arrayToDataTable(transformMatrix(rawdata));
-        chart.draw(data, options);
-    });
+            .done(function(rawdata) {
+                var options = {
+                    title: getJsonQueryReport().name,
+                    hAxis: {title: 'Execution', titleTextStyle: {color: '#333'}},
+                    vAxis: {minValue: 0}
+                };
+                var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+                var data = google.visualization.arrayToDataTable(transformMatrix(rawdata));
+                chart.draw(data, options);
+            });
 }
 
 
@@ -131,15 +131,26 @@ function retrieveChartFromLog(queryId, since) {
 function transformMatrix(data) {
     var jsonObject = JSON.parse(data);
     for (var i = 1; i < jsonObject.length; i++) {
-        for (var j = 1; j < jsonObject[i].length; j++) {
-            jsonObject[i][j] = parseInt(jsonObject[i][j]);
+        for (var j = 0; j < jsonObject[i].length; j++) {
+            if (j === 0) {
+                jsonObject[i][j] = new Date(jsonObject[i][j]);
+            } else {
+                jsonObject[i][j] = parseInt(jsonObject[i][j]);
+            }
         }
     }
+
+    //LAST REQUISITION VALUE ON VARIABLE NAME
+    /*
+    for (var j = 0; j < jsonObject[0].length; j++) {
+        if (j === 0) {
+
+        } else {
+            jsonObject[0][j] = jsonObject[0][j] + " (" + parseInt(jsonObject[jsonObject.length-1][j]) + ")";
+        }
+    }
+    */
     
-    /*for(var i = 1; i < jsonObject.length; i++){
-        console.log(jsonObject[i][0]);
-        jsonObject[i][0]=Date.parse(jsonObject[i][0]);
-    }*/
     //Destrava cursor após preencher o response
     $("body").toggleClass("wait");
     return jsonObject;
@@ -215,20 +226,20 @@ function populateQueryFields(jsonQueryReport) {
 
 /***************************FERRAMENTAS DE TESTE*******************************/
 /*function simpleRequest(url, busca) {
-    var dataOutput;
-    $.get(url, {"requestId": busca}, function(data) {
-        printResponse(data);
-    }, "json")
-            .fail(function() { //on failure
-                alert("Failed to retrieve information from servlet" + url);
-            });
-    return dataOutput;
-}*/
+ var dataOutput;
+ $.get(url, {"requestId": busca}, function(data) {
+ printResponse(data);
+ }, "json")
+ .fail(function() { //on failure
+ alert("Failed to retrieve information from servlet" + url);
+ });
+ return dataOutput;
+ }*/
 
 /*function printResponse(json) {
-    var request = json.jsonValidationScenarioList[1].validationScenarioDescription;
-    alert(request.toString());
-}*/
+ var request = json.jsonValidationScenarioList[1].validationScenarioDescription;
+ alert(request.toString());
+ }*/
 
 function getIdList(request) {
     var idList = new Array();
@@ -245,7 +256,7 @@ function collapseButton(fieldId) {
 
 function fireAlert(date) {
     //getRequestLogByDate("RequestDailyExecution", getIdRequestReference, date);
-    drawChart(getIdQueryReport() , date);
+    drawChart(getIdQueryReport(), date);
     //alert("alert fired"+date);
     //RequestTableData('tag-array');
 }
