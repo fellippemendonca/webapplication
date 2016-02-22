@@ -220,10 +220,9 @@
                 </div>
                 <br>
                 <div class="row">
-                    <div class="col-lg-10">
+                    <div class="col-lg-12">
                         <div id="chart_div" style="width: 1200px; height: 600px;"></div>
                     </div>
-                    <div class="col-lg-2">   </div>
                 </div>
             </div>
         </div>

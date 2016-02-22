@@ -246,8 +246,8 @@ function generatePanel(title, childNode) {
 }
 
 function refillValidationList(json) {
+    ValidationClear();
     document.getElementById('scenario-description').value = json.validationScenarioDescription;
-    document.getElementById('Validation').innerHTML = "";
     var elementList = json.jsonValidationElementList;
     $.each(elementList, function(i, element) {
         var ledColor = "red";

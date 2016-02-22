@@ -43,7 +43,7 @@ public class ValidationTimerSessionBean {
             Logger.getLogger(ValidationTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
             Logger.getLogger(ValidationTimerSessionBean.class.getName()).log(Level.SEVERE, null, ex);
-        }finally{
+        } finally {
             System.out.println("Feito!");
             this.autoScenario = null;
             return success;

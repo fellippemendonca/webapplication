@@ -27,6 +27,9 @@ public class ValidationOperationSource {
             case "Find Json Element":
                 success = findInJsonElement(responseContents.getContents(), expected);
                 break;
+            case "Find Json Element and Value":
+                success = findValueInJsonElement(responseContents.getContents(), expected, expected);
+                break;
             case "Find String":
                 success = responseContents.getContents().contains(expected);
                 break;
@@ -137,7 +140,22 @@ public class ValidationOperationSource {
             return success;
         }
     }
-
+    
+    
+    public boolean findValueInJsonElement(String json, String field, String value) {
+        JsonParser parser2;
+        boolean success = false;
+        try {
+            parser2 = new JsonParser();
+            JsonElement elementX = parser2.parse(json);
+            success = findElementAndValue(elementX, field, value);
+        } catch (JsonSyntaxException name) {
+            System.err.println("JsonSyntaxException: " + name);
+        } finally {
+            return success;
+        }
+    }
+    
     public boolean findElement(JsonElement element, String field) {
 
         //-------------------Caso o Json seja NULO------------------------------
@@ -195,7 +213,7 @@ public class ValidationOperationSource {
             } else {
                 Iterator<Map.Entry<String, JsonElement>> CrunchifyIterator = element.getAsJsonObject().entrySet().iterator();
                 while (CrunchifyIterator.hasNext()) {
-                    if (findElement(CrunchifyIterator.next().getValue(), field) == true) {
+                    if (findElementAndValue(CrunchifyIterator.next().getValue(), field, value) == true) {
                         return true;
                     }
                 }
@@ -204,7 +222,7 @@ public class ValidationOperationSource {
         } else if (element.isJsonArray()) {
             //System.out.println("Element is array");
             for (JsonElement jsonElement : element.getAsJsonArray()) {
-                if (findElement(jsonElement, field) == true) {
+                if (findElementAndValue(jsonElement, field, value) == true) {
                     return true;
                 }
             }

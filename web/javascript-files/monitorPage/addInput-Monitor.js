@@ -325,6 +325,12 @@ function requestClear() {
     removeInnerElement('Validation');
 }
 
+function ValidationClear() {
+    ElementCounter3 = 0;
+    removeElementValue('scenario-description');
+    removeInnerElement('Validation');
+}
+
 //Função que busca valores no servlet com base no nome do campo.
 function searchParameters(parameter) {
     var autocomp_opt = {source: function(request, response)

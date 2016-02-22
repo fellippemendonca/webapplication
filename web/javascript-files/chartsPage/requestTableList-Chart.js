@@ -137,6 +137,7 @@ function transformMatrix(data) {
             } else {
                 jsonObject[i][j] = parseInt(jsonObject[i][j]);
             }
+            
         }
     }
 
