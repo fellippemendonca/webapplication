@@ -77,7 +77,12 @@ public class DynamicMatrix {
     }
 
     public int getMaxCol(int index) {
-        return this.rows.get(index).getSize(); 
+        if(getMaxRow()>0){
+            return this.rows.get(index).getSize(); 
+        } else {
+            return 0;
+        }
+        
     }
     
     public String stringMatrix(int x, int y){

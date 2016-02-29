@@ -279,14 +279,17 @@ public class StatelessSessionBean implements Serializable{
     
     public String getJsonQueryReportChart(int queryId, String since){
         this.autoScenario = new AutoScenario();
+        String jsonQueryReportChart = "";
         try {
-            return this.autoScenario.getJsonQueryReportChart(queryId,since);
+            jsonQueryReportChart = this.autoScenario.getJsonQueryReportChart(queryId,since);
         } catch (NamingException ex) {
             Logger.getLogger(StatelessSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+            jsonQueryReportChart = "";
         }
         finally {
             this.autoScenario = null;
+            return jsonQueryReportChart;
         }
-        return null;
+        
     }
 }
