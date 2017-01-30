@@ -67,11 +67,11 @@
                 </div>
                 <div id="navbar" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
-                        <li><a href="http://10.116.45.34:8080/servlet-stateless/insertions.jsp">APIs</a></li>
-                        <li><a href="http://10.116.45.34:8080/servlet-stateless/validations.jsp">Validations</a></li>
-                        <li class="active"><a href="http://10.116.45.34:8080/servlet-stateless/monitor.jsp">Monitoring</a></li>
-                        <li><a href="http://10.116.45.34:8080/servlet-stateless/charts.jsp">Charts</a></li>
-                        <li><a href="http://10.116.45.34:8080/servlet-stateless/About.html">About</a></li>
+                        <li><a href="http://10.116.204.205:8080/servlet-stateless/insertions.jsp">APIs</a></li>
+                        <li><a href="http://10.116.204.205:8080/servlet-stateless/validations.jsp">Validations</a></li>
+                        <li class="active"><a href="http://10.116.204.205:8080/servlet-stateless/monitor.jsp">Monitoring</a></li>
+                        <li><a href="http://10.116.204.205:8080/servlet-stateless/charts.jsp">Charts</a></li>
+                        <li><a href="http://10.116.204.205:8080/servlet-stateless/About.html">About</a></li>
                         <li><a href="https://mktplace.atlassian.net/secure/CreateIssue!default.jspa">Contact</a></li>
                     </ul>
                 </div>
@@ -218,7 +218,7 @@
                                 <div class="container">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <h4>Json Object:</h4>
+                                            <h4>Payload:</h4>
                                             <textarea id="Payload" rows="1" cols="30"></textarea>
                                         </div>
                                     </div>
@@ -274,9 +274,8 @@
                                             <li><a onClick="addValidationElement('Validation', 'Find String', '', 'Find String', 'red');">Find String</a></li>
                                             <li><a onClick="addValidationElement('Validation', 'Find Json Element', '', 'Find Json Element', 'red');">Find Json Element</a></li>
                                             <li><a onClick="addValidationElement('Validation', 'Compare Json Structure', '', 'Match Json Structure', 'red');">Match Json Structure</a></li>
-                                            <li><a onClick="addValidationElement('Validation', 'Numerically Bigger', '', 'Numerically Bigger', 'red');">Numerically Bigger</a></li>
-                                            <li><a onClick="addValidationElement('Validation', 'Numerically Smaller', '', 'Numerically Smaller', 'red');">Numerically Smaller</a></li>
-                                            <li><a onClick="addValidationElement('Validation', 'Numerically Equal', '', 'Numerically Equal', 'red');">Numerically Equal</a></li>
+                                            <li><a onClick="addValidationElement('Validation', 'Check Json Element and Value', '', 'Check Json Element and Value', 'red');">Check Json Element and Value</a></li>
+                                            <li><a onClick="addValidationElement('Validation', 'Check Invalid Json Element and Value', '', 'Check Invalid Json Element and Value', 'red');">Check Invalid Json Element and Value</a></li>
                                         </ul>
                                     </div>
                                     <br><br><br><br>

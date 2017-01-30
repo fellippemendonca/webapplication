@@ -49,7 +49,7 @@ public class Parameter implements Serializable {
     private String parameterName;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 45)
+    @Size(min = 1, max = 100)
     @Column(name = "parameter_value")
     private String parameterValue;
     @Basic(optional = false)

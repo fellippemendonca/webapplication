@@ -18,7 +18,7 @@ public class ValidationTimerSessionBean {
 
     AutoScenario autoScenario;
 
-    @Schedule(minute = "1", second = "1", dayOfMonth = "*", month = "*", year = "*", hour = "*", dayOfWeek = "*")
+    @Schedule(minute = "20", second = "1", dayOfMonth = "*", month = "*", year = "*", hour = "*", dayOfWeek = "*")
 
     public void myTimer() {
         System.out.println("Timer event: " + new Date());

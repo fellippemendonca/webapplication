@@ -270,8 +270,8 @@ function printValidationResponse(json) {
     }
 
     var responseTable = "<br/><h4>API Response:</h4><br/><table id='responseTable' class='table table-bordered' cellspacing='0'>";
-    responseTable += "<thead><tr><th>Response Status</th><th>Time</th><th>Date</th></tr></thead><tbody>";
-    responseTable += "<tr><td>" + responseStatus + "</td><td>" + execTime + " ms</td><td>" + endDate + "</td></tr>";
+    responseTable += "<thead><tr><th>Request</th><th>Response Status</th><th>Time</th><th>Date</th></tr></thead><tbody>";
+    responseTable += "<tr><td>" + request + "</td><td>" + responseStatus + "</td><td>" + execTime + " ms</td><td>" + endDate + "</td></tr>";
     responseTable += "</tbody></table>";
 
     var responseContentsDiv = document.createElement('div');

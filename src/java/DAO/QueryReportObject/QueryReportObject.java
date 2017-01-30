@@ -219,8 +219,8 @@ public class QueryReportObject {
                 }
             } else {
                 int maxVariables = dx1.getMaxRow();
-                if (maxVariables > 10) {
-                    maxVariables = 10;
+                if (maxVariables > 15) {
+                    maxVariables = 15;
                 }
                 for (int i = 0; i < maxVariables; i++) {
                     chartVariables.add(dx1.getValue(i, 0));
@@ -243,8 +243,8 @@ public class QueryReportObject {
                                     tempValue = dx.getValue(i, 1);
                                 }
                             }
-                            if (count > 11) {
-                                System.out.println("exceeded 11 rows, breaking operation...");
+                            if (count > 16) {
+                                System.out.println("exceeded 16 rows, breaking operation...");
                                 break;
                             }
                             chartValues.add(tempValue);

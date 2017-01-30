@@ -8,9 +8,11 @@ package DAO.ValidationDAO;
 import HttpConnections.ResponseContents;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import java.util.Iterator;
 import java.util.Map;
+import JsonObjects.Validation.JsonSimpleValue;
 
 /**
  *
@@ -20,6 +22,7 @@ public class ValidationOperationSource {
 
     public boolean validateElement(String operation, String expected, ResponseContents responseContents) {
         boolean success = false;
+         JsonSimpleValue jsonObj = null;
         switch (operation) {
             case "Compare Json Structure":
                 success = compareBothJsonElements(expected, responseContents.getContents());
@@ -27,9 +30,26 @@ public class ValidationOperationSource {
             case "Find Json Element":
                 success = findInJsonElement(responseContents.getContents(), expected);
                 break;
-            case "Find Json Element and Value":
-                success = findValueInJsonElement(responseContents.getContents(), expected, expected);
-                break;
+            case "Check Json Element and Value":
+                try {
+                    jsonObj = new Gson().fromJson(expected, JsonSimpleValue.class);
+                    success = findValueInJsonElement(responseContents.getContents(), jsonObj.getField(), jsonObj.getValue());
+                } catch (JsonSyntaxException ex) {
+                    System.out.println(ex);
+                    success = false;
+                } finally {
+                    break;
+                }
+            case "Check Invalid Json Element and Value":
+                try {
+                    jsonObj = new Gson().fromJson(expected, JsonSimpleValue.class);
+                    success = findInvalidValueInJsonElement(responseContents.getContents(), jsonObj.getField(), jsonObj.getValue());
+                } catch (JsonSyntaxException ex) {
+                    System.out.println(ex);
+                    success = false;
+                } finally {
+                    break;
+                }
             case "Find String":
                 success = responseContents.getContents().contains(expected);
                 break;
@@ -153,6 +173,20 @@ public class ValidationOperationSource {
             System.err.println("JsonSyntaxException: " + name);
         } finally {
             return success;
+        }
+    }
+    
+    public boolean findInvalidValueInJsonElement(String json, String field, String value) {
+        JsonParser parser2;
+        boolean success = false;
+        try {
+            parser2 = new JsonParser();
+            JsonElement elementX = parser2.parse(json);
+            success = findElementAndValue(elementX, field, value);
+        } catch (JsonSyntaxException name) {
+            System.err.println("JsonSyntaxException: " + name);
+        } finally {
+            return !success;
         }
     }
     

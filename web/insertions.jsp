@@ -53,11 +53,11 @@
             </div>
             <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="http://10.116.45.34:8080/servlet-stateless/insertions.jsp">APIs</a></li>
-                    <li><a href="http://10.116.45.34:8080/servlet-stateless/validations.jsp">Validations</a></li>
-                    <li><a href="http://10.116.45.34:8080/servlet-stateless/monitor.jsp">Monitoring</a></li>
-                    <li><a href="http://10.116.45.34:8080/servlet-stateless/charts.jsp">Charts</a></li>
-                    <li><a href="http://10.116.45.34:8080/servlet-stateless/About.html">About</a></li>
+                    <li class="active"><a href="http://10.116.204.205:8080/servlet-stateless/insertions.jsp">APIs</a></li>
+                    <li><a href="http://10.116.204.205:8080/servlet-stateless/validations.jsp">Validations</a></li>
+                    <li><a href="http://10.116.204.205:8080/servlet-stateless/monitor.jsp">Monitoring</a></li>
+                    <li><a href="http://10.116.204.205:8080/servlet-stateless/charts.jsp">Charts</a></li>
+                    <li><a href="http://10.116.204.205:8080/servlet-stateless/About.html">About</a></li>
                     <li><a href="https://mktplace.atlassian.net/secure/CreateIssue!default.jspa">Contact</a></li>
                 </ul>
             </div>
@@ -194,7 +194,7 @@
                         <div class="col-md-6">
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <h3 class="panel-title">Json Object</h3>
+                                    <h3 class="panel-title">Payload</h3>
                                 </div>
                                 <textarea id="Payload" rows="5" cols="50"></textarea>
                             </div>

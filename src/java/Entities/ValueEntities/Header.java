@@ -47,7 +47,7 @@ public class Header implements Serializable {
     private String headerName;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 45)
+    @Size(min = 1, max = 200)
     @Column(name = "header_value")
     private String headerValue;
 
